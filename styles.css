@@ -1,13 +1,15 @@
 body {
   background-color: pink;
+  text-align: center;
 }
 .button {
   margin: 20px;
   text-align: center;
 }
 .button-container {
-  margin: auto;
+  margin: 10px;
   text-align: center;
+  display: block;
 }
 
 .output {
@@ -22,14 +24,12 @@ body {
   border: solid 2px;
   border-color: darkslategray;
   border-radius: 3px;
+  display: inline-block;
 }
 
 .container {
-  margin: auto;
-  padding: 50px;
-  background-color: whitesmoke;
-  width: 500px;
   height: 100px;
+  text-align: center;
 }
 
 .card-container {
@@ -43,13 +43,39 @@ body {
   border-color: darkslategray;
   border-radius: 3px;
 }
+.card-container1 {
+  margin: auto;
+  padding: 10px;
+  background-color: grey;
+  width: 200px;
+  height: 150px;
+  text-align: center;
+  border: solid 2px;
+  border-color: darkslategray;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.card-container2 {
+  margin: auto;
+  padding: 10px;
+  background-color: grey;
+  width: 200px;
+  height: 150px;
+  text-align: center;
+  border: solid 2px;
+  border-color: darkslategray;
+  border-radius: 3px;
+  display: inline-block;
+}
+
 .card {
   margin: auto;
   padding: 20px;
   background-color: white;
   border: solid 2px;
   border-color: grey;
-  width: 50px;
+  width: 30px;
   text-align: center;
   border-radius: 8px;
   /* display: display-outside; */
@@ -73,6 +99,7 @@ body {
 .score-board {
   background-color: white;
   margin: auto;
+  margin-top: 20px;
   width: 100px;
   height: 50px;
   color: black;

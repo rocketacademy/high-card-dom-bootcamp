@@ -29,6 +29,10 @@ let player2Card;
 let countDraws1 = 0;
 let countDraws2 = 0;
 
+// global boolean to represent whether player has clicked
+let canClick1 = true;
+let canClick2 = true;
+
 // //mainContainer DOM element as a global variable
 let mainContainer;
 mainContainer = document.createElement("div");
@@ -178,125 +182,142 @@ const highLowScore = (playerInfo) => {
 
 // Player action call backs
 const player1Click = () => {
-  if (playersTurn === 1) {
-    // Pop player 1's card metadata from the deck
-    player1Card = shuffledDeck.pop();
-    // If player already has 2 cards, empty cards aray from player1_info
-    if (player1_Info.cards.length == 2) {
-      player1_Info.cards = [];
-    }
-    // Otherwise, push new card into the cards array of player1_info
-    player1_Info.cards.push(player1Card);
+  if (playersTurn === 1 && canClick1 === true) {
+    //switch back canClick to false
+    canClick11 = false;
 
-    // Create card element from card metadata: create card DOM object - create suit and cardName elements, and append them to card element
-    const suit = document.createElement("div");
-    suit.classList.add("suit");
-    suit.innerText = player1Card.suitSymbol;
+    // Set timeout
 
-    const name = document.createElement("div");
-    console.log(`display name of card: ${player1Card.displayName}`);
-    console.log(`colour of card: ${player1Card.colour}`);
-    name.classList.add("name", player1Card.colour);
-    name.innerText = player1Card.displayName;
+    setTimeout(() => {
+      // Pop player 1's card metadata from the deck
+      player1Card = shuffledDeck.pop();
+      // If player already has 2 cards, empty cards aray from player1_info
+      if (player1_Info.cards.length == 2) {
+        player1_Info.cards = [];
+      }
+      // Otherwise, push new card into the cards array of player1_info
+      player1_Info.cards.push(player1Card);
 
-    const card = document.createElement("div");
-    card.classList.add("card");
+      // Create card element from card metadata: create card DOM object - create suit and cardName elements, and append them to card element
+      const suit = document.createElement("div");
+      suit.classList.add("suit");
+      suit.innerText = player1Card.suitSymbol;
 
-    card.appendChild(name);
-    card.appendChild(suit);
+      const name = document.createElement("div");
+      console.log(`display name of card: ${player1Card.displayName}`);
+      console.log(`colour of card: ${player1Card.colour}`);
+      name.classList.add("name", player1Card.colour);
+      name.innerText = player1Card.displayName;
 
-    // If two cards are drawn already, empty cardContainer1
-    if (countDraws1 == 2) {
-      //empty cardContainer1
-      cardContainer1.innerHTML = "";
-      //reset countdraws1
-      countDraws1 = 0;
-    }
+      const card = document.createElement("div");
+      card.classList.add("card");
 
-    // Increment countDraws1
-    countDraws1 += 1;
+      card.appendChild(name);
+      card.appendChild(suit);
 
-    // If player1 has drawn two cards already, calculate highlowscore and assign it to highLowScore key in player1_Info
-    if (countDraws1 == 2) {
-      player1_Info.highLowScore = highLowScore(player1_Info);
-    }
+      // If two cards are drawn already, empty cardContainer1
+      if (countDraws1 == 2) {
+        //empty cardContainer1
+        cardContainer1.innerHTML = "";
+        //reset countdraws1
+        countDraws1 = 0;
+      }
 
-    // If player2 has drawn two cards already, empty cardContainer2
-    if (countDraws2 == 2) {
-      cardContainer2.innerHTML = "";
-    }
+      // Increment countDraws1
+      countDraws1 += 1;
 
-    // display the card on cardcontainer1
-    cardContainer1.appendChild(card);
+      // If player1 has drawn two cards already, calculate highlowscore and assign it to highLowScore key in player1_Info
+      if (countDraws1 == 2) {
+        player1_Info.highLowScore = highLowScore(player1_Info);
+      }
 
-    // Switch to player 2's turn
-    playersTurn = 2;
+      // If player2 has drawn two cards already, empty cardContainer2
+      if (countDraws2 == 2) {
+        cardContainer2.innerHTML = "";
+      }
+
+      // display the card on cardcontainer1
+      cardContainer1.appendChild(card);
+
+      // Switch to player 2's turn
+      playersTurn = 2;
+
+      // Set canClick1 to true
+      canClick1 = true;
+    }, 2000);
   }
 };
 
 const player2Click = () => {
-  if (playersTurn === 2) {
-    const player2Card = shuffledDeck.pop();
-    playersTurn = 1;
+  if (playersTurn === 2 && canClick2 === true) {
+    canClick2 = false;
 
-    // If player already has 2 cards, empty cards aray from player1_info
-    if (player2_Info.cards.length == 2) {
-      player2_Info.cards = [];
-    }
-    // Otherwise, push new card into the cards array of player1_info
-    player2_Info.cards.push(player2Card);
+    setTimeout(() => {
+      player2Card = shuffledDeck.pop();
+      playersTurn = 1;
 
-    // Create card element from card metadata: create card DOM object - create suit and cardName elements, and append them to card element
-    const suit = document.createElement("div");
-    suit.classList.add("suit");
-    suit.innerText = player2Card.suitSymbol;
+      // If player already has 2 cards, empty cards aray from player1_info
+      if (player2_Info.cards.length == 2) {
+        player2_Info.cards = [];
+      }
+      // Otherwise, push new card into the cards array of player1_info
+      player2_Info.cards.push(player2Card);
 
-    const name = document.createElement("div");
-    console.log(`display name of card: ${player2Card.displayName}`);
-    console.log(`colour of card: ${player2Card.colour}`);
-    name.classList.add("name", player2Card.colour);
-    name.innerText = player2Card.displayName;
+      // Create card element from card metadata: create card DOM object - create suit and cardName elements, and append them to card element
+      const suit = document.createElement("div");
+      suit.classList.add("suit");
+      suit.innerText = player2Card.suitSymbol;
 
-    const card = document.createElement("div");
-    card.classList.add("card");
+      const name = document.createElement("div");
+      console.log(`display name of card: ${player2Card.displayName}`);
+      console.log(`colour of card: ${player2Card.colour}`);
+      name.classList.add("name", player2Card.colour);
+      name.innerText = player2Card.displayName;
 
-    card.appendChild(name);
-    card.appendChild(suit);
+      const card = document.createElement("div");
+      card.classList.add("card");
 
-    // If two cards are drawn already, empty cardContainer2
-    if (countDraws2 == 2) {
-      //empty cardContainer1
-      cardContainer2.innerHTML = "";
-      //reset countdraws1
-      countDraws2 = 0;
-    }
+      card.appendChild(name);
+      card.appendChild(suit);
 
-    // Increment countDraws2
-    countDraws2 += 1;
+      // If two cards are drawn already, empty cardContainer2
+      if (countDraws2 == 2) {
+        //empty cardContainer1
+        cardContainer2.innerHTML = "";
+        //reset countdraws1
+        countDraws2 = 0;
+      }
 
-    // If player2 has drawn two cards already, calculate highlowscore and assign it to highLowScore key in player1_Info
-    if (countDraws2 == 2) {
-      player2_Info.highLowScore = highLowScore(player2_Info);
-    }
+      // Increment countDraws2
+      countDraws2 += 1;
 
-    // display the card
-    cardContainer2.appendChild(card);
+      // If player2 has drawn two cards already, calculate highlowscore and assign it to highLowScore key in player1_Info
+      if (countDraws2 == 2) {
+        player2_Info.highLowScore = highLowScore(player2_Info);
+      }
 
-    // winning conditions
-    // If player1card has a higher highlowscore, output that they win and increment score
-    if (player1_Info.highLowScore > player2_Info.highLowScore) {
-      output("player 1 wins");
-      player1score += 1;
-      //scoreboardOutput(player1score, player2score);
-    } else if (player1_Info.highLowScore < player2_Info.highLowScore) {
-      output("player 2 wins");
-      player2score += 1;
-      //scoreboardOutput(player1score, player2score);
-    } else {
-      output("tie");
-    }
-    //Update scoreboard output
-    scoreboardOutput(player1score, player2score);
+      // display the card
+      cardContainer2.appendChild(card);
+
+      // winning conditions
+      // If player1card has a higher highlowscore, output that they win and increment score
+      if (player1_Info.highLowScore > player2_Info.highLowScore) {
+        output("player 1 wins");
+        player1score += 1;
+        //scoreboardOutput(player1score, player2score);
+      } else if (player1_Info.highLowScore < player2_Info.highLowScore) {
+        output("player 2 wins");
+        player2score += 1;
+        //scoreboardOutput(player1score, player2score);
+      } else {
+        output("tie");
+      }
+      //Update scoreboard output
+      scoreboardOutput(player1score, player2score);
+
+      // Set canClick2 to true
+      canClick2 = true;
+    }, 2000);
   }
 };
 
