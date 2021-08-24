@@ -96,8 +96,14 @@ const deck = shuffleCards(makeDeck());
 // Player 1 starts first
 let playersTurn = 1;
 
-// Use let for player1Card object because player1Card will be reassigned
+// Use let for playerCard object because playerCard will be reassigned
 let player1Card;
+let player2Card;
+
+//arrays to store players cards
+let player1CardArr = [];
+let player2CardArr = [];
+
 
 // create two buttons
 const player1Button = document.createElement("button");
@@ -120,20 +126,68 @@ const output = (message) => {
   gameInfo.innerText = message;
 };
 
+//function to display all cards
+const displayCards = () => {
+  
+    // Create card element from card metadata
+    for (let i=0; i<player1CardArr.length; i+=1){
+      const cardElement = createCard(player1CardArr[i]);
+      // Append the card element to the card container
+      cardContainer.appendChild(cardElement);
+    }
+
+    cardContainer.innerHTML += '<br>';
+
+    for (let i=0; i<player2CardArr.length; i+=1){
+      const cardElement = createCard(player2CardArr[i]);
+      // Append the card element to the card container
+      cardContainer.appendChild(cardElement);
+    }
+}
+
+//function to determine the winner
+const result = () => {
+  let outputDisplay = '';
+  
+  //sort arrays from lowest to highest rank
+  player1CardArr.sort((a,b) => {
+    return a.rank - b.rank;
+  });
+
+  player2CardArr.sort((a,b) => {
+    return a.rank - b.rank;
+  });
+
+  let player1Diff = player1CardArr[player1CardArr.length -1].rank - player1CardArr[0].rank;
+  let player2Diff = player2CardArr[player2CardArr.length -1].rank - player2CardArr[0].rank;
+
+  if (player1CardArr.length == 1 || player2CardArr.length == 1) {
+    outputDisplay = 'Players need to have multiple cards';
+  } else if (player1Diff > player2Diff){
+    outputDisplay = 'Player 1 wins';
+  } else if (player2Diff > player1Diff){
+    outputDisplay = 'Player 2 wins';
+  } else {
+    outputDisplay = 'tie';
+  }
+
+  return outputDisplay;
+}
+
 // Add an event listener on player 1's button to draw card and switch
 // to player 2's turn
 const player1Click = () => {
   if (playersTurn === 1) {
     // Pop player 1's card metadata from the deck
     player1Card = deck.pop();
+    player1CardArr.push(player1Card);
 
-    // Create card element from card metadata
-    const cardElement = createCard(player1Card);
     // Empty cardContainer in case this is not the 1st round of gameplay
     cardContainer.innerHTML = "";
-    // Append the card element to the card container
-    cardContainer.appendChild(cardElement);
 
+    //call function to display all cards
+    displayCards();
+    
     // Switch to player 2's turn
     playersTurn = 2;
   }
@@ -144,24 +198,20 @@ const player1Click = () => {
 const player2Click = () => {
   if (playersTurn === 2) {
     // Pop player 2's card metadata from the deck
-    const player2Card = deck.pop();
+    player2Card = deck.pop();
+    player2CardArr.push(player2Card);
 
-    // Create card element from card metadata
-    const cardElement = createCard(player2Card);
-    // Append card element to card container
-    cardContainer.appendChild(cardElement);
+    // Empty cardContainer in case this is not the 1st round of gameplay
+    cardContainer.innerHTML = "";
+
+    //call function to display all cards
+    displayCards();
 
     // Switch to player 1's turn
     playersTurn = 1;
 
     // Determine and output winner
-    if (player1Card.rank > player2Card.rank) {
-      output("player 1 wins");
-    } else if (player1Card.rank < player2Card.rank) {
-      output("player 2 wins");
-    } else {
-      output("tie");
-    }
+    output(result());
   }
 };
 
