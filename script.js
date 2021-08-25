@@ -129,12 +129,30 @@ const output = (message) => {
 //function to display all cards
 const displayCards = () => {
   
+    //sort arrays from lowest to highest rank
+  player1CardArr.sort((a,b) => {
+    return a.rank - b.rank;
+  });
+
+  player2CardArr.sort((a,b) => {
+    return a.rank - b.rank;
+  });
+
+  if (player1CardArr.length >2){
+  //swop the position of the highest card to the second position
+  [player1CardArr[1], player1CardArr[player1CardArr.length -1]] = [player1CardArr[player1CardArr.length -1], player1CardArr[1]];
+  }
+    if (player2CardArr.length >2){
+  [player2CardArr[1], player2CardArr[player2CardArr.length -1]] = [player2CardArr[player2CardArr.length -1], player2CardArr[1]];
+    }
+
     // Create card element from card metadata
     for (let i=0; i<player1CardArr.length; i+=1){
       const cardElement = createCard(player1CardArr[i]);
       // Append the card element to the card container
       cardContainer.appendChild(cardElement);
     }
+  
 
     cardContainer.innerHTML += '<br>';
 
@@ -149,15 +167,6 @@ const displayCards = () => {
 const result = () => {
   let outputDisplay = '';
   
-  //sort arrays from lowest to highest rank
-  player1CardArr.sort((a,b) => {
-    return a.rank - b.rank;
-  });
-
-  player2CardArr.sort((a,b) => {
-    return a.rank - b.rank;
-  });
-
   let player1Diff = player1CardArr[player1CardArr.length -1].rank - player1CardArr[0].rank;
   let player2Diff = player2CardArr[player2CardArr.length -1].rank - player2CardArr[0].rank;
 
