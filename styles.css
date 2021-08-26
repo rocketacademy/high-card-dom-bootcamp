@@ -35,3 +35,7 @@ body {
 .card-container {
   background-color: white;
 }
+
+.button {
+  display: block;
+}

@@ -21,6 +21,9 @@ const shuffleCards = (cards) => {
 
 let cardContainer;
 
+//global variable to keep track of whether new round
+let isNewRound = true;
+
 const makeDeck = () => {
   // Initialise an empty deck array
   const newDeck = [];
@@ -94,11 +97,14 @@ const makeDeck = () => {
 const deck = shuffleCards(makeDeck());
 
 // Player 1 starts first
-let playersTurn = 1;
+//let playersTurn = 1;
 
 // Use let for playerCard object because playerCard will be reassigned
 let player1Card;
 let player2Card;
+
+//keep track of the number of cards player will draw
+let numOfCards = 0;
 
 //arrays to store players cards
 let player1CardArr = [];
@@ -117,7 +123,7 @@ document.body.appendChild(player2Button);
 // Create game info div as global value
 // fill game info div with starting instructions
 const gameInfo = document.createElement("div");
-gameInfo.innerText = "Its player 1 turn. Click to draw a card!";
+gameInfo.innerText = "";
 document.body.appendChild(gameInfo);
 
 // Create a helper function for output to abstract complexity
@@ -138,11 +144,12 @@ const displayCards = () => {
     return a.rank - b.rank;
   });
 
+   //swop the position of the highest card to the second position
   if (player1CardArr.length >2){
-  //swop the position of the highest card to the second position
   [player1CardArr[1], player1CardArr[player1CardArr.length -1]] = [player1CardArr[player1CardArr.length -1], player1CardArr[1]];
   }
-    if (player2CardArr.length >2){
+
+  if (player2CardArr.length >2){
   [player2CardArr[1], player2CardArr[player2CardArr.length -1]] = [player2CardArr[player2CardArr.length -1], player2CardArr[1]];
     }
 
@@ -153,7 +160,6 @@ const displayCards = () => {
       cardContainer.appendChild(cardElement);
     }
   
-
     cardContainer.innerHTML += '<br>';
 
     for (let i=0; i<player2CardArr.length; i+=1){
@@ -167,11 +173,11 @@ const displayCards = () => {
 const result = () => {
   let outputDisplay = '';
   
-  let player1Diff = player1CardArr[player1CardArr.length -1].rank - player1CardArr[0].rank;
-  let player2Diff = player2CardArr[player2CardArr.length -1].rank - player2CardArr[0].rank;
+  let player1Diff = player1CardArr[1].rank - player1CardArr[0].rank;
+  let player2Diff = player2CardArr[1].rank - player2CardArr[0].rank;
 
   if (player1CardArr.length == 1 || player2CardArr.length == 1) {
-    outputDisplay = 'Players need to have multiple cards';
+    outputDisplay = `Players need to have ${numOfCards} cards`;
   } else if (player1Diff > player2Diff){
     outputDisplay = 'Player 1 wins';
   } else if (player2Diff > player1Diff){
@@ -186,7 +192,7 @@ const result = () => {
 // Add an event listener on player 1's button to draw card and switch
 // to player 2's turn
 const player1Click = () => {
-  if (playersTurn === 1) {
+  //if (playersTurn === 1) {
     // Pop player 1's card metadata from the deck
     player1Card = deck.pop();
     player1CardArr.push(player1Card);
@@ -198,14 +204,19 @@ const player1Click = () => {
     displayCards();
     
     // Switch to player 2's turn
-    playersTurn = 2;
-  }
+    //playersTurn = 2;
+ // }
+
+    if (player1CardArr.length === numOfCards && player2CardArr.length === numOfCards){
+    // Determine and output winner
+    output(result());
+    }
 };
 
 // Add event listener on player 2's button to draw card and determine winner
 // Switch back to player 1's turn to repeat game
 const player2Click = () => {
-  if (playersTurn === 2) {
+  //if (playersTurn === 2) {
     // Pop player 2's card metadata from the deck
     player2Card = deck.pop();
     player2CardArr.push(player2Card);
@@ -219,9 +230,11 @@ const player2Click = () => {
     // Switch to player 1's turn
     playersTurn = 1;
 
+    if (player1CardArr.length === numOfCards && player2CardArr.length === numOfCards){
     // Determine and output winner
     output(result());
-  }
+    }
+  //}
 };
 
 //JS to build the card element
@@ -243,8 +256,30 @@ const createCard = (cardInfo) => {
   return card;
 };
 
+//process the input of the user to be the number of cards player draw
+const acceptInput = () => {
+  numOfCards = Number(inputField.value);
+  const output = document.createElement("p");
+  output.innerHTML = `Each player will have to draw ${numOfCards} cards`;
+  document.body.appendChild(output);
+}
+
+//create input
+const inputField = document.createElement("input");
+
+
 //centralise our game initialisation into a single function called initGame
 const initGame = () => {
+  //create submit button
+  const button = document.createElement("button");
+  button.addEventListener("click", acceptInput);
+
+  button.innerText = "submit";
+  button.classList.add("button");
+
+  document.body.appendChild(inputField);
+  document.body.appendChild(button);
+
   // initialize button functionality
   player1Button.innerText = "Player 1 Draw";
   document.body.appendChild(player1Button);
@@ -257,12 +292,13 @@ const initGame = () => {
   player2Button.addEventListener("click", player2Click);
 
   // fill game info div with starting instructions
-  gameInfo.innerText = "Its player 1 turn. Click to draw a card!";
+  gameInfo.innerText = "";
   document.body.appendChild(gameInfo);
 
   cardContainer = document.createElement("div");
   cardContainer.classList.add("card-container");
   document.body.appendChild(cardContainer);
+  
 };
 
 initGame();
