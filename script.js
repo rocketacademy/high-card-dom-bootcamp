@@ -135,11 +135,19 @@ const getDiff = (array) => {
   return diffValue;
 };
 
+// const arrange = (array) => {
+//   highestCard = getMax(array);
+//   highCardIndex = array.indexOf(highestCard);
+//   lowestCard = getMin(array);
+//   lowCardIndex = array.indexOf(lowestCard);
+// };
+
 // ==================== GLOBAL SETUP ====================
 const deck = shuffleCards(makeDeck());
 
-let playersTurn = 1; // matches with starting instructions
+// const playersTurn = 1; // matches with starting instructions
 let player1Card;
+let player2Card;
 
 const gameInfo = document.createElement('div');
 
@@ -148,6 +156,9 @@ player1Button.classList.add('button');
 
 const player2Button = document.createElement('button');
 player2Button.classList.add('button');
+
+const playAgainButton = document.createElement('button');
+playAgainButton.classList.add('button');
 
 // Create a helper function for output to abstract complexity
 // of DOM manipulation away from game logic
@@ -158,75 +169,157 @@ const output = (message) => {
 let cardContainer1;
 let cardContainer2;
 let buttonDiv;
-const player1Hand = [];
-const player2Hand = [];
+let player1Hand = [];
+let player2Hand = [];
+let inputContainer;
+let inputField;
+let playButton;
+let gameMode = 'default';
+let input;
+let lobbyInfo;
+let playAgainDiv;
+
+const playerBoard = document.createElement('div');
+document.body.appendChild(playerBoard);
 
 // ==================== PLAYER ACTION CALLBACKS ====================
 const player1Click = () => {
   // Switch to player 1's turn
-  playersTurn = 1;
+  // playersTurn = 1;
 
-  if (playersTurn === 1) {
-    // Pop player 1's card metadata from the deck
-    player1Card = deck.pop();
-    player1Hand.push(player1Card);
+  if (gameMode === 'gameplay') {
+    if (player1Hand.length === input - 1 && player2Hand.length === input) {
+      player1Card = deck.pop();
+      player1Hand.push(player1Card);
+      cardContainer1.innerHTML = '';
+      player1Hand.sort((a, b) => a.rank - b.rank);
+      player1Hand.unshift(player1Hand.pop());
 
-    // Create card element from card metadata
-    const cardElement = createCard(player1Card);
-    // // Empty cardContainer in case this is not the 1st round of gameplay
-    // cardContainer1.innerHTML = '';
-    // Append the card element to the card container
-    cardContainer1.appendChild(cardElement);
-  }
-};
+      // Create card element from card metadata
+      for (let i = 0; i < player1Hand.length; i += 1) {
+        let cardElement = createCard(player1Hand[i]);
+        cardElement = cardContainer1.appendChild(cardElement);
+      }
+      gameMode = 'default';
+
+      // Determine and output winner
+      if (getDiff(player1Hand) > getDiff(player2Hand)) {
+        output('Player 1 wins!<br>Click \'Play Again\' to begin new round!');
+      } else if (getDiff(player1Hand) < getDiff(player2Hand)) {
+        output('Player 2 wins!<br>Click \'Play Again\' to begin new round!');
+      } else {
+        output('Its a tie!<br>Click \'Play Again\' to begin new round!');
+      } console.log(getDiff(player1Hand), getDiff(player2Hand));
+    } else { // Pop player 1's card metadata from the deck
+      player1Card = deck.pop();
+      player1Hand.push(player1Card);
+      cardContainer1.innerHTML = '';
+      player1Hand.sort((a, b) => a.rank - b.rank);
+      player1Hand.unshift(player1Hand.pop());
+
+      // Create card element from card metadata
+      for (let i = 0; i < player1Hand.length; i += 1) {
+        let cardElement = createCard(player1Hand[i]);
+        cardElement = cardContainer1.appendChild(cardElement);
+      }
+    } } };
+
+// createCard(player1Card);
+// // Empty cardContainer in case this is not the 1st round of gameplay
+// cardContainer1.innerHTML = '';
+// Append the card element to the card container
+// cardContainer1.appendChild(cardElement);
 
 const player2Click = () => {
-  // Switch to player 2's turn
-  playersTurn = 2;
-  output('It\'s player 2\'s turn.<br>Click again to draw a card!');
+  // // Switch to player 2's turn
+  // playersTurn = 2;
+  // output('It\'s player 2\'s turn.<br>Click again to draw a card!');
 
-  if (playersTurn === 2) {
-    // Pop player 2's card metadata from the deck
-    const player2Card = deck.pop();
-    player2Hand.push(player2Card);
+  if (gameMode === 'gameplay') {
+    if (player1Hand.length === input && player2Hand.length === input - 1) {
+      player2Card = deck.pop();
+      player2Hand.push(player2Card);
+      cardContainer2.innerHTML = '';
+      player2Hand.sort((a, b) => a.rank - b.rank);
+      console.log(player1Hand);
+      player2Hand.unshift(player2Hand.pop());
 
-    // Create card element from card metadata
-    const cardElement = createCard(player2Card);
-    // Append card element to card container
-    cardContainer2.appendChild(cardElement);
+      // Create card element from card metadata
+      for (let i = 0; i < player2Hand.length; i += 1) {
+        let cardElement = createCard(player2Hand[i]);
+        cardElement = cardContainer2.appendChild(cardElement);
+      }
+      gameMode = 'default';
 
-    // Determine and output winner
-    if (getDiff(player1Hand) > getDiff(player2Hand)) {
-      output('Player 1 wins!<br>Player 1, click to draw a card and play again!');
-    } else if (getDiff(player1Hand) < getDiff(player2Hand)) {
-      output('Player 2 wins!<br>Player 1, click to draw a card and play again!');
-    } else {
-      output('Its a tie!<br>Player 1, click to draw a card and play again!');
-    } console.log(getDiff(player1Hand), getDiff(player2Hand));
-  }
+      // Determine and output winner
+      if (getDiff(player1Hand) > getDiff(player2Hand)) {
+        output('Player 1 wins!<br>Click \'Play Again\' to begin new round!');
+      } else if (getDiff(player1Hand) < getDiff(player2Hand)) {
+        output('Player 2 wins!<br>Click \'Play Again\' to begin new round!');
+      } else {
+        output('Its a tie!<br>Click \'Play Again\' to begin new round!');
+      } console.log(getDiff(player1Hand), getDiff(player2Hand));
+    }
+    else { // Pop player 2's card metadata from the deck
+      player2Card = deck.pop();
+      player2Hand.push(player2Card);
+      cardContainer2.innerHTML = '';
+      player2Hand.sort((a, b) => a.rank - b.rank);
+      console.log(player1Hand);
+      player2Hand.unshift(player2Hand.pop());
+
+      // Create card element from card metadata
+      for (let i = 0; i < player2Hand.length; i += 1) {
+        let cardElement = createCard(player2Hand[i]);
+        cardElement = cardContainer2.appendChild(cardElement);
+      }
+    } }
+};
+
+// ==================== GAME COVER ====================
+
+const gameLobby = () => {
+  inputContainer = document.createElement('div');
+  inputContainer.classList.add('wrapper');
+  playerBoard.appendChild(inputContainer);
+
+  lobbyInfo = document.createElement('div');
+  lobbyInfo.innerHTML = 'Welcome to High Card Game.<br>Enter number of cards to be drawn for this round.';
+  lobbyInfo.classList.add('info');
+  inputContainer.appendChild(lobbyInfo);
+
+  inputField = document.createElement('input');
+  input = inputField.innerText;
+  inputContainer.appendChild(inputField);
+
+  playButton = document.createElement('button');
+  playButton.innerText = 'Play';
+  inputContainer.appendChild(playButton);
+
+  playButton.addEventListener('click', playButtonClick);
 };
 
 // ==================== GAME INITIALIZATION ====================
 const initGame = () => {
   // fill game info div with starting instructions
-  gameInfo.innerHTML = 'Welcome to High Card Game.<br>It\'s player 1\'s turn. Click to draw a card!';
+  gameInfo.innerHTML = `Each player can draw up to ${input} cards at any point.<br>Results will be shown once all players have drawn their cards.`;
   gameInfo.classList.add('info');
-  document.body.appendChild(gameInfo);
+  playerBoard.appendChild(gameInfo);
 
   // Initialise card container 1
   cardContainer1 = document.createElement('div');
   cardContainer1.classList.add('card-container', 'wrapper');
-  document.body.appendChild(cardContainer1);
+  playerBoard.appendChild(cardContainer1);
 
   // Initialise card container 2
   cardContainer2 = document.createElement('div');
   cardContainer2.classList.add('card-container', 'wrapper');
-  document.body.appendChild(cardContainer2);
+  playerBoard.appendChild(cardContainer2);
 
   // Initialise button container
   buttonDiv = document.createElement('div');
   buttonDiv.classList.add('wrapper');
-  document.body.appendChild(buttonDiv);
+  playerBoard.appendChild(buttonDiv);
 
   // initialize button functionality
   player1Button.innerText = 'Player 1: Draw';
@@ -237,6 +330,32 @@ const initGame = () => {
 
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
+
+  // initialise play again container
+  playAgainDiv = document.createElement('div');
+  playAgainDiv.classList.add('wrapper');
+  playerBoard.appendChild(playAgainDiv);
+
+  // initialise play again button
+  playAgainButton.innerText = 'Play Again';
+  playAgainDiv.appendChild(playAgainButton);
+
+  playAgainButton.addEventListener('click', () => {
+    if (player1Hand.length === input && player2Hand.length === input) {
+      playerBoard.innerHTML = '';
+      player1Hand = [];
+      player2Hand = [];
+      gameLobby(); } });
 };
 
-initGame();
+const playButtonClick = () => {
+  inputContainer.innerHTML = '';
+  initGame();
+  input = Number(inputField.value);
+  gameMode = 'gameplay';
+};
+
+if (gameMode === 'default') {
+  gameLobby();
+} else {
+  initGame(); }
