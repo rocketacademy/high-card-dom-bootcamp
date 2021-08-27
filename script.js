@@ -263,14 +263,6 @@ const createCard = (cardInfo) => {
 
 const initGame = () => {
   // initialize button functionality
-  cardContainer1 = document.createElement('div');
-  cardContainer1.classList.add('card-container');
-  document.body.appendChild(cardContainer1);
-
-  cardContainer2 = document.createElement('div');
-  cardContainer2.classList.add('card-container');
-  document.body.appendChild(cardContainer2);
-
   player1Button.innerText = 'Player 1 Draw';
   document.body.appendChild(player1Button);
 
@@ -280,20 +272,34 @@ const initGame = () => {
   decideWinnerButton.innerText = 'Winner?';
   document.body.appendChild(decideWinnerButton);
 
+  const divider = document.createElement('div');
+  divider.innerHTML = '<br>';
+  document.body.appendChild(divider);
+
   field.setAttribute('id', 'userInput');
   document.body.appendChild(field);
 
   submitButton.innerText = 'Submit';
   document.body.appendChild(submitButton);
 
+  const divider2 = document.createElement('p');
+  divider.innerHTML = '<br>';
+  document.body.appendChild(divider2);
+  gameInfo.innerText = 'Input maximum number of cards each player can draw';
+  document.body.appendChild(gameInfo);
+
+  cardContainer1 = document.createElement('div');
+  cardContainer1.classList.add('card-container');
+  document.body.appendChild(cardContainer1);
+
+  cardContainer2 = document.createElement('div');
+  cardContainer2.classList.add('card-container');
+  document.body.appendChild(cardContainer2);
+
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
   decideWinnerButton.addEventListener('click', decideWinner);
   submitButton.addEventListener('click', capture);
-
-  // fill game info div with starting instructions
-  gameInfo.innerText = 'Input maximum number of cards each player can draw';
-  document.body.appendChild(gameInfo);
 };
 
 initGame();
