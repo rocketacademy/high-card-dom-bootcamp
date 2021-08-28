@@ -132,6 +132,7 @@ const output = (message) => {
 const player1Click = () => {
   if (playersTurn === 1 && canClick === true) {
     canClick = false;
+    output('player 1 drawing...');
 
     setTimeout(() => {
       player1Card = deck.pop();
@@ -146,13 +147,14 @@ const player1Click = () => {
       cardContainer.appendChild(cardElement);
       playersTurn = 2;
       canClick = true;
-    }, 2000);
+    }, 1000);
   }
 };
 
 const player2Click = () => {
   if (playersTurn === 2 && canClick === true) {
     canClick = false;
+    output('player 2 drawing...');
 
     setTimeout(() => {
       const player2Card = deck.pop();
@@ -170,7 +172,7 @@ const player2Click = () => {
       } else {
         output('tie');
       }
-    }, 2000);
+    }, 1000);
   }
 };
 
