@@ -5,6 +5,7 @@ let player1Score = 0;
 let player2Score = 0;
 let player1CardArray = [];
 let player2CardArray = [];
+let startGame = true
 // Get a random index ranging from 0 (inclusive) to max (exclusive).
 const getRandomIndex = (max) => Math.floor(Math.random() * max);
 
@@ -131,6 +132,7 @@ const output = (message) => {
 };
 
 const player1Click = () => {
+  startGame = false
   cardContainer.classList.add('card-container')
   cardContainer.innerText = '';
   cardContainer2.innerText = '';
@@ -210,6 +212,7 @@ const player2Click = () => {
     message = ` GAME END, Player 1 won ${player1Score} and player 2 won ${player2Score} . \n cards will be reshuffle `;
     deck = shuffleCards(makeDeck());
     numOfCardsDraw = 5;
+    startGame = true
   }
   // Switch to player 1's turn
   playersTurn = 1;
@@ -235,7 +238,11 @@ const initGame = () => {
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
   inputNumCards.addEventListener('keyup', () => {
+    if(startGame){
     numOfCardsDraw = inputNumCards.value;
+    }else{
+      inputNumCards.placeholder = ` NO, ONLY ENTER AT THE START OF THE GAME!`
+    }
   });
 
   // fill game info div with starting instructions
