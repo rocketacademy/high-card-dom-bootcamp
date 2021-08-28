@@ -233,7 +233,9 @@ const initGame = () => {
 
   const inputNumCards = document.createElement('input');
   inputNumCards.placeholder = ' key in number of cards per playerhand';
+  
   inputNumCards.size = '50';
+  
 
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
@@ -241,7 +243,9 @@ const initGame = () => {
     if(startGame){
     numOfCardsDraw = inputNumCards.value;
     }else{
-      inputNumCards.placeholder = ` NO, ONLY ENTER AT THE START OF THE GAME!`
+       inputNumCards.setAttribute('value', ' ')
+      inputNumCards.placeholder = `ONLY ENTER AT THE START OF THE GAME!OR WHEN THE CARD IS RESHUFFLE `
+      
     }
   });
 
