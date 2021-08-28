@@ -49,7 +49,8 @@ const makeDeck = () => {
       currentSymbol = '♦️';
     }
 
-    // set the color of the card (used later to determine the css class which in turn determines the color)
+    // set the color of the card (used later to determine the css
+    // class which in turn determines the color)
     // does not directly set the color of the card
     let cardColor;
     if (currentSymbol === '♥️' || currentSymbol === '♦️') {
@@ -125,6 +126,8 @@ const output = (message) => {
 #################### */
 const deck = shuffleCards(makeDeck());
 
+let canClick = true;
+
 let playersTurn = 1; // matches with starting instructions, Player 1 begins first
 // let player1Card; // we let player1card here because it will be re-assigned
 // let player1CardAgain;
@@ -145,19 +148,25 @@ gameInfo.id = 'game-info';
 ## PLAYER ACTION CALLBACKS ##
 ########################### */
 const player1Click = () => {
-  if (playersTurn === 1) {
-    // getting player 1's card
-    player1Card = deck.pop();
+  if (playersTurn === 1 && canClick === true) {
+    canClick = false;
+    output("let's keep you waiting for no real reason at all!");
+    // arbitrary 5-second delay in dealing cards
+    setTimeout(() => {
+      // getting player 1's card
+      player1Card = deck.pop();
 
-    // Create card element from card metadata
-    const cardElement = createCard(player1Card);
-    // Empty cardContainer in case this is not the 1st round of gameplay
-    cardContainerPlayer1.innerHTML = '';
-    cardContainerPlayer2.innerHTML = '';
-    // Append the card element to the card container
-    cardContainerPlayer1.appendChild(cardElement);
-    output('player 1 has drawn their card - player 2, time to draw!');
-    playersTurn = 2;
+      // Create card element from card metadata
+      const cardElement = createCard(player1Card);
+      // Empty cardContainer in case this is not the 1st round of gameplay
+      cardContainerPlayer1.innerHTML = '';
+      cardContainerPlayer2.innerHTML = '';
+      // Append the card element to the card container
+      cardContainerPlayer1.appendChild(cardElement);
+      output('player 1 has drawn their card - player 2, time to draw!');
+      playersTurn = 2;
+      canClick = true; },
+    2000);// actual 5-second delay
   }
 
   if (playersTurn === 3) {
@@ -226,9 +235,8 @@ const player2Click = () => {
         it's a tie! another round?`);
     }
 
-    playersTurn = 1;
-
     // Switch to player 1's turn
+    playersTurn = 1;
 
   // }
   }
