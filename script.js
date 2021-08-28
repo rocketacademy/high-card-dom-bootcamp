@@ -3,7 +3,6 @@ let cardContainer2;
 let numOfCardsDraw = 5;
 let player1Score = 0;
 let player2Score = 0;
-
 let player1CardArray = [];
 let player2CardArray = [];
 // Get a random index ranging from 0 (inclusive) to max (exclusive).
@@ -159,6 +158,8 @@ const player1Click = () => {
 
   // Switch to player 2's turn
   playersTurn = 2;
+  player2Button.disabled = false
+  player1Button.disabled = true
 };
 
 const comparingCardsValue = (cards) => {
@@ -214,6 +215,8 @@ const player2Click = () => {
   playersTurn = 1;
   output(message);
   // Determine and output winner
+  player1Button.disabled = false
+  player2Button.disabled = true
 };
 
 const initGame = () => {
@@ -223,6 +226,7 @@ const initGame = () => {
 
   player2Button.innerText = 'Player 2 Draw';
   document.body.appendChild(player2Button);
+  player2Button.disabled = true
 
   const inputNumCards = document.createElement('input');
   inputNumCards.placeholder = ' key in number of cards per playerhand';
