@@ -1,17 +1,24 @@
 // ########## GLOBAL VARIABLES ##########
 
-let playersTurn = 1; // matches with starting instructions
 let player1Card;
+let player2Card;
+
+let p1Ranks = [];
+let p2Ranks = [];
 
 const player1Button = document.createElement('button');
-
 const player2Button = document.createElement('button');
+const endRoundButton = document.createElement('button');
 
 const gameInfo = document.createElement('div');
+const p1Label = document.createElement('div');
+const p2Label = document.createElement('div');
 
 let canClick = true;
 
 let cardContainer;
+let p1Div;
+let p2Div;
 
 // ########## HELPER FUNCTIONS ##########
 
@@ -124,55 +131,83 @@ const createCard = (cardInfo) => {
 // Create a helper function for output to abstract complexity
 // of DOM manipulation away from game logic
 const output = (message) => {
-  gameInfo.innerText = message;
+  gameInfo.innerHTML = message;
+};
+
+const addOutput = (message) => {
+  gameInfo.innerText += message;
 };
 
 // ########## PLAYER ACTION CALLBACKS ##########
 
 const player1Click = () => {
-  if (playersTurn === 1 && canClick === true) {
+  if (canClick === true) {
     canClick = false;
-    output('player 1 drawing...');
+    output('Player 1 drawing...');
 
     setTimeout(() => {
       player1Card = deck.pop();
+      p1Ranks.push(player1Card.rank);
 
       const cardElement = createCard(player1Card);
 
-      // in case this is not the 1st time
-      // in the entire app,
-      // empty the card container
-      cardContainer.innerHTML = '';
-
-      cardContainer.appendChild(cardElement);
-      playersTurn = 2;
+      p1Div.appendChild(cardElement);
       canClick = true;
+      output('Player 1 drew a card!');
     }, 1000);
   }
 };
 
 const player2Click = () => {
-  if (playersTurn === 2 && canClick === true) {
+  if (canClick === true) {
     canClick = false;
-    output('player 2 drawing...');
+    output('Player 2 drawing...');
 
     setTimeout(() => {
-      const player2Card = deck.pop();
+      player2Card = deck.pop();
+      p2Ranks.push(player2Card.rank);
+
       const cardElement = createCard(player2Card);
 
-      cardContainer.appendChild(cardElement);
-
-      playersTurn = 1;
+      p2Div.appendChild(cardElement);
       canClick = true;
-
-      if (player1Card.rank > player2Card.rank) {
-        output('player 1 wins');
-      } else if (player1Card.rank < player2Card.rank) {
-        output('player 2 wins');
-      } else {
-        output('tie');
-      }
+      output('Player 2 drew a card!');
     }, 1000);
+  }
+};
+
+const endRound = () => {
+  if (p1Ranks.length < 2 || p2Ranks.length < 2) {
+    output('Each player must have at least 2 cards in order to end the round!');
+  } else {
+    p1Ranks.sort((a, b) => a - b);
+    p2Ranks.sort((a, b) => a - b);
+    const p1Score = p1Ranks[p1Ranks.length - 1] - p1Ranks[0];
+    const p2Score = p2Ranks[p2Ranks.length - 1] - p2Ranks[0];
+    console.log(`p1 ${p1Score}`);
+    console.log(`p2 ${p2Score}`);
+
+    if (p1Score === p2Score) {
+      output('Both players draw! <br>');
+    } else if (p1Score > p2Score) {
+      output('Player 1 Wins! <br>');
+    } else if (p1Score < p2Score) {
+      output('Player 2 Wins! <br>');
+    }
+    addOutput('New round starting in 5... ');
+
+    setTimeout(() => { addOutput('4... '); }, 1000);
+    setTimeout(() => { addOutput('3... '); }, 2000);
+    setTimeout(() => { addOutput('2... '); }, 3000);
+    setTimeout(() => { addOutput('1...'); }, 4000);
+
+    setTimeout(() => {
+      output('New round has started! Click the respective buttons to draw cards!');
+      p1Div.innerHTML = '';
+      p2Div.innerHTML = '';
+      p1Ranks = [];
+      p2Ranks = [];
+    }, 5000);
   }
 };
 
@@ -180,22 +215,41 @@ const player2Click = () => {
 
 const initGame = () => {
   // fill game info div with starting instructions
-  gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
+  gameInfo.innerText = 'Welcome! Click the respective buttons to draw cards!';
   document.body.appendChild(gameInfo);
 
+  // card container
   cardContainer = document.createElement('div');
   cardContainer.classList.add('card-container');
   document.body.appendChild(cardContainer);
 
+  // divs for each player
+  p1Div = document.createElement('div');
+  p2Div = document.createElement('div');
+  p1Label.innerHTML = 'Player 1 Hand';
+  p2Label.innerHTML = '<br> Player 2 Hand';
+  cardContainer.appendChild(p1Label);
+  cardContainer.appendChild(p1Div);
+  cardContainer.appendChild(p2Label);
+  cardContainer.appendChild(p2Div);
+
+  // button div
+  const buttonDiv = document.createElement('div');
+  document.body.appendChild(buttonDiv);
+
   // initialize button functionality
   player1Button.innerText = 'Player 1 Draw';
-  document.body.appendChild(player1Button);
+  buttonDiv.appendChild(player1Button);
 
   player2Button.innerText = 'Player 2 Draw';
-  document.body.appendChild(player2Button);
+  buttonDiv.appendChild(player2Button);
+
+  endRoundButton.innerText = 'End Round';
+  buttonDiv.appendChild(endRoundButton);
 
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
+  endRoundButton.addEventListener('click', endRound);
 };
 
 const deck = shuffleCards(makeDeck());
