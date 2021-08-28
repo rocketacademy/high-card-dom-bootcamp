@@ -3,6 +3,8 @@
 let player1Card;
 let player2Card;
 
+let numCards = 52;
+
 let p1Ranks = [];
 let p2Ranks = [];
 
@@ -13,6 +15,11 @@ const endRoundButton = document.createElement('button');
 const gameInfo = document.createElement('div');
 const p1Label = document.createElement('div');
 const p2Label = document.createElement('div');
+
+const numberDiv = document.createElement('div');
+const numberText = document.createElement('p');
+const numberInput = document.createElement('input');
+const numberButton = document.createElement('button');
 
 let canClick = true;
 
@@ -139,47 +146,12 @@ const addOutput = (message) => {
 };
 
 // ########## PLAYER ACTION CALLBACKS ##########
-
-const player1Click = () => {
-  if (canClick === true) {
-    canClick = false;
-    output('Player 1 drawing...');
-
-    setTimeout(() => {
-      player1Card = deck.pop();
-      p1Ranks.push(player1Card.rank);
-
-      const cardElement = createCard(player1Card);
-
-      p1Div.appendChild(cardElement);
-      canClick = true;
-      output('Player 1 drew a card!');
-    }, 1000);
-  }
-};
-
-const player2Click = () => {
-  if (canClick === true) {
-    canClick = false;
-    output('Player 2 drawing...');
-
-    setTimeout(() => {
-      player2Card = deck.pop();
-      p2Ranks.push(player2Card.rank);
-
-      const cardElement = createCard(player2Card);
-
-      p2Div.appendChild(cardElement);
-      canClick = true;
-      output('Player 2 drew a card!');
-    }, 1000);
-  }
-};
-
 const endRound = () => {
   if (p1Ranks.length < 2 || p2Ranks.length < 2) {
     output('Each player must have at least 2 cards in order to end the round!');
   } else {
+    numberDiv.innerText = '';
+
     p1Ranks.sort((a, b) => a - b);
     p2Ranks.sort((a, b) => a - b);
     const p1Score = p1Ranks[p1Ranks.length - 1] - p1Ranks[0];
@@ -207,7 +179,79 @@ const endRound = () => {
       p2Div.innerHTML = '';
       p1Ranks = [];
       p2Ranks = [];
+      numberDiv.appendChild(numberText);
+      numberDiv.appendChild(numberInput);
+      numberDiv.appendChild(numberButton);
     }, 5000);
+  }
+};
+
+const checkEnd = () => {
+  if (p1Ranks.length === numCards && p2Ranks.length === numCards) {
+    endRound();
+  }
+};
+
+const player1Click = () => {
+  numberDiv.innerText = `Limit number of cards: ${numCards}`;
+  if (numCards === 52) {
+    numberDiv.innerText = 'Limit number of cards: unlimited';
+  }
+
+  if (canClick === true && p1Ranks.length < numCards) {
+    canClick = false;
+    output('Player 1 drawing...');
+
+    setTimeout(() => {
+      player1Card = deck.pop();
+      p1Ranks.push(player1Card.rank);
+
+      const cardElement = createCard(player1Card);
+
+      p1Div.appendChild(cardElement);
+      canClick = true;
+      output('Player 1 drew a card!');
+      checkEnd();
+    }, 1000);
+  }
+};
+
+const player2Click = () => {
+  numberDiv.innerText = `Limit number of cards: ${numCards}`;
+  if (numCards === 52) {
+    numberDiv.innerText = 'Limit number of cards: unlimited';
+  }
+
+  if (canClick === true && p2Ranks.length < numCards) {
+    canClick = false;
+    output('Player 2 drawing...');
+
+    setTimeout(() => {
+      player2Card = deck.pop();
+      p2Ranks.push(player2Card.rank);
+
+      const cardElement = createCard(player2Card);
+
+      p2Div.appendChild(cardElement);
+      canClick = true;
+      output('Player 2 drew a card!');
+      checkEnd();
+    }, 1000);
+  }
+};
+
+const setNumber = () => {
+  const userInput = document.getElementById('num-of-cards').value;
+  numCards = Number(userInput);
+  if (isNaN(numCards)) {
+    numberText.innerText = 'Invalid input for number of cards.';
+  } else if (numCards < 2) {
+    numberText.innerText = 'Limit must be at least 2 cards!';
+  } else {
+    numberText.innerText = `Limit number of cards: ${numCards}`;
+    if (numCards === 52) {
+      numberText.innerText = 'Limit number of cards: unlimited';
+    }
   }
 };
 
@@ -217,6 +261,15 @@ const initGame = () => {
   // fill game info div with starting instructions
   gameInfo.innerText = 'Welcome! Click the respective buttons to draw cards!';
   document.body.appendChild(gameInfo);
+
+  // number of cards
+  numberText.innerText = 'Limit number of cards: ';
+  numberDiv.appendChild(numberText);
+  numberInput.setAttribute('id', 'num-of-cards');
+  numberDiv.appendChild(numberInput);
+  numberButton.innerText = 'Enter';
+  numberDiv.appendChild(numberButton);
+  document.body.appendChild(numberDiv);
 
   // card container
   cardContainer = document.createElement('div');
@@ -250,6 +303,7 @@ const initGame = () => {
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
   endRoundButton.addEventListener('click', endRound);
+  numberButton.addEventListener('click', setNumber);
 };
 
 const deck = shuffleCards(makeDeck());
