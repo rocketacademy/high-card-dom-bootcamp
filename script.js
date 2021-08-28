@@ -180,6 +180,9 @@ let lobbyInfo;
 let playAgainDiv;
 let canClick = true;
 
+// const helperInfo = document.createElement('div');
+// helperInfo.classList.add('wrapper');
+
 const playerBoard = document.createElement('div');
 document.body.appendChild(playerBoard);
 
@@ -190,8 +193,17 @@ const player1Click = () => {
 
   if (gameMode === 'gameplay' && canClick === true) {
     canClick = false;
+
+    if (player1Hand.length === input - 1 && player2Hand.length === input) {
+      output('Drawing card and analyzing game result...');
+    }
+    else if (player1Hand.length < input) {
+      output('Drawing card...'); }
+    else { output(`Each player can draw up to ${input} cards at any point.<br>Results will be shown once all players have drawn their cards.<br>The Player with the higher difference between their highest and lowest cards wins.`); }
+
     setTimeout(() => {
       if (player1Hand.length === input - 1 && player2Hand.length === input) {
+        console.log('this ran');
         player1Card = deck.pop();
         player1Hand.push(player1Card);
         cardContainer1.innerHTML = '';
@@ -213,7 +225,9 @@ const player1Click = () => {
         } else {
           output('Its a tie!<br>Click \'Play Again\' to begin new round!');
         } console.log(getDiff(player1Hand), getDiff(player2Hand));
-      } else { // Pop player 1's card metadata from the deck
+      } else if (player1Hand.length < input) { // Pop player 1's card metadata from the deck
+        console.log('this also ran');
+
         player1Card = deck.pop();
         player1Hand.push(player1Card);
         cardContainer1.innerHTML = '';
@@ -225,7 +239,8 @@ const player1Click = () => {
           let cardElement = createCard(player1Hand[i]);
           cardElement = cardContainer1.appendChild(cardElement);
         }
-      } canClick = true; }, 2000); } };
+        output(`Each player can draw up to ${input} cards at any point.<br>Results will be shown once all players have drawn their cards.<br>The Player with the higher difference between their highest and lowest cards wins.`);
+      } canClick = true; }, 1000); } };
 
 // createCard(player1Card);
 // // Empty cardContainer in case this is not the 1st round of gameplay
@@ -240,6 +255,14 @@ const player2Click = () => {
 
   if (gameMode === 'gameplay' && canClick === true) {
     canClick = false;
+
+    if (player1Hand.length === input && player2Hand.length === input - 1) {
+      output('Drawing card and analyzing game result...');
+    }
+    else if (player2Hand.length < input) {
+      output('Drawing card...'); }
+    else { output(`Each player can draw up to ${input} cards at any point.<br>Results will be shown once all players have drawn their cards.<br>The Player with the higher difference between their highest and lowest cards wins.`); }
+
     setTimeout(() => {
       if (player1Hand.length === input && player2Hand.length === input - 1) {
         player2Card = deck.pop();
@@ -265,7 +288,7 @@ const player2Click = () => {
           output('Its a tie!<br>Click \'Play Again\' to begin new round!');
         } console.log(getDiff(player1Hand), getDiff(player2Hand));
       }
-      else { // Pop player 2's card metadata from the deck
+      else if (player2Hand.length < input) { // Pop player 2's card metadata from the deck
         player2Card = deck.pop();
         player2Hand.push(player2Card);
         cardContainer2.innerHTML = '';
@@ -278,7 +301,8 @@ const player2Click = () => {
           let cardElement = createCard(player2Hand[i]);
           cardElement = cardContainer2.appendChild(cardElement);
         }
-      } canClick = true; }, 2000); }
+        output(`Each player can draw up to ${input} cards at any point.<br>Results will be shown once all players have drawn their cards.<br>The Player with the higher difference between their highest and lowest cards wins.`);
+      } canClick = true; }, 1000); }
 };
 
 // ==================== GAME COVER ====================
