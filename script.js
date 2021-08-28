@@ -178,6 +178,7 @@ let gameMode = 'default';
 let input;
 let lobbyInfo;
 let playAgainDiv;
+let canClick = true;
 
 const playerBoard = document.createElement('div');
 document.body.appendChild(playerBoard);
@@ -187,42 +188,44 @@ const player1Click = () => {
   // Switch to player 1's turn
   // playersTurn = 1;
 
-  if (gameMode === 'gameplay') {
-    if (player1Hand.length === input - 1 && player2Hand.length === input) {
-      player1Card = deck.pop();
-      player1Hand.push(player1Card);
-      cardContainer1.innerHTML = '';
-      player1Hand.sort((a, b) => a.rank - b.rank);
-      player1Hand.unshift(player1Hand.pop());
+  if (gameMode === 'gameplay' && canClick === true) {
+    canClick = false;
+    setTimeout(() => {
+      if (player1Hand.length === input - 1 && player2Hand.length === input) {
+        player1Card = deck.pop();
+        player1Hand.push(player1Card);
+        cardContainer1.innerHTML = '';
+        player1Hand.sort((a, b) => a.rank - b.rank);
+        player1Hand.unshift(player1Hand.pop());
 
-      // Create card element from card metadata
-      for (let i = 0; i < player1Hand.length; i += 1) {
-        let cardElement = createCard(player1Hand[i]);
-        cardElement = cardContainer1.appendChild(cardElement);
-      }
-      gameMode = 'default';
+        // Create card element from card metadata
+        for (let i = 0; i < player1Hand.length; i += 1) {
+          let cardElement = createCard(player1Hand[i]);
+          cardElement = cardContainer1.appendChild(cardElement);
+        }
+        gameMode = 'default';
 
-      // Determine and output winner
-      if (getDiff(player1Hand) > getDiff(player2Hand)) {
-        output('Player 1 wins!<br>Click \'Play Again\' to begin new round!');
-      } else if (getDiff(player1Hand) < getDiff(player2Hand)) {
-        output('Player 2 wins!<br>Click \'Play Again\' to begin new round!');
-      } else {
-        output('Its a tie!<br>Click \'Play Again\' to begin new round!');
-      } console.log(getDiff(player1Hand), getDiff(player2Hand));
-    } else { // Pop player 1's card metadata from the deck
-      player1Card = deck.pop();
-      player1Hand.push(player1Card);
-      cardContainer1.innerHTML = '';
-      player1Hand.sort((a, b) => a.rank - b.rank);
-      player1Hand.unshift(player1Hand.pop());
+        // Determine and output winner
+        if (getDiff(player1Hand) > getDiff(player2Hand)) {
+          output('Player 1 wins!<br>Click \'Play Again\' to begin new round!');
+        } else if (getDiff(player1Hand) < getDiff(player2Hand)) {
+          output('Player 2 wins!<br>Click \'Play Again\' to begin new round!');
+        } else {
+          output('Its a tie!<br>Click \'Play Again\' to begin new round!');
+        } console.log(getDiff(player1Hand), getDiff(player2Hand));
+      } else { // Pop player 1's card metadata from the deck
+        player1Card = deck.pop();
+        player1Hand.push(player1Card);
+        cardContainer1.innerHTML = '';
+        player1Hand.sort((a, b) => a.rank - b.rank);
+        player1Hand.unshift(player1Hand.pop());
 
-      // Create card element from card metadata
-      for (let i = 0; i < player1Hand.length; i += 1) {
-        let cardElement = createCard(player1Hand[i]);
-        cardElement = cardContainer1.appendChild(cardElement);
-      }
-    } } };
+        // Create card element from card metadata
+        for (let i = 0; i < player1Hand.length; i += 1) {
+          let cardElement = createCard(player1Hand[i]);
+          cardElement = cardContainer1.appendChild(cardElement);
+        }
+      } canClick = true; }, 2000); } };
 
 // createCard(player1Card);
 // // Empty cardContainer in case this is not the 1st round of gameplay
@@ -235,45 +238,47 @@ const player2Click = () => {
   // playersTurn = 2;
   // output('It\'s player 2\'s turn.<br>Click again to draw a card!');
 
-  if (gameMode === 'gameplay') {
-    if (player1Hand.length === input && player2Hand.length === input - 1) {
-      player2Card = deck.pop();
-      player2Hand.push(player2Card);
-      cardContainer2.innerHTML = '';
-      player2Hand.sort((a, b) => a.rank - b.rank);
-      console.log(player1Hand);
-      player2Hand.unshift(player2Hand.pop());
+  if (gameMode === 'gameplay' && canClick === true) {
+    canClick = false;
+    setTimeout(() => {
+      if (player1Hand.length === input && player2Hand.length === input - 1) {
+        player2Card = deck.pop();
+        player2Hand.push(player2Card);
+        cardContainer2.innerHTML = '';
+        player2Hand.sort((a, b) => a.rank - b.rank);
+        console.log(player1Hand);
+        player2Hand.unshift(player2Hand.pop());
 
-      // Create card element from card metadata
-      for (let i = 0; i < player2Hand.length; i += 1) {
-        let cardElement = createCard(player2Hand[i]);
-        cardElement = cardContainer2.appendChild(cardElement);
+        // Create card element from card metadata
+        for (let i = 0; i < player2Hand.length; i += 1) {
+          let cardElement = createCard(player2Hand[i]);
+          cardElement = cardContainer2.appendChild(cardElement);
+        }
+        gameMode = 'default';
+
+        // Determine and output winner
+        if (getDiff(player1Hand) > getDiff(player2Hand)) {
+          output('Player 1 wins!<br>Click \'Play Again\' to begin new round!');
+        } else if (getDiff(player1Hand) < getDiff(player2Hand)) {
+          output('Player 2 wins!<br>Click \'Play Again\' to begin new round!');
+        } else {
+          output('Its a tie!<br>Click \'Play Again\' to begin new round!');
+        } console.log(getDiff(player1Hand), getDiff(player2Hand));
       }
-      gameMode = 'default';
+      else { // Pop player 2's card metadata from the deck
+        player2Card = deck.pop();
+        player2Hand.push(player2Card);
+        cardContainer2.innerHTML = '';
+        player2Hand.sort((a, b) => a.rank - b.rank);
+        console.log(player1Hand);
+        player2Hand.unshift(player2Hand.pop());
 
-      // Determine and output winner
-      if (getDiff(player1Hand) > getDiff(player2Hand)) {
-        output('Player 1 wins!<br>Click \'Play Again\' to begin new round!');
-      } else if (getDiff(player1Hand) < getDiff(player2Hand)) {
-        output('Player 2 wins!<br>Click \'Play Again\' to begin new round!');
-      } else {
-        output('Its a tie!<br>Click \'Play Again\' to begin new round!');
-      } console.log(getDiff(player1Hand), getDiff(player2Hand));
-    }
-    else { // Pop player 2's card metadata from the deck
-      player2Card = deck.pop();
-      player2Hand.push(player2Card);
-      cardContainer2.innerHTML = '';
-      player2Hand.sort((a, b) => a.rank - b.rank);
-      console.log(player1Hand);
-      player2Hand.unshift(player2Hand.pop());
-
-      // Create card element from card metadata
-      for (let i = 0; i < player2Hand.length; i += 1) {
-        let cardElement = createCard(player2Hand[i]);
-        cardElement = cardContainer2.appendChild(cardElement);
-      }
-    } }
+        // Create card element from card metadata
+        for (let i = 0; i < player2Hand.length; i += 1) {
+          let cardElement = createCard(player2Hand[i]);
+          cardElement = cardContainer2.appendChild(cardElement);
+        }
+      } canClick = true; }, 2000); }
 };
 
 // ==================== GAME COVER ====================
@@ -289,11 +294,13 @@ const gameLobby = () => {
   inputContainer.appendChild(lobbyInfo);
 
   inputField = document.createElement('input');
+  inputField.classList.add('input');
   input = inputField.innerText;
   inputContainer.appendChild(inputField);
 
   playButton = document.createElement('button');
   playButton.innerText = 'Play';
+  playButton.classList.add('button');
   inputContainer.appendChild(playButton);
 
   playButton.addEventListener('click', playButtonClick);
@@ -302,7 +309,7 @@ const gameLobby = () => {
 // ==================== GAME INITIALIZATION ====================
 const initGame = () => {
   // fill game info div with starting instructions
-  gameInfo.innerHTML = `Each player can draw up to ${input} cards at any point.<br>Results will be shown once all players have drawn their cards.`;
+  gameInfo.innerHTML = `Each player can draw up to ${input} cards at any point.<br>Results will be shown once all players have drawn their cards.<br>The Player with the higher difference between their highest and lowest cards wins.`;
   gameInfo.classList.add('info');
   playerBoard.appendChild(gameInfo);
 
@@ -349,10 +356,12 @@ const initGame = () => {
 };
 
 const playButtonClick = () => {
-  inputContainer.innerHTML = '';
-  initGame();
   input = Number(inputField.value);
-  gameMode = 'gameplay';
+  lobbyInfo.innerHTML = 'Please enter a number more than 1 to begin.';
+  if (input > 1) {
+    inputContainer.innerHTML = '';
+    initGame();
+    gameMode = 'gameplay'; }
 };
 
 if (gameMode === 'default') {

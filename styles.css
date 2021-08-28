@@ -44,7 +44,7 @@ body {
   text-align: center;
   text-align: middle;
   font-size: 20px;
-  height: 40px;
+  height: 80px;
 }
 
 .button {
@@ -54,7 +54,7 @@ body {
   width: 200px;
   border-radius: 8px;
   background-color: lightgray;
-  border-style: hidden;
+  border-style: outset;
   border-color: lightgray;
   border-width: 4px;
   font-size: 20px;
@@ -78,4 +78,11 @@ body {
   background-color: lightgrey;
   margin: 10px;
   padding: 10px;
+}
+
+.input {
+  height: 40px;
+  border-radius: 8px;
+  border-style: double;
+  width: 150px;
 }
