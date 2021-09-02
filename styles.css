@@ -1,3 +1,90 @@
 body {
-  background-color: pink;
+  background-color: white;
+}
+
+.card {
+  margin: 10px;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  background-color: floralwhite;
+  width: 130px;
+  text-align: center;
+  border-style: groove;
+  border-color: floralwhite;
+  border-width: 4px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.suit {
+  margin: 5px;
+  font-size: 30px;
+}
+
+.name {
+  margin: 5px;
+  font-size: 30px;
+  font-weight: bold;
+  font-family: Roboto;
+}
+
+.red {
+  color: red;
+}
+
+.black {
+  color: black;
+}
+
+.info {
+  margin: 10px;
+  padding: 10px;
+  text-align: center;
+  text-align: middle;
+  font-size: 20px;
+  height: 80px;
+}
+
+.button {
+  font-family: Roboto;
+  margin: 10px;
+  padding: 10px;
+  width: 200px;
+  border-radius: 8px;
+  background-color: lightgray;
+  border-style: outset;
+  border-color: lightgray;
+  border-width: 4px;
+  font-size: 20px;
+}
+
+.header {
+  margin: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border-style: dotted;
+  border-color: gray;
+
+  text-align: center;
+}
+
+.wrapper {
+  text-align: center;
+}
+
+.table {
+  background-color: lightgrey;
+  margin: 10px;
+  padding: 10px;
+}
+
+.input {
+  height: 40px;
+  border-radius: 8px;
+  border-style: double;
+  width: 150px;
+  font-size: 20px;
+  text-align: center;
 }
