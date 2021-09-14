@@ -113,7 +113,6 @@ const makeCard = (card) => {
 let playersTurn = 1;
 let player1Card;
 let player2Card;
-let canClick = true;
 
 const player1Button = document.createElement('button');
 
@@ -131,34 +130,27 @@ const deck = shuffleCards(makeDeck());
 
 // Player Action Callbacks
 const player1Click = () => {
-  if (playersTurn === 1 && canClick === true) {
-    canClick = false;
-    setTimeout(() => {
-      player1Card = deck.pop();
-      makeCard(player1Card);
-      playersTurn = 2;
-      canClick = true;
-    }, 2000);
+  if (playersTurn === 1) {
+    player1Card = deck.pop();
+    makeCard(player1Card);
+    playersTurn = 2;
+    canClick = true;
   }
 };
 
 const player2Click = () => {
-  if (playersTurn === 2 && canClick === true) {
-    canClick = false;
-    setTimeout(() => {
-      player2Card = deck.pop();
-      makeCard(player2Card);
-      playersTurn = 1;
-      canClick = true;
+  if (playersTurn === 2) {
+    player2Card = deck.pop();
+    makeCard(player2Card);
+    playersTurn = 1;
 
-      if (player1Card.rank > player2Card.rank) {
-        output('player 1 wins');
-      } else if (player1Card.rank < player2Card.rank) {
-        output('player 2 wins');
-      } else {
-        output('tie');
-      }
-    }, 2000);
+    if (player1Card.rank > player2Card.rank) {
+      output('player 1 wins');
+    } else if (player1Card.rank < player2Card.rank) {
+      output('player 2 wins');
+    } else {
+      output('tie');
+    }
   }
 };
 
