@@ -89,7 +89,7 @@ const makeDeck = () => {
 };
 
 // Render card on DOM
-const makeCard = (card) => {
+const makeCard = (card, playerContainer) => {
   const suit = document.createElement('div');
   suit.classList.add('suit');
   suit.innerText = card.emoji;
@@ -103,20 +103,22 @@ const makeCard = (card) => {
 
   const cardContainer = document.createElement('div');
   cardContainer.classList.add('card');
-  document.body.appendChild(cardContainer);
+  playerContainer.appendChild(cardContainer);
 
   cardContainer.appendChild(name);
   cardContainer.appendChild(suit);
 };
 
 // MATCH
-let playersTurn = 1;
+const mode = 'draw cards';
 let player1Card;
 let player2Card;
 
 const player1Button = document.createElement('button');
 
 const player2Button = document.createElement('button');
+
+const getResultButton = document.createElement('button');
 
 const gameInfo = document.createElement('div');
 
@@ -130,27 +132,25 @@ const deck = shuffleCards(makeDeck());
 
 // Player Action Callbacks
 const player1Click = () => {
-  if (playersTurn === 1) {
+  if (mode === 'draw cards') {
     player1Card = deck.pop();
-    makeCard(player1Card);
-    playersTurn = 2;
-    canClick = true;
+    makeCard(player1Card, document.getElementById('player1Container'));
   }
 };
 
 const player2Click = () => {
-  if (playersTurn === 2) {
+  if (mode === 'draw cards') {
     player2Card = deck.pop();
-    makeCard(player2Card);
-    playersTurn = 1;
-
-    if (player1Card.rank > player2Card.rank) {
-      output('player 1 wins');
-    } else if (player1Card.rank < player2Card.rank) {
-      output('player 2 wins');
-    } else {
-      output('tie');
-    }
+    makeCard(player2Card, document.getElementById('player2Container'));
+  }
+};
+const getResultsClick = () => {
+  if (player1Card.rank > player2Card.rank) {
+    output('player 1 wins');
+  } else if (player1Card.rank < player2Card.rank) {
+    output('player 2 wins');
+  } else {
+    output('tie');
   }
 };
 
@@ -158,13 +158,20 @@ const player2Click = () => {
 const initGame = () => {
   // initialize button functionality
   player1Button.innerText = 'Player 1 Draw';
-  document.body.appendChild(player1Button);
+  document.getElementById('player1Container').appendChild(player1Button);
 
   player2Button.innerText = 'Player 2 Draw';
-  document.body.appendChild(player2Button);
+  document.getElementById('player2Container').appendChild(player2Button);
+
+  getResultButton.innerText = 'Get Results';
+  document.body.appendChild(getResultButton);
 
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
+  getResultButton.addEventListener('click', getResultsClick);
+
+  // document.body.appendChild(player1Container);
+  // document.body.appendChild(player2Container);
 
   // fill game info div with starting instructions
   gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';

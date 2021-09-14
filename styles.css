@@ -30,3 +30,13 @@ body {
 .black {
   color: black;
 }
+
+.playerContainer {
+  background-color: green;
+  border-radius: 10px;
+}
+
+h2 {
+  margin: 15px;
+  color: #fff;
+}
