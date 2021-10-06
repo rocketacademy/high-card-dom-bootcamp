@@ -159,20 +159,23 @@ const determineWinner = () => {
 
 // This function gets called when either Player 1 or 2 clicks Draw
 const playerClick = (player) => {
-  const oppPlayer = player === 1 ? 2 : 1;
-  const oppCardContainer = document.getElementById(`cards-player-${oppPlayer}`);
-
   if (!gameInProgress) {
     // If it is a new game, then empty the opponent's card container
     // And set the gameInProgress flag and the cards per player value
+    const oppPlayer = player === 1 ? 2 : 1;
+    const oppCardContainer = document.getElementById(`cards-player-${oppPlayer}`);
     oppCardContainer.innerHTML = '';
     gameInProgress = true;
     cardsPerPlayer = Number(numCardsInput.value);
     numCardsInput.disabled = true;
   }
-
-  const playerCardArr = player === 1 ? player1Cards : player2Cards;
   const playerButton = document.getElementById(`button-player-${player}`);
+  const playerCardArr = player === 1 ? player1Cards : player2Cards;
+
+  playerButton.disabled = true;
+  setTimeout(() => {
+    if (playerCardArr.length < cardsPerPlayer) playerButton.disabled = false;
+  }, 400);
 
   const newCard = deck.pop();
   playerCardArr.push(newCard);
@@ -182,10 +185,6 @@ const playerClick = (player) => {
   // Create card UIs for the current player
   createCards(playerCardArr, player);
 
-  if (playerCardArr.length === cardsPerPlayer) {
-    // Current player done drawing
-    playerButton.disabled = true;
-  }
   if (player1Cards.length === cardsPerPlayer && player2Cards.length === cardsPerPlayer) {
     // Both players done drawing
     determineWinner();
