@@ -13,6 +13,8 @@ const player2Button = document.createElement('button');
 // fill game info div with starting instructions
 const gameInfo = document.createElement('div');
 
+let cardContainer;
+
 /// Helper Functions ///////////////////////////////////////////////////////////////////
 // Get a random index ranging from 0 (inclusive) to max (exclusive).
 const getRandomIndex = (max) => Math.floor(Math.random() * max);
@@ -106,13 +108,31 @@ const makeDeck = () => {
   return newDeck;
 };
 
-const deck = shuffleCards(makeDeck()); // moved from global
-
 // Create a helper function for output to abstract complexity
 // of DOM manipulation away from game logic
 const output = (message) => {
   gameInfo.innerText = message;
 };
+
+const makeCard = (cardMeta) => {
+  const card = document.createElement('div');
+  card.classList.add('card');
+  document.body.appendChild(card);
+
+  const name = document.createElement('div');
+  name.classList.add('name', cardMeta.color);
+  name.innerText = cardMeta.displayName;
+  card.appendChild(name);
+
+  const suit = document.createElement('div');
+  suit.classList.add('suit', cardMeta.color);
+  suit.innerText = cardMeta.suitSymbol;
+  card.appendChild(suit);
+
+  return card;
+};
+
+const deck = shuffleCards(makeDeck()); // moved from global
 
 /// Callback Functions ///////////////////////////////////////////////////////////////////
 // Add an event listener on player 1's button to draw card and switch
@@ -121,6 +141,9 @@ const player1Click = () => {
   if (playersTurn === 1) {
     player1Card = deck.pop();
     console.log(player1Card);
+    const cardElement = makeCard(player1Card);
+    cardContainer.innerHTML = '';
+    cardContainer.appendChild(cardElement);
     playersTurn = 2;
     console.log(playersTurn);
   }
@@ -132,6 +155,8 @@ const player2Click = () => {
   if (playersTurn === 2) {
     const player2Card = deck.pop();
     console.log(player2Card);
+    const cardElement = makeCard(player2Card);
+    cardContainer.appendChild(cardElement);
     playersTurn = 1;
     console.log(playersTurn);
 
@@ -161,34 +186,12 @@ const initGame = () => {
   // fill game info div with starting instructions
   gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
   document.body.appendChild(gameInfo);
+
+  cardContainer = document.createElement('div');
+  cardContainer.classList.add('card-container');
+  document.body.appendChild(cardContainer);
 };
 
 initGame();
 
-/// working below ////////////////////////////////////////////////////////
-const cardInfo = {
-  suitSymbol: '♦️', // represented
-  suit: 'diamond', // represented
-  name: 'queen', // represented
-  displayName: 'Q', // represented
-  color: 'red', // represented
-  rank: 12, // represented
-};
-
-const makeCard = (cardMeta) => {
-  const card = document.createElement('div');
-  card.classList.add('card');
-  document.body.appendChild(card);
-
-  const name = document.createElement('div');
-  name.classList.add('name', cardMeta.color);
-  name.innerText = cardMeta.displayName;
-  card.appendChild(name);
-
-  const suit = document.createElement('div');
-  suit.classList.add('suit', cardMeta.color);
-  suit.innerText = cardMeta.suitSymbol;
-  card.appendChild(suit);
-};
-
-makeCard(cardInfo);
+/// work below ////////////////////////////////////////////////////////
