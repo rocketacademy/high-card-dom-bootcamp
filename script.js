@@ -109,10 +109,24 @@ const makeCard = (card, playerContainer) => {
   cardContainer.appendChild(suit);
 };
 
+// Arrange cards in player hand from small to big in rank
+const arrangeCardsSmallToBig = (playerHand) => {
+  let currentCard;
+  let nextCard;
+  for (let i = 0; i < playerHand.length - 1; i += 1) {
+    currentCard = playerHand[i];
+    nextCard = playerHand[i + 1];
+    if (currentCard.rank < nextCard.rank) {
+      playerHand.push(playerHand.shift());
+    }
+  }
+};
 // MATCH
 const mode = 'draw cards';
 let player1Card;
 let player2Card;
+const player1Hand = [];
+const player2Hand = [];
 
 const player1Button = document.createElement('button');
 
@@ -134,21 +148,40 @@ const deck = shuffleCards(makeDeck());
 const player1Click = () => {
   if (mode === 'draw cards') {
     player1Card = deck.pop();
+    player1Hand.push(player1Card);
     makeCard(player1Card, document.getElementById('player1Container'));
   }
+  console.log(player1Hand);
 };
 
 const player2Click = () => {
   if (mode === 'draw cards') {
     player2Card = deck.pop();
+    player2Hand.push(player2Card);
     makeCard(player2Card, document.getElementById('player2Container'));
   }
 };
+
 const getResultsClick = () => {
-  if (player1Card.rank > player2Card.rank) {
-    output('player 1 wins');
-  } else if (player1Card.rank < player2Card.rank) {
-    output('player 2 wins');
+  arrangeCardsSmallToBig(player1Hand);
+  arrangeCardsSmallToBig(player2Hand);
+  const p1SmallestCard = player1Hand.shift();
+  const p1BiggestCard = player1Hand.pop();
+  const p1CardDiff = Number(p1BiggestCard.rank) - Number(p1SmallestCard.rank);
+  const p2SmallestCard = player2Hand.shift();
+  const p2BiggestCard = player2Hand.pop();
+  const p2CardDiff = Number(p2BiggestCard.rank) - Number(p2SmallestCard.rank);
+
+  // test if outcome is accurate
+  console.log(`player 1 card diff ${p1CardDiff}`);
+  console.log(`player 2 card diff ${p2CardDiff}`);
+  //
+  if (p1CardDiff > p2CardDiff) {
+    output('Player 1 Wins!');
+    (document.getElementById('player1Container')).classList.add('winning-player');
+  } else if (p1CardDiff < p2CardDiff) {
+    output('Player 2 Wins!');
+    (document.getElementById('player2Container')).classList.add('winning-player');
   } else {
     output('tie');
   }

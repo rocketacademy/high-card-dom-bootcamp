@@ -36,6 +36,11 @@ body {
   border-radius: 10px;
 }
 
+.winning-player {
+  background-color: pink;
+  border-radius: 10px;
+}
+
 h2 {
   margin: 15px;
   color: #fff;
