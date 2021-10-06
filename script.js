@@ -271,27 +271,31 @@ const initGame = () => {
     document.body.appendChild(gameInfo);
     output("Enter the number of card each player should draw");
     const numberInput = document.createElement("input");
-    numberInput.placeholder = "Press ENTER to submit";
-    numberInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            //do something
-            const formattedCardsToDraw = parseInt(e.target.value);
-            if (typeof formattedCardsToDraw === "number") {
-                numberOfCardsToDraw = formattedCardsToDraw;
-                //continue
-                // remove input and start game
-                numberInput.remove();
-                output(
-                    `${numberOfCardsToDraw} cards are drawn per player. Player 1 please draw.`
-                );
-                createPlayerButtons();
-            } else {
-                output("Please enter a valid number");
-                numberInput.value = "";
-            }
+
+    const numberInputButton = document.createElement('button')
+    numberInputButton.innerText = "Submit"
+    numberInputButton.addEventListener("click", () => {
+        const formattedCardsToDraw = parseInt(numberInput.value);
+        console.log(typeof formattedCardsToDraw)
+        if (!isNaN(formattedCardsToDraw)) {
+            numberOfCardsToDraw = formattedCardsToDraw;
+            //continue
+            // remove input and start game
+            numberInput.remove();
+            numberInputButton.remove()
+            output(
+                `${numberOfCardsToDraw} cards are drawn per player. Player 1 please draw.`
+            );
+            createPlayerButtons();
+        } else {
+            output("Please enter a valid number");
+            numberInput.value = "";
         }
-    });
+    })
+
     document.body.appendChild(numberInput);
+    document.body.appendChild(numberInputButton)
+
 };
 
 initGame();
