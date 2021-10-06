@@ -122,7 +122,7 @@ const arrangeCardsSmallToBig = (playerHand) => {
   }
 };
 // MATCH
-const mode = 'draw cards';
+let mode = 'draw cards';
 let player1Card;
 let player2Card;
 const player1Hand = [];
@@ -143,15 +143,23 @@ const output = (message) => {
 };
 
 const deck = shuffleCards(makeDeck());
+// can click function
+let canClick = true;
 
 // Player Action Callbacks
 const player1Click = () => {
-  if (mode === 'draw cards') {
-    player1Card = deck.pop();
-    player1Hand.push(player1Card);
-    makeCard(player1Card, document.getElementById('player1Container'));
+  if (mode === 'draw cards' && canClick === true) {
+    canClick = false;
+
+    setTimeout(() => {
+      player1Card = deck.pop();
+      player1Hand.push(player1Card);
+      makeCard(player1Card, document.getElementById('player1Container'));
+      canClick = true;
+
+      console.log(player1Hand);
+    }, 2000);
   }
-  console.log(player1Hand);
 };
 
 const player2Click = () => {
@@ -163,6 +171,7 @@ const player2Click = () => {
 };
 
 const getResultsClick = () => {
+  mode = 'tabulating results';
   arrangeCardsSmallToBig(player1Hand);
   arrangeCardsSmallToBig(player2Hand);
   const p1SmallestCard = player1Hand.shift();
