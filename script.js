@@ -73,7 +73,7 @@ const makeDeck = () => {
 const deck = shuffleCards(makeDeck());
 let player1Cards = [];
 let player2Cards = [];
-const CARDS_PER_PLAYER = 3;
+const CARDS_PER_PLAYER = 5;
 let gameInProgress = true;
 
 let playersTurn = 1; // Player 1 starts first
@@ -198,11 +198,6 @@ const initGame = () => {
     const cardContainer = document.createElement('div');
     cardContainer.id = `cards-player-${i}`;
     playerContainer.appendChild(cardContainer);
-
-    const playerLabel = document.createElement('p');
-    playerLabel.id = `label-player-${i}`;
-    // playerLabel.innerText = 'test';
-    playerContainer.appendChild(playerLabel);
 
     const playerButton = document.createElement('button');
     playerButton.id = `button-player-${i}`;
