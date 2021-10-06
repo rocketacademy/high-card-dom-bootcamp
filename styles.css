@@ -32,3 +32,11 @@ body {
 .black {
   color: black;
 }
+
+.high {
+  border: solid 3px limegreen;
+}
+
+.low {
+  border: solid 3px crimson;
+}

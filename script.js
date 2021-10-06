@@ -85,22 +85,31 @@ const output = (message) => {
   instructions.innerHTML = message;
 };
 
-const createCard = (cardInfo) => {
-  const suit = document.createElement('div');
-  suit.classList.add('suit', cardInfo.colour);
-  suit.innerText = cardInfo.suitSymbol;
+const createCards = (cards, player) => {
+  const cardContainer = document.getElementById(`cards-player-${player}`);
+  const cardsCopy = [...cards].sort((a, b) => a.rank - b.rank);
+  cardsCopy.unshift(cardsCopy.pop());
 
-  const name = document.createElement('div');
-  name.classList.add('name', cardInfo.colour);
-  name.innerText = cardInfo.displayName;
+  cardsCopy.forEach((card, index) => {
+    const suit = document.createElement('div');
+    suit.classList.add('suit', card.colour);
+    suit.innerText = card.suitSymbol;
 
-  const card = document.createElement('div');
-  card.classList.add('card');
+    const name = document.createElement('div');
+    name.classList.add('name', card.colour);
+    name.innerText = card.displayName;
 
-  card.appendChild(name);
-  card.appendChild(suit);
+    const cardDiv = document.createElement('div');
+    cardDiv.classList.add('card');
+    if (cardsCopy.length > 1) {
+      if (index === 0) cardDiv.classList.add('high');
+      if (index === 1) cardDiv.classList.add('low');
+    }
+    cardDiv.appendChild(name);
+    cardDiv.appendChild(suit);
 
-  return card;
+    cardContainer.appendChild(cardDiv);
+  });
 };
 
 const resetGame = () => {
@@ -110,9 +119,8 @@ const resetGame = () => {
 };
 
 const calculateDifference = (cards) => {
-  cards.sort((a, b) => a.rank - b.rank);
-
-  return cards[cards.length - 1].rank - cards[0].rank;
+  const sorted = [...cards].sort((a, b) => a.rank - b.rank);
+  return sorted[sorted.length - 1].rank - sorted[0].rank;
 };
 
 const determineWinner = () => {
@@ -142,17 +150,14 @@ const player1Click = () => {
     const newCard = deck.pop();
     player1Cards.push(newCard);
 
-    // Create card element from card metadata
-    const cardElement = createCard(newCard);
-
+    cardContainer.innerHTML = '';
     if (!gameInProgress) {
-      cardContainer.innerHTML = '';
       oppCardContainer.innerHTML = '';
       gameInProgress = true;
     }
 
-    // Append the card element to the card container
-    cardContainer.appendChild(cardElement);
+    // Create card element from card metadata
+    createCards(player1Cards, 1);
 
     // Switch to player 2's turn
     playersTurn = 2;
@@ -167,10 +172,9 @@ const player2Click = () => {
     const newCard = deck.pop();
     player2Cards.push(newCard);
 
+    cardContainer.innerHTML = '';
     // Create card element from card metadata
-    const cardElement = createCard(newCard);
-    // Append card element to card container
-    cardContainer.appendChild(cardElement);
+    createCards(player2Cards, 2);
 
     // Switch to player 1's turn
     playersTurn = 1;
