@@ -12,6 +12,12 @@ body {
   display: inline-block;
 }
 
+.player2 {
+  position: relative;
+  right: 90px;
+  top: 150px;
+}
+
 .suit {
   margin: 5px;
   font-size: 20px;

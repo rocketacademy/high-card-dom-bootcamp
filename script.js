@@ -1,35 +1,30 @@
+// Initialize global variable for container holding all cards
 let cardContainer;
-
-// Global variable to store players turn and player 1's card
-let playersTurn = 1;
+// Initialize global variable to keep track of num of cards drawns
+let numCardsPOne = 0;
+let numCardsPTwo = 0;
+// Global variable to store player 1's card
 let player1Card;
-// Create elements for displayed items
+let player2Card;
 
-const player1Button = document.createElement('button');
-player1Button.innerText = 'Player 1 Draw';
-document.body.appendChild(player1Button);
-
+// Array to store card values
+const pOneValueArray = [];
+const pTwoValueArray = [];
+// Global variables for DOM element creation
 const player2Button = document.createElement('button');
-player2Button.innerText = 'Player 2 Draw';
-document.body.appendChild(player2Button);
-
+const player1Button = document.createElement('button');
 const gameInfo = document.createElement('div');
-gameInfo.innerText = 'Player 1: Click to draw a card!🃏';
-document.body.appendChild(gameInfo);
 
-cardContainer = document.createElement('div');
-cardContainer.classList.add('card-container');
-document.body.appendChild(cardContainer);
-
+// Create a deck
 const makeDeck = () => {
   // Initialise an empty deck array
   const newDeck = [];
-  // Initialise an array of the 4 suits in our deck. We will loop over this array.
+  // Initialise an array of the 4 suits & emojis in our deck
   const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
   const suitEmoji = ['❤️', '♦️', '♣️', '♠️'];
   // Loop over the suits array
   for (let suitIndex = 0; suitIndex < suits.length; suitIndex += 1) {
-    // Store the current suit in a variable
+    // Store the current suit & suit emoji in a variable
     const currentSuit = suits[suitIndex];
     const currentEmoji = suitEmoji[suitIndex];
     // Loop from 1 to 13 to create all cards for a given suit
@@ -116,7 +111,7 @@ const output = (message) => {
   gameInfo.innerHTML = message;
 };
 
-// Function to generate DOM card from players draw
+// Function to generate DOM card from players drawn card
 const createCard = (cardInfo) => {
   const suit = document.createElement('div');
   suit.classList.add('suit');
@@ -135,39 +130,105 @@ const createCard = (cardInfo) => {
   return card;
 };
 
-const player1Click = () => {
-  if (playersTurn === 1) {
-    player1Card = shuffledDeck.pop();
-    // Create card element from card metadata
-    const cardElement = createCard(player1Card);
-    // Empty cardContainer in case this is not the 1st round of gameplay
-    cardContainer.innerHTML = '';
-    // Append the card element to the card container
-    cardContainer.appendChild(cardElement);
-    output('Player 2: Click to draw a card!🃏');
-    playersTurn = 2;
-    // gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
-  }
+// Function to generate DOM card from player 2 draw: Diff due to diff class
+// so that position can be changed based on which player's card it is
+const createCardTwo = (cardInfo) => {
+  const suit = document.createElement('div');
+  suit.classList.add('suit');
+  suit.innerText = cardInfo.suitSymbol;
+
+  const name = document.createElement('div');
+  name.classList.add(cardInfo.displayName, cardInfo.colour);
+  name.innerText = cardInfo.displayName;
+
+  const card = document.createElement('div');
+  card.classList.add('card');
+  card.classList.add('player2');
+
+  card.appendChild(name);
+  card.appendChild(suit);
+
+  return card;
 };
 
+// Callback function for player 1: Draws a card from deck,
+// converts to a displayed card and appends to document
+const player1Click = () => {
+  output('Player 1 is drawing!');
+  // If both players have drawn same no of cards,
+  // Clear the array, global counters and clear the output elements
+  if (numCardsPOne === numCardsPTwo) {
+    for (let j = 0; j < numCardsPOne; j += 1) {
+      pOneValueArray.pop();
+      pTwoValueArray.pop();
+    }
+    numCardsPOne = 0;
+    numCardsPTwo = 0;
+    cardContainer.innerHTML = '';
+    // Append card container so that changes are seen in the document
+    document.body.appendChild(cardContainer);
+  }
+  // Increment counter for each click made
+  numCardsPOne += 1;
+  player1Card = shuffledDeck.pop();
+  // Store cards rank in array
+  pOneValueArray.push(player1Card.rank);
+  // Create card element from card metadata
+  const cardElement = createCard(player1Card);
+  // Append the card element to the card container
+  cardContainer.appendChild(cardElement);
+};
+
+// Functions to calculate difference between max and min values for each player
+const findMax = (...array) => Math.max(...array);
+const findMin = (...array) => Math.min(...array);
+const findDif = (...array) => {
+  const outputDif = findMax(...array) - findMin(...array);
+  return outputDif;
+};
+
+// Callback function for player 2: Draws a card from deck,
+// converts to a displayed card and appends to document
 const player2Click = () => {
-  if (playersTurn === 2) {
-    const player2Card = shuffledDeck.pop();
-
-    const cardElement = createCard(player2Card);
-    // Append card element to card container
-    cardContainer.appendChild(cardElement);
-    playersTurn = 1;
-
-    if (player1Card.rank > player2Card.rank) {
-      output('Player 1 wins!😊 <br> Player 1 please try again!');
-    } else if (player1Card.rank < player2Card.rank) {
-      output('Player 2 wins!😊<br> Player 1 please try again!');
+  // Update game info message to players
+  output('Player 2 is drawing cards!');
+  // Increment counter for number of cards drawn by player 2
+  numCardsPTwo += 1;
+  player2Card = shuffledDeck.pop();
+  // Store cards rank in array
+  pTwoValueArray.push(player2Card.rank);
+  const cardElement = createCardTwo(player2Card);
+  // Append card element to card container
+  cardContainer.appendChild(cardElement);
+  // Condition where if both players have same no of cards, compare values and declare a winner
+  if (numCardsPOne === numCardsPTwo) {
+    if (findDif(...pOneValueArray) - findDif(...pTwoValueArray) > 0) {
+      output(`Player 1 wins! <br> Player 1's High Low Diff: ${findDif(...pOneValueArray)} <br> Player 2's High Low Diff: ${findDif(...pTwoValueArray)} <br> `);
+    } else if (findDif(...pOneValueArray) - findDif(...pTwoValueArray) < 0) {
+      output(`Player 2 wins! <br> Player 1's High Low Diff: ${findDif(...pOneValueArray)} <br> Player 2's High Low Diff: ${findDif(...pTwoValueArray)} <br> `);
     } else {
-      output('Tie😑<br> Player 1 please try again!');
+      output(`It's a tie! <br> Player 1's High Low Diff: ${findDif(...pOneValueArray)} <br> Player 2's High Low Diff: ${findDif(...pTwoValueArray)} <br> `);
     }
   }
 };
 
-player1Button.addEventListener('click', player1Click);
-player2Button.addEventListener('click', player2Click);
+// Function to initialize
+const initGame = () => {
+// Create elements for content to be displayed at start of game
+  player1Button.innerText = 'Player 1 Draw';
+  document.body.appendChild(player1Button);
+
+  player2Button.innerText = 'Player 2 Draw';
+  document.body.appendChild(player2Button);
+
+  gameInfo.innerHTML = 'Player 1: Draw as many cards as you like. <br> Then Player 2 will draw the same number of cards!🃏';
+  document.body.appendChild(gameInfo);
+
+  cardContainer = document.createElement('div');
+  cardContainer.classList.add('card-container');
+  document.body.appendChild(cardContainer);
+  player1Button.addEventListener('click', player1Click);
+  player2Button.addEventListener('click', player2Click); };
+
+// Start game
+initGame();
