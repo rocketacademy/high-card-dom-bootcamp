@@ -1,3 +1,29 @@
 body {
   background-color: pink;
 }
+
+.card {
+  margin: 10px;
+  padding: 10px;
+  background-color: rgb(128, 128, 128);
+  width: 50px;
+  text-align: center;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.suit {
+  margin: 5px;
+  font-size: 2em;
+}
+
+.name {
+  margin: 5px;
+  font-size: 1.5em;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.red {
+  color: rgba(255, 0, 0, 0.589);
+}
