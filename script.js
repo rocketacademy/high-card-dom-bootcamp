@@ -1,4 +1,15 @@
 //////////////////////////////////
+//Global variables
+//////////////////////////////////
+let playersTurn = 1; // matches with starting instructions
+let player1Card; //if not unable to access this variable in player2Click() 
+
+let cardContainer;
+const player1Button = document.createElement("button");
+const player2Button = document.createElement("button");
+const gameInfo = document.createElement("div");
+
+//////////////////////////////////
 //Helper functions
 //////////////////////////////////
 // Get a random index ranging from 0 (inclusive) to max (exclusive).
@@ -73,6 +84,8 @@ const makeDeck = () => {
   return newDeck;
 };
 
+const deck = shuffleCards(makeDeck());
+
 //creating a card for display with information stored in card object
 const createCard = (cardInfo) => {
   const suit = document.createElement("div");
@@ -97,19 +110,6 @@ const createCard = (cardInfo) => {
 const output = (message) => {
   gameInfo.innerText = message;
 };
-
-//////////////////////////////////
-//Global variables
-//////////////////////////////////
-const deck = shuffleCards(makeDeck());
-
-let playersTurn = 1; // matches with starting instructions
-let player1Card;
-
-let cardContainer;
-const player1Button = document.createElement("button");
-const player2Button = document.createElement("button");
-const gameInfo = document.createElement("div");
 
 //////////////////////////////////
 //Player Action Callbacks
