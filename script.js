@@ -48,45 +48,44 @@ const makeDeck = () => {
                 cardName = "king";
             }
 
+            // checks the cardName of each card and assigns their respective displayNames
             let displayName;
-
             switch (cardName) {
                 case "ace":
                     displayName = "A";
-                    break
+                    break;
                 case "jack":
                     displayName = "J";
-                    break
+                    break;
                 case "queen":
                     displayName = "Q";
-                    break
+                    break;
                 case "king":
                     displayName = "K";
-                    break
+                    break;
                 default:
                     displayName = cardName;
-                    break
+                    break;
             }
 
+            // checks the suits of each card and assigns their respective emoji suit
             let suitSymbol;
-            console.log(currentSuit)
-
             switch (currentSuit) {
                 case "diamonds":
                     suitSymbol = "♦️";
-                    break
+                    break;
                 case "clubs":
                     suitSymbol = "♣️";
-                    break
+                    break;
                 case "spades":
                     suitSymbol = "♠️";
-                    break
+                    break;
                 case "hearts":
                     suitSymbol = "♥️";
-                    break
+                    break;
                 default:
-                   console.log('weird')
-                }
+                    console.log("weird");
+            }
 
             let color;
             if (currentSuit === "diamonds" || currentSuit === "hearts") {
@@ -116,14 +115,21 @@ const makeDeck = () => {
 
 const deck = shuffleCards(makeDeck());
 
-let playersTurn = 1; // matches with starting instructions
-let player1Card;
+let player1Cards = [];
+let player2Cards = [];
+let gameRestarted = false
 
 const player1Button = document.createElement("button");
 
 const player2Button = document.createElement("button");
 
 const gameInfo = document.createElement("div");
+
+const playerContainer1 = document.createElement("div")
+const playerContainer2 = document.createElement("div")
+
+const cardContainer1 = document.createElement("div");
+const cardContainer2 = document.createElement("div");
 
 const createCard = (cardInfo) => {
     console.log(cardInfo);
@@ -133,7 +139,7 @@ const createCard = (cardInfo) => {
 
     const name = document.createElement("div");
     name.classList.add(cardInfo.displayName, cardInfo.color);
-    name.innerText = cardInfo.displayName
+    name.innerText = cardInfo.displayName;
 
     const card = document.createElement("div");
     card.classList.add("card");
@@ -144,44 +150,86 @@ const createCard = (cardInfo) => {
     return card;
 };
 
+const clearContainers = () => {
+    cardContainer1.innerHTML = ""
+    cardContainer2.innerHTML = ""
+    gameRestarted = false
+}
+
+
 const player1Click = () => {
-    if (playersTurn === 1) {
+    if (gameRestarted){
+        clearContainers()
+    }
+    if (player1Cards.length < numberOfCardsToDraw) {
         // Pop player 1's card metadata from the deck
-        player1Card = deck.pop();
-
+        const newCard = deck.pop();
+        player1Cards.push(newCard);
         // Create card element from card metadata
-        const cardElement = createCard(player1Card);
-        // Empty cardContainer in case this is not the 1st round of gameplay
-        cardContainer.innerHTML = "";
-        // Append the card element to the card container
-        cardContainer.appendChild(cardElement);
+        const cardElement = createCard(newCard);
 
-        // Switch to player 2's turn
-        playersTurn = 2;
+        // Append the card element to the card container
+        cardContainer1.appendChild(cardElement);
+    }
+
+    checkForWinner();
+};
+
+const calculateScoreOfHand = (hand) => {
+    let score = 0;
+    for (let i = 0; i < hand.length; i++) {
+        score += parseInt(hand[i].rank);
+    }
+    return score;
+};
+
+const resetGame = () => {
+    gameRestarted = true
+    player1Cards = []
+    player2Cards = []
+}
+
+const checkForWinner = () => {
+    const player1CardsLeft = numberOfCardsToDraw - player1Cards.length;
+    const player2CardsLeft = numberOfCardsToDraw - player2Cards.length;
+    console.log(player2CardsLeft);
+    console.log(player1CardsLeft);
+    if (player1CardsLeft === 0 && player2CardsLeft === 0) {
+        const player1Score = calculateScoreOfHand(player1Cards);
+        const player2Score = calculateScoreOfHand(player2Cards);
+
+        // Determine and output winner
+        if (player1Score > player2Score) {
+            output("player 1 wins, click any button to play again.");
+        } else if (player1Score < player2Score) {
+            output("player 2 wins, click any button to play again.");
+        } else {
+            output("tie, click any button to play again.");
+        }
+        // reset game
+        resetGame()
+    } else {
+        output(
+            `Player 1 draw ${player1CardsLeft} more cards. Player 2 draw ${player2CardsLeft} more cards.`
+        );
     }
 };
 
 const player2Click = () => {
-    if (playersTurn === 2) {
+    if (gameRestarted){
+        clearContainers()
+    }
+    if (player2Cards.length < numberOfCardsToDraw) {
         // Pop player 2's card metadata from the deck
-        const player2Card = deck.pop();
+        const newCard = deck.pop();
+        player2Cards.push(newCard);
 
         // Create card element from card metadata
-        const cardElement = createCard(player2Card);
+        const cardElement = createCard(newCard);
         // Append card element to card container
-        cardContainer.appendChild(cardElement);
-
+        cardContainer2.appendChild(cardElement);
         // Switch to player 1's turn
-        playersTurn = 1;
-
-        // Determine and output winner
-        if (player1Card.rank > player2Card.rank) {
-            output("player 1 wins");
-        } else if (player1Card.rank < player2Card.rank) {
-            output("player 2 wins");
-        } else {
-            output("tie");
-        }
+        checkForWinner();
     }
 };
 
@@ -190,10 +238,10 @@ const player2Click = () => {
 const output = (message) => {
     gameInfo.innerText = message;
 };
-let cardContainer;
 
-const initGame = () => {
+let numberOfCardsToDraw;
 
+const createPlayerButtons = () => {
     // initialize button functionality
     player1Button.innerText = "Player 1 Draw";
     document.body.appendChild(player1Button);
@@ -204,15 +252,46 @@ const initGame = () => {
     player1Button.addEventListener("click", player1Click);
     player2Button.addEventListener("click", player2Click);
 
+    playerContainer1.innerHTML = "Player 1"
+    document.body.appendChild(playerContainer1)
 
-    cardContainer = document.createElement("div");
-    cardContainer.classList.add("card-container");
-    document.body.appendChild(cardContainer);
+    playerContainer2.innerHTML = "Player 2"
+    document.body.appendChild(playerContainer2)
 
+    cardContainer1.classList.add("card-container");
+    playerContainer1.appendChild(cardContainer1);
+
+    cardContainer2.classList.add("card-container");
+    playerContainer2.appendChild(cardContainer2);
+};
+
+
+const initGame = () => {
     // fill game info div with starting instructions
-    gameInfo.innerText = "Its player 1 turn. Click to draw a card!";
     document.body.appendChild(gameInfo);
-
+    output("Enter the number of card each player should draw");
+    const numberInput = document.createElement("input");
+    numberInput.placeholder = "Press ENTER to submit";
+    numberInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            //do something
+            const formattedCardsToDraw = parseInt(e.target.value);
+            if (typeof formattedCardsToDraw === "number") {
+                numberOfCardsToDraw = formattedCardsToDraw;
+                //continue
+                // remove input and start game
+                numberInput.remove();
+                output(
+                    `${numberOfCardsToDraw} cards are drawn per player. Player 1 please draw.`
+                );
+                createPlayerButtons();
+            } else {
+                output("Please enter a valid number");
+                numberInput.value = "";
+            }
+        }
+    });
+    document.body.appendChild(numberInput);
 };
 
 initGame();
