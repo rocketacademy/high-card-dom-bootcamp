@@ -3,6 +3,9 @@
 
 let playersTurn = 1; // matches with starting instructions
 let player1Card;
+let player2Card;
+let playersHands = [[],[]];
+let maxCards = 0
 
 const player1Button = document.createElement("button");
 
@@ -15,6 +18,12 @@ let cardContainer;
 cardContainer = document.createElement("div");
 cardContainer.classList.add("card-container");
 document.body.appendChild(cardContainer);
+
+let cardContainer2;
+
+cardContainer2 = document.createElement("div");
+cardContainer2.classList.add("card-container2");
+document.body.appendChild(cardContainer2);
 
 // Get a random index ranging from 0 (inclusive) to max (exclusive).
 const getRandomIndex = (max) => Math.floor(Math.random() * max);
@@ -102,38 +111,64 @@ const output = (message) => {
 };
 
 const player1Click = () => {
-  if (playersTurn === 1) {
+  if (maxCards===0){
+    output('Please submit max cards')
+  }else {
     // Pop player 1's card metadata from the deck
     player1Card = deck.pop();
     console.log(player1Card);
-
-    // Create card element from card metadata
-    const cardElement = createCard(player1Card);
-    // Empty cardContainer in case this is not the 1st round of gameplay
+    playersHands[0].push(player1Card);
+    playersHands[0].sort((a,b)=>((b.rank -a.rank)));
+    
     cardContainer.innerHTML = "";
-    // Append the card element to the card container
-    cardContainer.appendChild(cardElement);
 
-    // Switch to player 2's turn
-    playersTurn = 2;
-    output("Its player 2 turn. Click to draw a card!");
+    for (let i=0;i<playersHands[0].length;i+=1){
+     // Create card element from card metadata
+      const cardElement = createCard(playersHands[0][i]);
+    
+      // Append the card element to the card container
+      cardContainer.appendChild(cardElement);
+    }
+    winCheck();
+
+
+    
   }
 };
 
 const player2Click = () => {
-  if (playersTurn === 2) {
+  if(maxCards===0){
+    output('Please submit max cards')
+  }else {
     // Pop player 2's card metadata from the deck
-    const player2Card = deck.pop();
+    player2Card = deck.pop();
+    playersHands[1].push(player2Card);
+    playersHands[1].sort((a,b)=>((b.rank -a.rank)));
+    cardContainer2.innerHTML = "";
+    for (let i=0;i<playersHands[1].length;i+=1){
+     // Create card element from card metadata
+      const cardElement = createCard(playersHands[1][i]);
+    
+      // Append the card element to the card container
+      cardContainer2.appendChild(cardElement);
+    }
+    winCheck();
 
-    // Create card element from card metadata
-    const cardElement = createCard(player2Card);
-    // Append card element to card container
-    cardContainer.appendChild(cardElement);
 
     // Switch to player 1's turn
     playersTurn = 1;
 
-    // Determine and output winner
+    //oneCard();
+
+
+  }
+};
+
+//Function to determine the one card game
+const oneCard = () => {
+  console.log(player1Card);
+  console.log(player2Card);
+      // Determine and output winner
     if (player1Card.rank > player2Card.rank) {
       output("player 1 wins,player 1 click to start again");
     } else if (player1Card.rank < player2Card.rank) {
@@ -141,10 +176,16 @@ const player2Click = () => {
     } else {
       output("tie");
     }
-  }
-};
+}
 
 const initGame = () => {
+  // initialize max card submission field and button
+  const inputField = document.createElement('input');
+  const submitButton = document.createElement('button');
+  submitButton.innerText= 'Submit Max Cards'
+  document.body.appendChild(inputField);
+  document.body.appendChild(submitButton);
+
   // initialize button functionality
   player1Button.innerText = "Player 1 Draw";
   document.body.appendChild(player1Button);
@@ -152,12 +193,21 @@ const initGame = () => {
   player2Button.innerText = "Player 2 Draw";
   document.body.appendChild(player2Button);
 
+  // fill game info div with starting instructions
+  gameInfo.innerText = "Submit maximum number of cards to play";
+  document.body.appendChild(gameInfo);
+  const setMaxCards = () =>{
+  maxCards = parseInt(inputField.value);
+  
+}
+  
+  submitButton.addEventListener('click',setMaxCards);
   player1Button.addEventListener("click", player1Click);
   player2Button.addEventListener("click", player2Click);
 
-  // fill game info div with starting instructions
-  gameInfo.innerText = "Its player 1 turn. Click to draw a card!";
-  document.body.appendChild(gameInfo);
+  
+
+  
 };
 
 const createCard = (cardInfo) => {
@@ -177,5 +227,14 @@ const createCard = (cardInfo) => {
 
   return card;
 };
+
+const winCheck =()=>{
+  if (playersHands[0].length === maxCards && playersHands[1] === maxCards){
+    output('game over');
+  }
+}
+
+
+
 const deck = shuffleCards(makeDeck());
 initGame()
