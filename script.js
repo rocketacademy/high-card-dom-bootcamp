@@ -138,3 +138,31 @@ const initGame = () => {
 };
 
 initGame();
+
+/// working below ////////////////////////////////////////////////////////
+const cardInfo = {
+  suitSymbol: '♦️',
+  suit: 'diamond',
+  name: 'queen',
+  displayName: 'Q',
+  color: 'red',
+  rank: 12,
+};
+
+const makeCard = (cardMeta) => {
+  const card = document.createElement('div');
+  card.classList.add('card');
+  document.body.appendChild(card);
+
+  const name = document.createElement('div');
+  name.classList.add('name', cardMeta.color);
+  name.innerText = cardMeta.displayName;
+  card.appendChild(name);
+
+  const suit = document.createElement('div');
+  suit.classList.add('suit', cardMeta.color);
+  suit.innerText = cardMeta.suitSymbol;
+  card.appendChild(suit);
+};
+
+makeCard(cardInfo);
