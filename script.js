@@ -46,28 +46,54 @@ const makeDeck = () => {
     // Store the current suit in a variable
     const currentSuit = suits[suitIndex];
 
+    let currentSymbol = '';
+    if (suitIndex === 0) {
+      currentSymbol = '♥';
+    } else if (suitIndex === 1) {
+      currentSymbol = '♦';
+    } else if (suitIndex === 2) {
+      currentSymbol = '♣';
+    } else if (suitIndex === 3) {
+      currentSymbol = '♠';
+    }
+
+    let currentColor = '';
+    if (suitIndex === 0 || suitIndex === 1) {
+      currentColor = 'red';
+    } else if (suitIndex === 2 || suitIndex === 3) {
+      currentColor = 'black';
+    }
+
     // Loop from 1 to 13 to create all cards for a given suit
     // Notice rankCounter starts at 1 and not 0, and ends at 13 and not 12.
     // This is an example of a loop without an array.
     for (let rankCounter = 1; rankCounter <= 13; rankCounter += 1) {
       // By default, the card name is the same as rankCounter
       let cardName = `${rankCounter}`;
+      let shortName = `${rankCounter}`;
 
       // If rank is 1, 11, 12, or 13, set cardName to the ace or face card's name
       if (cardName === '1') {
         cardName = 'ace';
+        shortName = 'A';
       } else if (cardName === '11') {
         cardName = 'jack';
+        shortName = 'J';
       } else if (cardName === '12') {
         cardName = 'queen';
+        shortName = 'Q';
       } else if (cardName === '13') {
         cardName = 'king';
+        shortName = 'K';
       }
 
       // Create a new card with the current name, suit, and rank
       const card = {
+        suitSymbol: currentSymbol,
         name: cardName,
         suit: currentSuit,
+        displayName: shortName,
+        color: currentColor,
         rank: rankCounter,
       };
 
@@ -141,12 +167,12 @@ initGame();
 
 /// working below ////////////////////////////////////////////////////////
 const cardInfo = {
-  suitSymbol: '♦️',
-  suit: 'diamond',
-  name: 'queen',
-  displayName: 'Q',
-  color: 'red',
-  rank: 12,
+  suitSymbol: '♦️', // represented
+  suit: 'diamond', // represented
+  name: 'queen', // represented
+  displayName: 'Q', // represented
+  color: 'red', // represented
+  rank: 12, // represented
 };
 
 const makeCard = (cardMeta) => {
