@@ -20,7 +20,7 @@ const makeDeck = () => {
   // Initialise an empty deck array
   const newDeck = [];
   // Initialise an array of the 4 suits in our deck. We will loop over this array.
-  const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
+  const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
   const suitSymbols = ['♥️', '♦', '♣️', '♠️'];
 
   // Loop over the suits array
@@ -38,16 +38,16 @@ const makeDeck = () => {
 
       // If rank is 1, 11, 12, or 13, set cardName to the ace or face card's name
       if (cardName === '1') {
-        cardName = 'ace';
+        cardName = 'Ace';
         displayName = 'A';
       } else if (cardName === '11') {
-        cardName = 'jack';
+        cardName = 'Jack';
         displayName = 'J';
       } else if (cardName === '12') {
-        cardName = 'queen';
+        cardName = 'Queen';
         displayName = 'Q';
       } else if (cardName === '13') {
-        cardName = 'king';
+        cardName = 'King';
         displayName = 'K';
       }
 
@@ -73,10 +73,8 @@ const makeDeck = () => {
 const deck = shuffleCards(makeDeck());
 let player1Cards = [];
 let player2Cards = [];
-const CARDS_PER_PLAYER = 5;
-let gameInProgress = true;
-
-let playersTurn = 1; // Player 1 starts first
+let cardsPerPlayer = 0;
+let gameInProgress = false;
 
 // Create a helper function for output to abstract complexity
 // of DOM manipulation away from game logic
@@ -115,7 +113,10 @@ const createCards = (cards, player) => {
 const resetGame = () => {
   player1Cards = [];
   player2Cards = [];
+  cardsPerPlayer = 0;
   gameInProgress = false;
+  document.getElementById('button-player-1').disabled = false;
+  document.getElementById('button-player-2').disabled = false;
 };
 
 const calculateDifference = (cards) => {
@@ -126,63 +127,51 @@ const calculateDifference = (cards) => {
 const determineWinner = () => {
   const player1Difference = calculateDifference(player1Cards);
   const player2Difference = calculateDifference(player2Cards);
-  let message = `Player 1 has a difference of ${player1Difference}.<br>`;
-  message += `Player 2 has a difference of ${player2Difference}.<br>`;
+  let message = `Player 1 has a greatest difference of ${player1Difference}.<br>`;
+  message += `Player 2 has a greatest difference of ${player2Difference}.<br>`;
 
   // Determine and output winner
   if (player1Difference > player2Difference) {
-    message += 'player 1 wins!';
+    message += 'Player 1 wins!';
   } else if (player1Difference < player2Difference) {
-    message += 'player 2 wins!';
+    message += 'Player 2 wins!';
   } else {
-    message += 'tie!';
+    message += "It's a tie!";
   }
+  message += '<br><br>Start a new game by choosing the number of cards and hitting Draw again!';
 
   output(message);
   resetGame();
 };
 
-const player1Click = () => {
-  if (playersTurn === 1) {
-    const cardContainer = document.getElementById('cards-player-1');
-    const oppCardContainer = document.getElementById('cards-player-2');
-    // Pop player 1's card metadata from the deck
-    const newCard = deck.pop();
-    player1Cards.push(newCard);
+const playerClick = (player) => {
+  if (cardsPerPlayer === 0) cardsPerPlayer = Number(document.getElementById('num-cards-input').value);
 
-    cardContainer.innerHTML = '';
-    if (!gameInProgress) {
-      oppCardContainer.innerHTML = '';
-      gameInProgress = true;
-    }
+  const oppPlayer = player === 1 ? 2 : 1;
+  const playerCardArr = player === 1 ? player1Cards : player2Cards;
 
-    // Create card element from card metadata
-    createCards(player1Cards, 1);
+  const cardContainer = document.getElementById(`cards-player-${player}`);
+  const oppCardContainer = document.getElementById(`cards-player-${oppPlayer}`);
 
-    // Switch to player 2's turn
-    playersTurn = 2;
-    output('Its player 2 turn. Click to draw a card!');
+  const playerButton = document.getElementById(`button-player-${player}`);
+  // Pop players card metadata from the deck
+  const newCard = deck.pop();
+  playerCardArr.push(newCard);
+
+  output(`Player ${player} drew the ${newCard.name} of ${newCard.suit}.`);
+
+  cardContainer.innerHTML = '';
+  if (!gameInProgress) {
+    oppCardContainer.innerHTML = '';
+    gameInProgress = true;
   }
-};
 
-const player2Click = () => {
-  if (playersTurn === 2) {
-    const cardContainer = document.getElementById('cards-player-2');
-    // Pop player 2's card metadata from the deck
-    const newCard = deck.pop();
-    player2Cards.push(newCard);
+  // Create card element from card metadata
+  createCards(playerCardArr, player);
 
-    cardContainer.innerHTML = '';
-    // Create card element from card metadata
-    createCards(player2Cards, 2);
-
-    // Switch to player 1's turn
-    playersTurn = 1;
-    if (player1Cards.length === CARDS_PER_PLAYER && player2Cards.length === CARDS_PER_PLAYER) {
-      determineWinner();
-    } else {
-      output('Its player 1 turn. Click to draw a card!');
-    }
+  if (playerCardArr.length === cardsPerPlayer) playerButton.disabled = true;
+  if (player1Cards.length === cardsPerPlayer && player2Cards.length === cardsPerPlayer) {
+    determineWinner();
   }
 };
 
@@ -202,17 +191,40 @@ const initGame = () => {
     const playerButton = document.createElement('button');
     playerButton.id = `button-player-${i}`;
     playerButton.innerText = `Player ${i} Draw`;
-    const listenerFn = i === 1 ? player1Click : player2Click;
-    playerButton.addEventListener('click', listenerFn);
+    playerButton.addEventListener('click', () => { playerClick(i); });
     playerContainer.appendChild(playerButton);
 
     gameContainer.appendChild(playerContainer);
   }
 
+  const outputDiv = document.createElement('div');
+  outputDiv.classList.add('output');
+
+  const numCardsInput = document.createElement('input');
+  numCardsInput.id = 'num-cards-input';
+  numCardsInput.type = 'number';
+  numCardsInput.min = '2';
+  numCardsInput.max = '5';
+  numCardsInput.value = '2';
+  numCardsInput.addEventListener('input', () => {
+    const player1Button = document.getElementById('button-player-1');
+    const player2Button = document.getElementById('button-player-2');
+    if (numCardsInput.value >= 2 && numCardsInput.value <= 5) {
+      player1Button.disabled = false;
+      player2Button.disabled = false;
+    } else {
+      player1Button.disabled = true;
+      player2Button.disabled = true;
+    }
+  });
+  outputDiv.appendChild(numCardsInput);
+
   const instructions = document.createElement('p');
   instructions.id = 'instructions';
-  instructions.innerText = 'Its player 1 turn. Click to draw a card!';
-  gameContainer.appendChild(instructions);
+  instructions.innerHTML = 'Input the number of cards to draw.<br>Then either player can hit Draw to start the game!';
+  outputDiv.appendChild(instructions);
+
+  document.body.appendChild(outputDiv);
 };
 
 initGame();
