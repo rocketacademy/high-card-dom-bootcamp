@@ -70,24 +70,31 @@ const makeDeck = () => {
   return newDeck;
 };
 
-const deck = shuffleCards(makeDeck());
+let deck = shuffleCards(makeDeck());
 let player1Cards = [];
 let player2Cards = [];
 let cardsPerPlayer = 0;
 let gameInProgress = false;
 
-// Create a helper function for output to abstract complexity
-// of DOM manipulation away from game logic
+const numCardsInput = document.createElement('input');
+const gameOutput = document.createElement('p');
+
+// Helper function to output message
 const output = (message) => {
-  const instructions = document.getElementById('instructions');
-  instructions.innerHTML = message;
+  gameOutput.innerHTML = message;
 };
 
+// Helper function to create the cards UI given an array of cards
 const createCards = (cards, player) => {
   const cardContainer = document.getElementById(`cards-player-${player}`);
+  cardContainer.innerHTML = '';
+
+  // Sort player's cards in ascending order based on rank
+  // Then get the last (highest) card and put it in front
   const cardsCopy = [...cards].sort((a, b) => a.rank - b.rank);
   cardsCopy.unshift(cardsCopy.pop());
 
+  // Creating a card UI for each element in the cards array
   cardsCopy.forEach((card, index) => {
     const suit = document.createElement('div');
     suit.classList.add('suit', card.colour);
@@ -100,6 +107,7 @@ const createCards = (cards, player) => {
     const cardDiv = document.createElement('div');
     cardDiv.classList.add('card');
     if (cardsCopy.length > 1) {
+      // Special styling for the first (highest) and second (lowest) card
       if (index === 0) cardDiv.classList.add('high');
       if (index === 1) cardDiv.classList.add('low');
     }
@@ -110,27 +118,32 @@ const createCards = (cards, player) => {
   });
 };
 
+// Helper function to reset game
 const resetGame = () => {
+  deck = shuffleCards(makeDeck());
   player1Cards = [];
   player2Cards = [];
   cardsPerPlayer = 0;
   gameInProgress = false;
   document.getElementById('button-player-1').disabled = false;
   document.getElementById('button-player-2').disabled = false;
+  numCardsInput.disabled = false;
 };
 
+// Calculate difference by sorting the cards in ascending order
+// And subtract rank of first card from rank of last card
 const calculateDifference = (cards) => {
   const sorted = [...cards].sort((a, b) => a.rank - b.rank);
   return sorted[sorted.length - 1].rank - sorted[0].rank;
 };
 
+// Determine winner by calculating each player's greatest difference
 const determineWinner = () => {
   const player1Difference = calculateDifference(player1Cards);
   const player2Difference = calculateDifference(player2Cards);
   let message = `Player 1 has a greatest difference of ${player1Difference}.<br>`;
   message += `Player 2 has a greatest difference of ${player2Difference}.<br>`;
 
-  // Determine and output winner
   if (player1Difference > player2Difference) {
     message += 'Player 1 wins!';
   } else if (player1Difference < player2Difference) {
@@ -144,38 +157,43 @@ const determineWinner = () => {
   resetGame();
 };
 
+// This function gets called when either Player 1 or 2 clicks Draw
 const playerClick = (player) => {
-  if (cardsPerPlayer === 0) cardsPerPlayer = Number(document.getElementById('num-cards-input').value);
-
   const oppPlayer = player === 1 ? 2 : 1;
-  const playerCardArr = player === 1 ? player1Cards : player2Cards;
-
-  const cardContainer = document.getElementById(`cards-player-${player}`);
   const oppCardContainer = document.getElementById(`cards-player-${oppPlayer}`);
 
+  if (!gameInProgress) {
+    // If it is a new game, then empty the opponent's card container
+    // And set the gameInProgress flag and the cards per player value
+    oppCardContainer.innerHTML = '';
+    gameInProgress = true;
+    cardsPerPlayer = Number(numCardsInput.value);
+    numCardsInput.disabled = true;
+  }
+
+  const playerCardArr = player === 1 ? player1Cards : player2Cards;
   const playerButton = document.getElementById(`button-player-${player}`);
-  // Pop players card metadata from the deck
+
   const newCard = deck.pop();
   playerCardArr.push(newCard);
 
   output(`Player ${player} drew the ${newCard.name} of ${newCard.suit}.`);
 
-  cardContainer.innerHTML = '';
-  if (!gameInProgress) {
-    oppCardContainer.innerHTML = '';
-    gameInProgress = true;
-  }
-
-  // Create card element from card metadata
+  // Create card UIs for the current player
   createCards(playerCardArr, player);
 
-  if (playerCardArr.length === cardsPerPlayer) playerButton.disabled = true;
+  if (playerCardArr.length === cardsPerPlayer) {
+    // Current player done drawing
+    playerButton.disabled = true;
+  }
   if (player1Cards.length === cardsPerPlayer && player2Cards.length === cardsPerPlayer) {
+    // Both players done drawing
     determineWinner();
   }
 };
 
-const initGame = () => {
+// Functions to generate all the HTML elements necessary
+const initGameArea = () => {
   const gameContainer = document.createElement('div');
   gameContainer.id = 'container';
   document.body.appendChild(gameContainer);
@@ -196,11 +214,12 @@ const initGame = () => {
 
     gameContainer.appendChild(playerContainer);
   }
+};
 
+const initOutputArea = () => {
   const outputDiv = document.createElement('div');
   outputDiv.classList.add('output');
 
-  const numCardsInput = document.createElement('input');
   numCardsInput.id = 'num-cards-input';
   numCardsInput.type = 'number';
   numCardsInput.min = '2';
@@ -219,12 +238,12 @@ const initGame = () => {
   });
   outputDiv.appendChild(numCardsInput);
 
-  const instructions = document.createElement('p');
-  instructions.id = 'instructions';
-  instructions.innerHTML = 'Input the number of cards to draw.<br>Then either player can hit Draw to start the game!';
-  outputDiv.appendChild(instructions);
+  gameOutput.id = 'gameOutput';
+  gameOutput.innerHTML = 'Input the number of cards to draw.<br>Then either player can hit Draw to start the game!';
+  outputDiv.appendChild(gameOutput);
 
   document.body.appendChild(outputDiv);
 };
 
-initGame();
+initGameArea();
+initOutputArea();
