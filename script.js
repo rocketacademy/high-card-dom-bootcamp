@@ -2,12 +2,14 @@
 //Global variables
 //////////////////////////////////
 let playersTurn = 1; // matches with starting instructions
-let player1Card; //if not unable to access this variable in player2Click() 
+let player1Card; //if not unable to access this variable in player2Click()
 
 let cardContainer;
 const player1Button = document.createElement("button");
 const player2Button = document.createElement("button");
 const gameInfo = document.createElement("div");
+
+let canClick = true;
 
 //////////////////////////////////
 //Helper functions
@@ -115,44 +117,51 @@ const output = (message) => {
 //Player Action Callbacks
 //////////////////////////////////
 const player1Click = () => {
-  if (playersTurn === 1) {
-    // Pop player 1's card metadata from the deck
-    player1Card = deck.pop();
-    
-    // Create card element from card metadata
-    const cardElement = createCard(player1Card);
-    // Empty cardContainer in case this is not the 1st round of gameplay
-    cardContainer.innerHTML = '';
-    // Append the card element to the card container
-    cardContainer.appendChild(cardElement);
-    
-    // Switch to player 2's turn
-    playersTurn = 2
-    output("It's player 2 turn. Click to draw a card!");
+  if (playersTurn === 1 && canClick === true) {
+    canClick = false;
+
+    setTimeout(() => {
+      player1Card = deck.pop();
+      // Create card element from card metadata
+      const cardElement = createCard(player1Card);
+      // Empty cardContainer in case this is not the 1st round of gameplay
+      cardContainer.innerHTML = "";
+      // Append the card element to the card container
+      cardContainer.appendChild(cardElement);
+
+      // Switch to player 2's turn
+      playersTurn = 2;
+      canClick = true;
+      output("It's player 2 turn. Click to draw a card!");
+    }, 2000);
   }
 };
 
 const player2Click = () => {
-  if (playersTurn === 2) {
-    // Pop player 2's card metadata from the deck
-    const player2Card = deck.pop();
-    
-    // Create card element from card metadata
-    const cardElement = createCard(player2Card);    
-    // Append card element to card container
-    cardContainer.appendChild(cardElement);
-    
-    // Switch to player 1's turn
-    playersTurn = 1;
-    
-    // Determine and output winner
-    if (player1Card.rank > player2Card.rank) {
-      output('player 1 wins');
-    } else if (player1Card.rank < player2Card.rank) {
-      output('player 2 wins');
-    } else {
-      output('tie');
-    }
+  if (playersTurn === 2 && canClick === true) {
+    canClick = false;
+
+    setTimeout(() => {
+      const player2Card = deck.pop();
+
+      // Create card element from card metadata
+      const cardElement = createCard(player2Card);
+      // Append card element to card container
+      cardContainer.appendChild(cardElement);
+
+      // Switch to player 1's turn
+      playersTurn = 1;
+      canClick = true;
+
+      // Determine and output winner
+      if (player1Card.rank > player2Card.rank) {
+        output("player 1 wins");
+      } else if (player1Card.rank < player2Card.rank) {
+        output("player 2 wins");
+      } else {
+        output("tie");
+      }
+    }, 2000);
   }
 };
 //////////////////////////////////
