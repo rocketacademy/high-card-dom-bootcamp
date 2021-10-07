@@ -1,5 +1,7 @@
 // Initialize global variable for container holding all cards
 let cardContainer;
+// Initialize global variable for container holding P2 cards - so that cards can be in a new row
+let cardContainer2;
 // Initialize global variable to keep track of num of cards drawns
 let numCardsPOne = 0;
 let numCardsPTwo = 0;
@@ -171,6 +173,7 @@ const player1Click = () => {
       numCardsPOne = 0;
       numCardsPTwo = 0;
       cardContainer.innerHTML = '';
+      cardContainer2.innerHTML = '';
       // Append card container so that changes are seen in the document
       document.body.appendChild(cardContainer);
     }
@@ -212,7 +215,9 @@ const player2Click = () => {
     pTwoValueArray.push(player2Card.rank);
     const cardElement = createCardTwo(player2Card);
     // Append card element to card container
-    cardContainer.appendChild(cardElement);
+    cardContainer2.appendChild(cardElement);
+    document.body.appendChild(cardContainer);
+    document.body.appendChild(cardContainer2);
     // Condition where if both players have same no of cards, compare values and declare a winner
     if (numCardsPOne === numCardsPTwo) {
       // Change back to P1 turn
@@ -242,7 +247,11 @@ const initGame = () => {
 
   cardContainer = document.createElement('div');
   cardContainer.classList.add('card-container');
+  cardContainer2 = document.createElement('div');
+  cardContainer2.classList.add('card-container2');
+  document.body.appendChild(cardContainer2);
   document.body.appendChild(cardContainer);
+
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click); };
 changePlayerButton.addEventListener('click', endP1Turn);
