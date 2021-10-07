@@ -5,7 +5,9 @@ let playersTurn = 1; // matches with starting instructions
 let player1Card;
 let player2Card;
 let playersHands = [[],[]];
-let maxCards = 0
+let maxCards = 0;
+let player1Score = 0 ;
+let player2Score = 0 ;
 
 const player1Button = document.createElement("button");
 
@@ -111,20 +113,31 @@ const output = (message) => {
 };
 
 const player1Click = () => {
-  if (maxCards===0){
-    output('Please submit max cards')
+  if (maxCards<2 || maxCards >7){
+    output('Please submit max cards between 2 and 7')
+  }else if (playersHands[0].length === maxCards) {
+    output('Player 1,maximum cards reached')
+
   }else {
     // Pop player 1's card metadata from the deck
     player1Card = deck.pop();
-    console.log(player1Card);
+    // sort the player's hand and shift the largest card rank to the front
     playersHands[0].push(player1Card);
-    playersHands[0].sort((a,b)=>((b.rank -a.rank)));
+    playersHands[0].sort((a,b)=>((a.rank -b.rank)));
+    if (playersHands[0].length>1){
+      playersHands[0].unshift(playersHands[0].pop());
+    }
     
     cardContainer.innerHTML = "";
 
     for (let i=0;i<playersHands[0].length;i+=1){
      // Create card element from card metadata
       const cardElement = createCard(playersHands[0][i]);
+      if (i==0){
+        cardElement.classList.add('high');
+      } else if (i==1){
+        cardElement.classList.add('low');
+      }
     
       // Append the card element to the card container
       cardContainer.appendChild(cardElement);
@@ -137,17 +150,31 @@ const player1Click = () => {
 };
 
 const player2Click = () => {
-  if(maxCards===0){
-    output('Please submit max cards')
+  if(maxCards<2 || maxCards >7){
+    output('Please submit max cards between 2 and 7')
+  }else if (playersHands[1].length === maxCards) {
+    output('Player 2, maximum cards reached')
+
   }else {
     // Pop player 2's card metadata from the deck
     player2Card = deck.pop();
+    // sort the player's hand and shift the largest card rank to the front
     playersHands[1].push(player2Card);
-    playersHands[1].sort((a,b)=>((b.rank -a.rank)));
+    playersHands[1].sort((a,b)=>((a.rank -b.rank)));
+    if (playersHands[1].length>1){
+      playersHands[1].unshift(playersHands[1].pop());
+    }
+    
+
     cardContainer2.innerHTML = "";
     for (let i=0;i<playersHands[1].length;i+=1){
      // Create card element from card metadata
       const cardElement = createCard(playersHands[1][i]);
+      if (i==0){
+        cardElement.classList.add('high');
+      } else if (i==1){
+        cardElement.classList.add('low');
+      }
     
       // Append the card element to the card container
       cardContainer2.appendChild(cardElement);
@@ -155,10 +182,7 @@ const player2Click = () => {
     winCheck();
 
 
-    // Switch to player 1's turn
-    playersTurn = 1;
-
-    //oneCard();
+   
 
 
   }
@@ -181,6 +205,9 @@ const oneCard = () => {
 const initGame = () => {
   // initialize max card submission field and button
   const inputField = document.createElement('input');
+  inputField.type = 'number';
+  inputField.min = 2;
+  inputField.max = 7;
   const submitButton = document.createElement('button');
   submitButton.innerText= 'Submit Max Cards'
   document.body.appendChild(inputField);
@@ -200,12 +227,10 @@ const initGame = () => {
   maxCards = parseInt(inputField.value);
   
 }
-  
+  // activate buttons
   submitButton.addEventListener('click',setMaxCards);
   player1Button.addEventListener("click", player1Click);
   player2Button.addEventListener("click", player2Click);
-
-  
 
   
 };
@@ -228,9 +253,21 @@ const createCard = (cardInfo) => {
   return card;
 };
 
+//function to check the winning conditions
 const winCheck =()=>{
-  if (playersHands[0].length === maxCards && playersHands[1] === maxCards){
-    output('game over');
+  if (playersHands[0].length === maxCards && playersHands[1].length === maxCards){
+    playersHands[0].sort((a,b)=>((a.rank -b.rank)));
+    playersHands[1].sort((a,b)=>((a.rank -b.rank)));
+    player1Score = playersHands[0][playersHands[0].length-1].rank - playersHands[0][0].rank;
+    player2Score = playersHands[1][playersHands[1].length-1].rank - playersHands[1][0].rank;
+    if (player1Score>player2Score){
+      output(`Player 1 wins with a score of ${player1Score}`);
+    }else if (player2Score > player1Score){
+      output(`Player 2 wins with a score of ${player2Score}`);
+    }else {
+      output(`Its a tie, with a score of ${player2Score}`);
+    }
+    
   }
 }
 
