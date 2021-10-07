@@ -1,3 +1,45 @@
 body {
   background-color: pink;
 }
+.card {
+  margin: 10px;
+  padding: 10px;
+  background-color: grey;
+  width: 50px;
+  text-align: center;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.suit {
+  margin: 5px;
+  font-size: 20px;
+}
+
+.name {
+  margin: 5px;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.red {
+  color: red;
+}
+.black {
+  color: black;
+}
+
+.high {
+  border: rgb(74, 206, 74);
+  border-radius: 20%;
+  border-width: 5px;
+  border-style: solid;
+}
+
+.low {
+  border: rgb(206, 18, 18);
+  border-radius: 20%;
+  border-width: 5px;
+  border-style: solid;
+}
