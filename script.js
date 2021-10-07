@@ -6,12 +6,16 @@ let numCardsPTwo = 0;
 // Global variable to store player 1's card
 let player1Card;
 let player2Card;
+// Boolean value to ensure P1 goes first and P2 cannot go until turn ends
+let isPlayerOne = true;
 
 // Array to store card values
 const pOneValueArray = [];
 const pTwoValueArray = [];
 // Global variables for DOM element creation
 const player2Button = document.createElement('button');
+const changePlayerButton = document.createElement('button');
+changePlayerButton.innerText = 'End P1 Turn';
 const player1Button = document.createElement('button');
 const gameInfo = document.createElement('div');
 
@@ -154,31 +158,37 @@ const createCardTwo = (cardInfo) => {
 // Callback function for player 1: Draws a card from deck,
 // converts to a displayed card and appends to document
 const player1Click = () => {
-  output('Player 1 is drawing!');
-  // If both players have drawn same no of cards,
-  // Clear the array, global counters and clear the output elements
-  if (numCardsPOne === numCardsPTwo) {
-    for (let j = 0; j < numCardsPOne; j += 1) {
-      pOneValueArray.pop();
-      pTwoValueArray.pop();
+  // Ensure that P2 cannot draw careds
+  if (isPlayerOne === true) {
+    output('Player 1 is drawing!');
+    // If both players have drawn same no of cards,
+    // Clear the array, global counters and clear the output elements
+    if (numCardsPOne === numCardsPTwo) {
+      for (let j = 0; j < numCardsPOne; j += 1) {
+        pOneValueArray.pop();
+        pTwoValueArray.pop();
+      }
+      numCardsPOne = 0;
+      numCardsPTwo = 0;
+      cardContainer.innerHTML = '';
+      // Append card container so that changes are seen in the document
+      document.body.appendChild(cardContainer);
     }
-    numCardsPOne = 0;
-    numCardsPTwo = 0;
-    cardContainer.innerHTML = '';
-    // Append card container so that changes are seen in the document
-    document.body.appendChild(cardContainer);
+    // Increment counter for each click made
+    numCardsPOne += 1;
+    player1Card = shuffledDeck.pop();
+    // Store cards rank in array
+    pOneValueArray.push(player1Card.rank);
+    // Create card element from card metadata
+    const cardElement = createCard(player1Card);
+    // Append the card element to the card container
+    cardContainer.appendChild(cardElement);
   }
-  // Increment counter for each click made
-  numCardsPOne += 1;
-  player1Card = shuffledDeck.pop();
-  // Store cards rank in array
-  pOneValueArray.push(player1Card.rank);
-  // Create card element from card metadata
-  const cardElement = createCard(player1Card);
-  // Append the card element to the card container
-  cardContainer.appendChild(cardElement);
 };
-
+// Callback function to switch between player turns
+const endP1Turn = () => {
+  isPlayerOne = false;
+};
 // Functions to calculate difference between max and min values for each player
 const findMax = (...array) => Math.max(...array);
 const findMin = (...array) => Math.min(...array);
@@ -190,24 +200,29 @@ const findDif = (...array) => {
 // Callback function for player 2: Draws a card from deck,
 // converts to a displayed card and appends to document
 const player2Click = () => {
+  // Ensure that P1 cannot draw careds
+  if (isPlayerOne === false) {
   // Update game info message to players
-  output('Player 2 is drawing cards!');
-  // Increment counter for number of cards drawn by player 2
-  numCardsPTwo += 1;
-  player2Card = shuffledDeck.pop();
-  // Store cards rank in array
-  pTwoValueArray.push(player2Card.rank);
-  const cardElement = createCardTwo(player2Card);
-  // Append card element to card container
-  cardContainer.appendChild(cardElement);
-  // Condition where if both players have same no of cards, compare values and declare a winner
-  if (numCardsPOne === numCardsPTwo) {
-    if (findDif(...pOneValueArray) - findDif(...pTwoValueArray) > 0) {
-      output(`Player 1 wins! <br> Player 1's High Low Diff: ${findDif(...pOneValueArray)} <br> Player 2's High Low Diff: ${findDif(...pTwoValueArray)} <br> `);
-    } else if (findDif(...pOneValueArray) - findDif(...pTwoValueArray) < 0) {
-      output(`Player 2 wins! <br> Player 1's High Low Diff: ${findDif(...pOneValueArray)} <br> Player 2's High Low Diff: ${findDif(...pTwoValueArray)} <br> `);
-    } else {
-      output(`It's a tie! <br> Player 1's High Low Diff: ${findDif(...pOneValueArray)} <br> Player 2's High Low Diff: ${findDif(...pTwoValueArray)} <br> `);
+    output('Player 2 is drawing cards!');
+    // Increment counter for number of cards drawn by player 2
+    numCardsPTwo += 1;
+    player2Card = shuffledDeck.pop();
+    // Store cards rank in array
+    pTwoValueArray.push(player2Card.rank);
+    const cardElement = createCardTwo(player2Card);
+    // Append card element to card container
+    cardContainer.appendChild(cardElement);
+    // Condition where if both players have same no of cards, compare values and declare a winner
+    if (numCardsPOne === numCardsPTwo) {
+      // Change back to P1 turn
+      isPlayerOne = true;
+      if (findDif(...pOneValueArray) - findDif(...pTwoValueArray) > 0) {
+        output(`Player 1 wins! <br> Player 1's High Low Diff: ${findDif(...pOneValueArray)} <br> Player 2's High Low Diff: ${findDif(...pTwoValueArray)} <br> `);
+      } else if (findDif(...pOneValueArray) - findDif(...pTwoValueArray) < 0) {
+        output(`Player 2 wins! <br> Player 1's High Low Diff: ${findDif(...pOneValueArray)} <br> Player 2's High Low Diff: ${findDif(...pTwoValueArray)} <br> `);
+      } else {
+        output(`It's a tie! <br> Player 1's High Low Diff: ${findDif(...pOneValueArray)} <br> Player 2's High Low Diff: ${findDif(...pTwoValueArray)} <br> `);
+      }
     }
   }
 };
@@ -217,7 +232,7 @@ const initGame = () => {
 // Create elements for content to be displayed at start of game
   player1Button.innerText = 'Player 1 Draw';
   document.body.appendChild(player1Button);
-
+  document.body.appendChild(changePlayerButton);
   player2Button.innerText = 'Player 2 Draw';
   document.body.appendChild(player2Button);
 
@@ -229,6 +244,6 @@ const initGame = () => {
   document.body.appendChild(cardContainer);
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click); };
-
+changePlayerButton.addEventListener('click', endP1Turn);
 // Start game
 initGame();
