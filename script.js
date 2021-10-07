@@ -188,6 +188,7 @@ const player1Click = () => {
 // Callback function to switch between player turns
 const endP1Turn = () => {
   isPlayerOne = false;
+  output(`Player 2! <br>It's your turn to draw ${numCardsPOne} cards.`);
 };
 // Functions to calculate difference between max and min values for each player
 const findMax = (...array) => Math.max(...array);
