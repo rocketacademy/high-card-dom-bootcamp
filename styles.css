@@ -4,7 +4,7 @@ body {
 .card {
   margin: 10px;
   padding: 10px;
-  background-color: grey;
+  background-color: white;
   width: 50px;
   text-align: center;
   border-radius: 8px;
@@ -25,4 +25,29 @@ body {
 
 .red {
   color: red;
+}
+
+.container {
+  background-color: grey;
+  border-radius: 10px;
+  padding: 5px;
+  height: 300px;
+}
+
+.button {
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.card-container-one {
+  float: left;
+}
+
+.card-container-two {
+  float: right;
+}
+
+.game-info {
+  float: left;
+  clear: left;
 }

@@ -1,19 +1,30 @@
 /// Global Variables ///////////////////////////////////////////////////////////////////
-// Player 1 starts first
+// player 1 starts by default
 let playersTurn = 1;
 
-// Use let for player1Card object because player1Card will be reassigned
-let player1Card;
+let previousTurn;
 
-// create two buttons
+let player1Cards = [];
+let player2Cards = [];
+
+// create a container for cardContainer element and gameInfo element
+const container = document.createElement('div');
+
+// create a cardContainer
+const cardContainerOne = document.createElement('div');
+const cardContainerTwo = document.createElement('div');
+
+// create gameInfo div
+const gameInfo = document.createElement('div');
+
+// create two buttons and input field
 const player1Button = document.createElement('button');
 const player2Button = document.createElement('button');
 
-// Create game info div as global value
-// fill game info div with starting instructions
-const gameInfo = document.createElement('div');
+const inputContainer = document.createElement('div');
 
-let cardContainer;
+const cardCountField = document.createElement('input');
+const cardCountButton = document.createElement('button');
 
 /// Helper Functions ///////////////////////////////////////////////////////////////////
 // Get a random index ranging from 0 (inclusive) to max (exclusive).
@@ -37,6 +48,7 @@ const shuffleCards = (cards) => {
   return cards;
 };
 
+// Make a deck of card/array of card objects
 const makeDeck = () => {
   // Initialise an empty deck array
   const newDeck = [];
@@ -68,13 +80,13 @@ const makeDeck = () => {
 
     // Loop from 1 to 13 to create all cards for a given suit
     // Notice rankCounter starts at 1 and not 0, and ends at 13 and not 12.
-    // This is an example of a loop without an array.
     for (let rankCounter = 1; rankCounter <= 13; rankCounter += 1) {
-      // By default, the card name is the same as rankCounter
+      // By default, the card name and short name is the same as rankCounter
       let cardName = `${rankCounter}`;
       let shortName = `${rankCounter}`;
 
       // If rank is 1, 11, 12, or 13, set cardName to the ace or face card's name
+      // and set shortName to the abbreviation of ace or face card's name
       if (cardName === '1') {
         cardName = 'ace';
         shortName = 'A';
@@ -90,6 +102,7 @@ const makeDeck = () => {
       }
 
       // Create a new card with the current name, suit, and rank
+      // and suit symbol, display name and color
       const card = {
         suitSymbol: currentSymbol,
         name: cardName,
@@ -108,90 +121,129 @@ const makeDeck = () => {
   return newDeck;
 };
 
+const deck = shuffleCards(makeDeck());
+
 // Create a helper function for output to abstract complexity
 // of DOM manipulation away from game logic
 const output = (message) => {
-  gameInfo.innerText = message;
+  gameInfo.innerHTML = message;
 };
 
-const makeCard = (cardMeta) => {
+// function to consume a cardObject and produce a card element
+const makeCard = (cardObject) => {
   const card = document.createElement('div');
   card.classList.add('card');
-  document.body.appendChild(card);
 
   const name = document.createElement('div');
-  name.classList.add('name', cardMeta.color);
-  name.innerText = cardMeta.displayName;
+  name.classList.add('name', cardObject.color);
+  name.innerText = cardObject.displayName;
   card.appendChild(name);
 
   const suit = document.createElement('div');
-  suit.classList.add('suit', cardMeta.color);
-  suit.innerText = cardMeta.suitSymbol;
+  suit.classList.add('suit', cardObject.color);
+  suit.innerText = cardObject.suitSymbol;
   card.appendChild(suit);
 
   return card;
 };
 
-const deck = shuffleCards(makeDeck()); // moved from global
-
-/// Callback Functions ///////////////////////////////////////////////////////////////////
-// Add an event listener on player 1's button to draw card and switch
-// to player 2's turn
-const player1Click = () => {
-  if (playersTurn === 1) {
-    player1Card = deck.pop();
-    console.log(player1Card);
-    const cardElement = makeCard(player1Card);
-    cardContainer.innerHTML = '';
-    cardContainer.appendChild(cardElement);
-    playersTurn = 2;
-    console.log(playersTurn);
+// function to calculate the difference between the highest card
+// and the lowest card in a hand
+const calcDifference = (hand) => {
+  const handRanks = [];
+  for (let i = 0; i < hand.length; i += 1) {
+    handRanks.push(hand[i].rank);
   }
+  const handMax = Math.max(...handRanks);
+  const handMin = Math.min(...handRanks);
+  const handDif = handMax - handMin;
+  return handDif;
 };
 
-// Add event listener on player 2's button to draw card and determine winner
-// Switch back to player 1's turn to repeat game
-const player2Click = () => {
-  if (playersTurn === 2) {
-    const player2Card = deck.pop();
-    console.log(player2Card);
-    const cardElement = makeCard(player2Card);
-    cardContainer.appendChild(cardElement);
-    playersTurn = 1;
-    console.log(playersTurn);
-
-    if (player1Card.rank > player2Card.rank) {
-      output('player 1 wins');
-    } else if (player1Card.rank < player2Card.rank) {
-      output('player 2 wins');
-    } else {
-      output('tie');
+/// Callback Functions ///////////////////////////////////////////////////////////////////
+// player 1's button to draw card and switch to player 2's turn
+const player1Click = () => {
+  if (playersTurn === 1) {
+    cardContainerOne.innerText = '';
+    if (previousTurn === 2) {
+      cardContainerTwo.innerText = '';
+    }
+    if (player1Cards.length < 3) {
+      player1Cards.push(deck.pop());
+    }
+    for (let i = 0; i < player1Cards.length; i += 1) {
+      const cardElement = makeCard(player1Cards[i]);
+      cardContainerOne.appendChild(cardElement);
+    }
+    if (player1Cards.length === 3) {
+      previousTurn = 1;
+      playersTurn = 2;
+      gameInfo.innerHTML = 'Its player 2 turn. Click to draw a card!';
     }
   }
 };
 
-/// //////////////////////////////////////////////////////////////////
+// player 2's button to draw card, determine winner and switch back to player 1's turn to repeat
+const player2Click = () => {
+  if (playersTurn === 2) {
+    cardContainerTwo.innerText = '';
+    if (player2Cards.length < 3) {
+      player2Cards.push(deck.pop());
+    }
+    for (let i = 0; i < player2Cards.length; i += 1) {
+      const cardElement = makeCard(player2Cards[i]);
+      cardContainerTwo.appendChild(cardElement);
+    }
+    if (player2Cards.length === 3) {
+      if (calcDifference(player1Cards) > calcDifference(player2Cards)) {
+        output('<br>player 1 wins');
+      } else if (calcDifference(player1Cards) < calcDifference(player2Cards)) {
+        output('<br>player 2 wins');
+      } else {
+        output('<br>tie');
+      }
+      previousTurn = 2;
+      playersTurn = 1;
+      gameInfo.innerHTML += '<br>Its player 1 turn. Click to draw a card!';
+      player1Cards = [];
+      player2Cards = [];
+    }
+  }
+};
+
+/// Initialise /////////////////////////////////////////////////////////////////////////
 
 const initGame = () => {
+  container.classList.add('container');
+  document.body.appendChild(container);
+
+  cardContainerOne.classList.add('card-container-one');
+  container.appendChild(cardContainerOne);
+
+  cardContainerTwo.classList.add('card-container-two');
+  container.appendChild(cardContainerTwo);
+
+  gameInfo.classList.add('game-info');
+  // fill gameInfo div with starting instructions
+  gameInfo.innerHTML = 'Its player 1 turn. Click to draw a card!';
+  container.appendChild(gameInfo);
+
   // initialize button functionality
+  player1Button.classList.add('button');
   player1Button.innerText = 'Player 1 Draw';
   document.body.appendChild(player1Button);
 
+  player2Button.classList.add('button');
   player2Button.innerText = 'Player 2 Draw';
   document.body.appendChild(player2Button);
 
+  document.body.appendChild(inputContainer);
+  inputContainer.appendChild(cardCountField);
+  cardCountButton.innerText = 'Submit';
+  inputContainer.appendChild(cardCountButton);
+
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
-
-  // fill game info div with starting instructions
-  gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
-  document.body.appendChild(gameInfo);
-
-  cardContainer = document.createElement('div');
-  cardContainer.classList.add('card-container');
-  document.body.appendChild(cardContainer);
 };
 
 initGame();
-
-/// work below ////////////////////////////////////////////////////////
