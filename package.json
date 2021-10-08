@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/rocketacademy/high-card-bootcamp#readme",
   "devDependencies": {
-    "eslint": "^7.6.0",
+    "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.0"
   }
