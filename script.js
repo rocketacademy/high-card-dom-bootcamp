@@ -4,6 +4,8 @@ let playersTurn = 1;
 
 let previousTurn;
 
+let cardCount = 2;
+
 let player1Cards = [];
 let player2Cards = [];
 
@@ -11,20 +13,21 @@ let player2Cards = [];
 const container = document.createElement('div');
 
 // create a cardContainer
-const cardContainerOne = document.createElement('div');
-const cardContainerTwo = document.createElement('div');
+const cardTable = document.createElement('table');
+const cardRow = document.createElement('tr');
+const cardColOne = document.createElement('td');
+const cardColTwo = document.createElement('td');
 
-// create gameInfo div
-const gameInfo = document.createElement('div');
+// create gameInfo row
+const infoRow = document.createElement('tr');
+const gameInfo = document.createElement('td');
 
 // create two buttons and input field
 const player1Button = document.createElement('button');
 const player2Button = document.createElement('button');
 
 const inputContainer = document.createElement('div');
-
 const cardCountField = document.createElement('input');
-const cardCountButton = document.createElement('button');
 
 /// Helper Functions ///////////////////////////////////////////////////////////////////
 // Get a random index ranging from 0 (inclusive) to max (exclusive).
@@ -163,22 +166,28 @@ const calcDifference = (hand) => {
 /// Callback Functions ///////////////////////////////////////////////////////////////////
 // player 1's button to draw card and switch to player 2's turn
 const player1Click = () => {
+  cardCountField.disabled = true;
+  cardCount = Number(cardCountField.value);
   if (playersTurn === 1) {
-    cardContainerOne.innerText = '';
+    cardColOne.innerText = '';
     if (previousTurn === 2) {
-      cardContainerTwo.innerText = '';
+      cardColTwo.innerText = '';
     }
-    if (player1Cards.length < 3) {
+    if (player1Cards.length < cardCount) {
       player1Cards.push(deck.pop());
     }
+    player1Cards.sort((firstItem, secondItem) => firstItem.rank - secondItem.rank);
+    player1Cards.unshift(player1Cards.pop());
     for (let i = 0; i < player1Cards.length; i += 1) {
       const cardElement = makeCard(player1Cards[i]);
-      cardContainerOne.appendChild(cardElement);
+      cardColOne.appendChild(cardElement);
     }
-    if (player1Cards.length === 3) {
+    if (player1Cards.length === cardCount) {
+      gameInfo.innerHTML = 'Its player 2 turn. Click to draw a card!';
       previousTurn = 1;
       playersTurn = 2;
-      gameInfo.innerHTML = 'Its player 2 turn. Click to draw a card!';
+      player1Button.disabled = true;
+      player2Button.disabled = false;
     }
   }
 };
@@ -186,27 +195,32 @@ const player1Click = () => {
 // player 2's button to draw card, determine winner and switch back to player 1's turn to repeat
 const player2Click = () => {
   if (playersTurn === 2) {
-    cardContainerTwo.innerText = '';
-    if (player2Cards.length < 3) {
+    cardColTwo.innerText = '';
+    if (player2Cards.length < cardCount) {
       player2Cards.push(deck.pop());
     }
+    player2Cards.sort((firstItem, secondItem) => firstItem.rank - secondItem.rank);
+    player2Cards.unshift(player2Cards.pop());
     for (let i = 0; i < player2Cards.length; i += 1) {
       const cardElement = makeCard(player2Cards[i]);
-      cardContainerTwo.appendChild(cardElement);
+      cardColTwo.appendChild(cardElement);
     }
-    if (player2Cards.length === 3) {
+    if (player2Cards.length === cardCount) {
       if (calcDifference(player1Cards) > calcDifference(player2Cards)) {
-        output('<br>player 1 wins');
+        output('player 1 wins');
       } else if (calcDifference(player1Cards) < calcDifference(player2Cards)) {
-        output('<br>player 2 wins');
+        output('player 2 wins');
       } else {
-        output('<br>tie');
+        output('tie');
       }
+      gameInfo.innerHTML += '<br>Its player 1 turn. Click to draw a card!';
       previousTurn = 2;
       playersTurn = 1;
-      gameInfo.innerHTML += '<br>Its player 1 turn. Click to draw a card!';
       player1Cards = [];
       player2Cards = [];
+      player1Button.disabled = false;
+      player2Button.disabled = true;
+      cardCountField.disabled = false;
     }
   }
 };
@@ -217,16 +231,21 @@ const initGame = () => {
   container.classList.add('container');
   document.body.appendChild(container);
 
-  cardContainerOne.classList.add('card-container-one');
-  container.appendChild(cardContainerOne);
+  container.appendChild(cardTable);
+  cardRow.classList.add('card-container');
+  cardTable.appendChild(cardRow);
 
-  cardContainerTwo.classList.add('card-container-two');
-  container.appendChild(cardContainerTwo);
+  cardColOne.classList.add('player-one');
+  cardRow.appendChild(cardColOne);
+  cardColTwo.classList.add('player-two');
+  cardRow.appendChild(cardColTwo);
 
+  infoRow.classList.add('info-row');
+  cardTable.appendChild(infoRow);
   gameInfo.classList.add('game-info');
   // fill gameInfo div with starting instructions
   gameInfo.innerHTML = 'Its player 1 turn. Click to draw a card!';
-  container.appendChild(gameInfo);
+  infoRow.appendChild(gameInfo);
 
   // initialize button functionality
   player1Button.classList.add('button');
@@ -235,12 +254,15 @@ const initGame = () => {
 
   player2Button.classList.add('button');
   player2Button.innerText = 'Player 2 Draw';
+  player2Button.disabled = true;
   document.body.appendChild(player2Button);
 
   document.body.appendChild(inputContainer);
+  cardCountField.type = 'number';
+  cardCountField.value = '2';
+  cardCountField.min = '2';
+  cardCountField.max = '6';
   inputContainer.appendChild(cardCountField);
-  cardCountButton.innerText = 'Submit';
-  inputContainer.appendChild(cardCountButton);
 
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);

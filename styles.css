@@ -39,15 +39,10 @@ body {
   border-radius: 10px;
 }
 
-.card-container-one {
-  float: left;
+table {
+  width: 100%;
 }
 
-.card-container-two {
-  float: right;
-}
-
-.game-info {
-  float: left;
-  clear: left;
+td {
+  width: 50%;
 }
