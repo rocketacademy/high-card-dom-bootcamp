@@ -1,32 +1,33 @@
-/// Global Variables ///////////////////////////////////////////////////////////////////
+// global variable record if round recently ended
 let endRound = false;
 
+// default card count to play with
 let cardCount = 2;
 
+// arrays to store card objects for players
 let player1Cards = [];
 let player2Cards = [];
 
-// create a container for cardContainer element and gameInfo element
+// a general container
 const container = document.createElement('div');
 
-// create a cardContainer
+// a table with one row and two columns to contain cards
 const cardTable = document.createElement('table');
 const cardRow = document.createElement('tr');
 const cardColOne = document.createElement('td');
 const cardColTwo = document.createElement('td');
 
-// create gameInfo row
-const infoRow = document.createElement('tr');
-const gameInfo = document.createElement('td');
-
+// a container to hold player buttons and input field
+const buttonAndFieldContainer = document.createElement('div');
 // create two buttons and input field
 const player1Button = document.createElement('button');
 const player2Button = document.createElement('button');
-
-const inputContainer = document.createElement('div');
 const cardCountField = document.createElement('input');
 
-/// Helper Functions ///////////////////////////////////////////////////////////////////
+// a container to hold game info
+const infoContainer = document.createElement('div');
+const gameInfo = document.createElement('p');
+
 // Get a random index ranging from 0 (inclusive) to max (exclusive).
 const getRandomIndex = (max) => Math.floor(Math.random() * max);
 
@@ -48,7 +49,7 @@ const shuffleCards = (cards) => {
   return cards;
 };
 
-// Make a deck of card/array of card objects
+// Make a deck of cards
 const makeDeck = () => {
   // Initialise an empty deck array
   const newDeck = [];
@@ -121,6 +122,7 @@ const makeDeck = () => {
   return newDeck;
 };
 
+// call makedeck then shufflecards and store in global variable deck
 const deck = shuffleCards(makeDeck());
 
 // Create a helper function for output to abstract complexity
@@ -160,11 +162,14 @@ const calcDifference = (hand) => {
   return handDif;
 };
 
+// function to disable the input field
 const disableCardCountField = () => {
   cardCountField.disabled = true;
   cardCount = Number(cardCountField.value);
 };
 
+// function to pop an object from deck and
+// store in correct player
 const drawCardObject = (player) => {
   let currentPlayer;
   if (player === 1) {
@@ -177,6 +182,8 @@ const drawCardObject = (player) => {
   }
 };
 
+// function to disable correct player button
+// when player has drawn max cards for round
 const disablePlayerButton = (player) => {
   let currentPlayer;
   let currentButton;
@@ -192,6 +199,7 @@ const disablePlayerButton = (player) => {
   }
 };
 
+// function to sort unshift and render all card elements of a player
 const renderCardElements = (player) => {
   let currentPlayer;
   let currentCol;
@@ -210,6 +218,7 @@ const renderCardElements = (player) => {
   }
 };
 
+// function to empty elements at end of round
 const emptyRoundEnd = (player) => {
   let currentCol;
   if (player === 1) {
@@ -224,6 +233,8 @@ const emptyRoundEnd = (player) => {
   }
 };
 
+// function to empty player elements to
+// prevent duplicate render
 const refreshCardCol = (player) => {
   let currentCol;
   if (player === 1) {
@@ -234,14 +245,15 @@ const refreshCardCol = (player) => {
   currentCol.innerText = '';
 };
 
+// function to determine winner and reset for next round
 const meetWinningConditions = () => {
   if (player2Cards.length === cardCount && player1Cards.length === cardCount) {
     if (calcDifference(player1Cards) > calcDifference(player2Cards)) {
-      output('player 1 wins');
+      output(`Player 1 has a difference of ${calcDifference(player1Cards)} between their highest and lowest rank cards.<br>Player 2 has a difference of ${calcDifference(player2Cards)} between their highest and lowest rank cards.<br><br>Player 1 Wins!<br>Start a new round by choosing the number of cards and pressing a draw button.`);
     } else if (calcDifference(player1Cards) < calcDifference(player2Cards)) {
-      output('player 2 wins');
+      output(`Player 1 has a difference of ${calcDifference(player1Cards)} between their highest and lowest rank cards.<br>Player 2 has a difference of ${calcDifference(player2Cards)} between their highest and lowest rank cards.<br><br>Player 2 Wins!<br>Start a new round by choosing the number of cards and pressing a draw button.`);
     } else {
-      output('tie');
+      output(`Player 1 has a difference of ${calcDifference(player1Cards)} between their highest and lowest rank cards.<br>Player 2 has a difference of ${calcDifference(player2Cards)} between their highest and lowest rank cards.<br><br>It's a tie!<br>Start a new round by choosing the number of cards and pressing a draw button.`);
     }
     player1Cards = [];
     player2Cards = [];
@@ -252,6 +264,7 @@ const meetWinningConditions = () => {
   }
 };
 
+// function containing all functions called when player clicks
 const callPlayerFunctions = (player) => {
   disableCardCountField();
   refreshCardCol(player);
@@ -262,7 +275,6 @@ const callPlayerFunctions = (player) => {
   meetWinningConditions();
 };
 
-/// Callback Functions ///////////////////////////////////////////////////////////////////
 // player 1's button function
 const player1Click = () => {
   const player = 1;
@@ -275,43 +287,50 @@ const player2Click = () => {
   callPlayerFunctions(player);
 };
 
-/// Initialise /////////////////////////////////////////////////////////////////////////
-
+// function to initialise game
 const initGame = () => {
-  container.classList.add('container');
+  container.id = 'container';
   document.body.appendChild(container);
 
   container.appendChild(cardTable);
-  cardRow.classList.add('card-container');
+
+  cardRow.id = 'card-container';
   cardTable.appendChild(cardRow);
 
-  cardColOne.classList.add('player-one');
+  cardColOne.id = 'player-one';
   cardRow.appendChild(cardColOne);
-  cardColTwo.classList.add('player-two');
+  cardColTwo.id = 'player-two';
   cardRow.appendChild(cardColTwo);
 
-  infoRow.classList.add('info-row');
-  cardTable.appendChild(infoRow);
-  gameInfo.classList.add('game-info');
-  infoRow.appendChild(gameInfo);
+  buttonAndFieldContainer.id = 'button-field-container';
+  document.body.appendChild(buttonAndFieldContainer);
 
+  player1Button.id = 'button-one';
   player1Button.classList.add('button');
   player1Button.innerText = 'Player 1 Draw';
-  document.body.appendChild(player1Button);
+  buttonAndFieldContainer.appendChild(player1Button);
 
-  player2Button.classList.add('button');
-  player2Button.innerText = 'Player 2 Draw';
-  document.body.appendChild(player2Button);
-
-  document.body.appendChild(inputContainer);
+  cardCountField.id = 'input-field';
   cardCountField.type = 'number';
   cardCountField.value = '2';
   cardCountField.min = '2';
   cardCountField.max = '6';
-  inputContainer.appendChild(cardCountField);
+  buttonAndFieldContainer.appendChild(cardCountField);
+
+  player2Button.id = 'button-two';
+  player2Button.classList.add('button');
+  player2Button.innerText = 'Player 2 Draw';
+  buttonAndFieldContainer.appendChild(player2Button);
+
+  infoContainer.id = 'info-container';
+  document.body.appendChild(infoContainer);
+
+  gameInfo.id = 'game-info';
+  infoContainer.appendChild(gameInfo);
 
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
 };
 
+// call to initialise game
 initGame();
