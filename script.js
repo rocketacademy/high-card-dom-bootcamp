@@ -1,8 +1,5 @@
 /// Global Variables ///////////////////////////////////////////////////////////////////
-// player 1 starts by default
-let playersTurn = 1;
-
-let previousTurn;
+let endRound = false;
 
 let cardCount = 2;
 
@@ -163,66 +160,119 @@ const calcDifference = (hand) => {
   return handDif;
 };
 
-/// Callback Functions ///////////////////////////////////////////////////////////////////
-// player 1's button to draw card and switch to player 2's turn
-const player1Click = () => {
+const disableCardCountField = () => {
   cardCountField.disabled = true;
   cardCount = Number(cardCountField.value);
-  if (playersTurn === 1) {
-    cardColOne.innerText = '';
-    if (previousTurn === 2) {
-      cardColTwo.innerText = '';
-    }
-    if (player1Cards.length < cardCount) {
-      player1Cards.push(deck.pop());
-    }
-    player1Cards.sort((firstItem, secondItem) => firstItem.rank - secondItem.rank);
-    player1Cards.unshift(player1Cards.pop());
-    for (let i = 0; i < player1Cards.length; i += 1) {
-      const cardElement = makeCard(player1Cards[i]);
-      cardColOne.appendChild(cardElement);
-    }
-    if (player1Cards.length === cardCount) {
-      gameInfo.innerHTML = 'Its player 2 turn. Click to draw a card!';
-      previousTurn = 1;
-      playersTurn = 2;
-      player1Button.disabled = true;
-      player2Button.disabled = false;
-    }
+};
+
+const drawCardObject = (player) => {
+  let currentPlayer;
+  if (player === 1) {
+    currentPlayer = player1Cards;
+  } else if (player === 2) {
+    currentPlayer = player2Cards;
+  }
+  if (currentPlayer.length < cardCount) {
+    currentPlayer.push(deck.pop());
   }
 };
 
-// player 2's button to draw card, determine winner and switch back to player 1's turn to repeat
-const player2Click = () => {
-  if (playersTurn === 2) {
-    cardColTwo.innerText = '';
-    if (player2Cards.length < cardCount) {
-      player2Cards.push(deck.pop());
-    }
-    player2Cards.sort((firstItem, secondItem) => firstItem.rank - secondItem.rank);
-    player2Cards.unshift(player2Cards.pop());
-    for (let i = 0; i < player2Cards.length; i += 1) {
-      const cardElement = makeCard(player2Cards[i]);
-      cardColTwo.appendChild(cardElement);
-    }
-    if (player2Cards.length === cardCount) {
-      if (calcDifference(player1Cards) > calcDifference(player2Cards)) {
-        output('player 1 wins');
-      } else if (calcDifference(player1Cards) < calcDifference(player2Cards)) {
-        output('player 2 wins');
-      } else {
-        output('tie');
-      }
-      gameInfo.innerHTML += '<br>Its player 1 turn. Click to draw a card!';
-      previousTurn = 2;
-      playersTurn = 1;
-      player1Cards = [];
-      player2Cards = [];
-      player1Button.disabled = false;
-      player2Button.disabled = true;
-      cardCountField.disabled = false;
-    }
+const disablePlayerButton = (player) => {
+  let currentPlayer;
+  let currentButton;
+  if (player === 1) {
+    currentPlayer = player1Cards;
+    currentButton = player1Button;
+  } else if (player === 2) {
+    currentPlayer = player2Cards;
+    currentButton = player2Button;
   }
+  if (currentPlayer.length === cardCount) {
+    currentButton.disabled = true;
+  }
+};
+
+const renderCardElements = (player) => {
+  let currentPlayer;
+  let currentCol;
+  if (player === 1) {
+    currentPlayer = player1Cards;
+    currentCol = cardColOne;
+  } else if (player === 2) {
+    currentPlayer = player2Cards;
+    currentCol = cardColTwo;
+  }
+  currentPlayer.sort((firstItem, secondItem) => firstItem.rank - secondItem.rank);
+  currentPlayer.unshift(currentPlayer.pop());
+  for (let i = 0; i < currentPlayer.length; i += 1) {
+    const cardElement = makeCard(currentPlayer[i]);
+    currentCol.appendChild(cardElement);
+  }
+};
+
+const emptyRoundEnd = (player) => {
+  let currentCol;
+  if (player === 1) {
+    currentCol = cardColTwo;
+  } else if (player === 2) {
+    currentCol = cardColOne;
+  }
+  if (endRound) {
+    currentCol.innerText = '';
+    gameInfo.innerText = '';
+    endRound = false;
+  }
+};
+
+const refreshCardCol = (player) => {
+  let currentCol;
+  if (player === 1) {
+    currentCol = cardColOne;
+  } else if (player === 2) {
+    currentCol = cardColTwo;
+  }
+  currentCol.innerText = '';
+};
+
+const meetWinningConditions = () => {
+  if (player2Cards.length === cardCount && player1Cards.length === cardCount) {
+    if (calcDifference(player1Cards) > calcDifference(player2Cards)) {
+      output('player 1 wins');
+    } else if (calcDifference(player1Cards) < calcDifference(player2Cards)) {
+      output('player 2 wins');
+    } else {
+      output('tie');
+    }
+    player1Cards = [];
+    player2Cards = [];
+    player1Button.disabled = false;
+    player2Button.disabled = false;
+    cardCountField.disabled = false;
+    endRound = true;
+  }
+};
+
+const callPlayerFunctions = (player) => {
+  disableCardCountField();
+  refreshCardCol(player);
+  emptyRoundEnd(player);
+  drawCardObject(player);
+  renderCardElements(player);
+  disablePlayerButton(player);
+  meetWinningConditions();
+};
+
+/// Callback Functions ///////////////////////////////////////////////////////////////////
+// player 1's button function
+const player1Click = () => {
+  const player = 1;
+  callPlayerFunctions(player);
+};
+
+// player 2's button function
+const player2Click = () => {
+  const player = 2;
+  callPlayerFunctions(player);
 };
 
 /// Initialise /////////////////////////////////////////////////////////////////////////
@@ -243,18 +293,14 @@ const initGame = () => {
   infoRow.classList.add('info-row');
   cardTable.appendChild(infoRow);
   gameInfo.classList.add('game-info');
-  // fill gameInfo div with starting instructions
-  gameInfo.innerHTML = 'Its player 1 turn. Click to draw a card!';
   infoRow.appendChild(gameInfo);
 
-  // initialize button functionality
   player1Button.classList.add('button');
   player1Button.innerText = 'Player 1 Draw';
   document.body.appendChild(player1Button);
 
   player2Button.classList.add('button');
   player2Button.innerText = 'Player 2 Draw';
-  player2Button.disabled = true;
   document.body.appendChild(player2Button);
 
   document.body.appendChild(inputContainer);
