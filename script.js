@@ -103,73 +103,146 @@ const createCard = (cardData) => {
   return card;
 };
 
+// function. Calculate total hand value for comparison.
+const getHandValue = (hand) => {
+  let finalHandValue = 0;
+  for (let i = 0; i < hand.length; i += 1) {
+    finalHandValue += hand[i].rank;
+  }
+  return finalHandValue;
+};
+
 // GLOBAL VARIABLES
 const deck = shuffleDeck(createDeck());
 
 const gameInterface = document.createElement('div');
-const gameInfo = document.createElement('div');
 const player1Button = document.createElement('button');
 const player2Button = document.createElement('button');
-
+const skipButton = document.createElement('button');
+let player1Hand = [];
+let player2Hand = [];
+let player1HandValue;
+let player2HandValue;
 let playerTurn = 1;
 let player1Card;
 let player2Card;
 
-let cardContainer;
+let cardContainer1;
+let cardContainer2;
 
 const output = (message) => {
-  gameInfo.innerText = message;
+  gameInterface.innerText = message;
 };
 
 // PLAYER ACTION CALLBACK
+// GAME LOGIC
+const checkWinConditions = () => {
+  if (player1HandValue > player2HandValue) {
+    output(`Player 1 Hand Value: ${player1HandValue}
+    Player 2 Hand Value: ${player2HandValue}
+    Player 1 Wins!`);
+  } else if (player1HandValue < player2HandValue) {
+    output(`Player 1 Hand Value: ${player1HandValue}
+    Player 2 Hand Value: ${player2HandValue}
+    Player 2 Wins!`);
+  } else { output(`Player 1 Hand Value: ${player1HandValue}
+    Player 2 Hand Value: ${player2HandValue}
+    Players are tied!`); }
+};
+
+const gameStateManager = () => {
+  if (playerTurn === 1) {
+    playerTurn = 2;
+    skipButton.innerText = 'compare values';
+
+    gameInterface.innerText = `It's player 2's turn. Each click to draws a card!
+  Click multiple times to draw up to the same hand size as player 1.
+  Player 2 may click the 'compare values' button with a smaller hand size to compare the hand values, and get bonus points! 
+  The highest valued hand wins!`;
+  } else if (playerTurn === 2) {
+    playerTurn = 1;
+    checkWinConditions();
+    skipButton.innerText = 'reset';
+  } else if (playerTurn === 0) {
+    // reset game state
+    cardContainer1.innerText = '';
+    cardContainer2.innerText = '';
+    player1Hand = [];
+    player2Hand = [];
+    playerTurn = 1;
+    skipButton.innerText = 'Stand';
+    gameInterface.innerText = `It's player 1's turn. Click to draw a card!
+  Click multiple times to draw up to a hand of 5. 
+  Player 2 will match the number of cards.
+  Click the 'stand' button to let player 2 draw if player 1 does not have 5 cards yet.
+  The higher hand value wins!`;
+  }
+  console.log(`player turn: ${playerTurn}`);
+};
+
 const player1Click = () => {
   if (playerTurn === 1) {
-    cardContainer.innerText = '';
-
+    // cardContainer.innerText = '';
     player1Card = deck.pop();
     const cardElement = createCard(player1Card);
 
-    cardContainer.appendChild(cardElement);
-    playerTurn = 2;
+    player1Hand.push(player1Card);
+    console.log(`Player 1 Hand: ${player1Hand}`);
+    player1HandValue = getHandValue(player1Hand);
+    console.log(`Player 1 Hand Value: ${player1HandValue}`);
+    cardContainer1.appendChild(cardElement);
+    if (player1Hand.length === 5) {
+      playerTurn = 2;
+    }
   }
 };
 
 const player2Click = () => {
   if (playerTurn === 2) {
     player2Card = deck.pop();
-
     const cardElement = createCard(player2Card);
-    cardContainer.appendChild(cardElement);
 
-    playerTurn = 1;
-
-    if (player1Card.rank > player2Card.rank) {
-      output('Player 1 wins');
-    } else if (player1Card.rank < player2Card.rank) {
-      output('Player 2 wins');
-    } else { output('You tied!'); }
+    player2Hand.push(player2Card);
+    console.log(`Player 2 Hand: ${player2Hand}`);
+    player2HandValue = getHandValue(player2Hand);
+    console.log(`Player 2 Hand Value: ${player2HandValue}`);
+    cardContainer2.appendChild(cardElement);
+    if (player2Hand.length === player1Hand.length) {
+      playerTurn = 0;
+      checkWinConditions();
+      skipButton.innerText = 'Reset';
+    }
   }
 };
 
-// GAME LOGIC
-
 // GAME INIT
 const initGame = () => {
-  gameInfo.innerText = "It's player 1's turn. Click to draw a card!";
-  gameInfo.classList.add('game-message');
-  document.body.appendChild(gameInfo);
+  gameInterface.innerText = `It's player 1's turn. Click to draw a card!
+  Click multiple times to draw up to a hand of 5. 
+  Player 2 will match the number of cards.
+  Click the 'stand' button to let player 2 draw if player 1 does not have 5 cards yet.
+  The higher hand value wins!`;
+  gameInterface.classList.add('game-message');
+  document.body.appendChild(gameInterface);
 
-  cardContainer = document.createElement('div');
-  cardContainer.classList.add('card-container');
-  document.body.appendChild(cardContainer);
+  cardContainer1 = document.createElement('div');
+  cardContainer1.classList.add('card-container');
+  document.body.appendChild(cardContainer1);
+
+  cardContainer2 = document.createElement('div');
+  cardContainer2.classList.add('card-container');
+  document.body.appendChild(cardContainer2);
 
   player1Button.innerText = 'Player 1 Draw';
   document.body.appendChild(player1Button);
   player2Button.innerText = 'Player 2 Draw';
   document.body.appendChild(player2Button);
+  skipButton.innerText = 'Stand';
+  document.body.appendChild(skipButton);
 
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
+  skipButton.addEventListener('click', gameStateManager);
 };
 
 initGame();
