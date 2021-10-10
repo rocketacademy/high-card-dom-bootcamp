@@ -188,6 +188,7 @@ const player2Click = () => {
         output('tie');
       }
     }, 2000);
+    canClick = true;
     console.log('timeout is happening');
   }
 };
