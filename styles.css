@@ -1,3 +1,79 @@
+h1 {
+  text-align: center;
+}
+
 body {
+  font-family: Roboto;
+}
+
+.button {
+  display: inline-block;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 9px 24px;
+  color: white;
+  background-color: #6261b5;
+  margin: 4px 2px;
+  /* button shadow */
+  box-shadow: 1px 2px 2px rgb(208 221 241 / 28%);
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: none;
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.card {
+  border-width: thin;
+  border-style: solid;
+  margin: 10px;
+  padding: 10px;
+  background-color: white;
+  width: 45px;
+  text-align: center;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.card-container {
+  margin: 10px;
+  padding: 10px;
+  height: 120px;
   background-color: pink;
+  text-align: center;
+}
+
+.game-info {
+  margin: 10px;
+  padding: 10px;
+  text-align: center;
+  font-weight: 14px;
+}
+
+.input-field {
+  width: 200px;
+  padding: 9px 24px;
+  margin: 4px 2px;
+}
+
+.name {
+  margin: 5px;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.red {
+  color: red;
+}
+
+.suit {
+  margin: 5px;
+  font-size: 20px;
+}
+
+.wrapper {
+  text-align: center;
+  margin: 10px;
+  padding: 10px;
 }
