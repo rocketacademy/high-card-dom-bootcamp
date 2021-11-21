@@ -1,4 +1,8 @@
 /**
+ * https://bootcamp.rocketacademy.co/1-1-frontend-basics/1.3-high-card-dom
+ */
+
+/**
  * Create a card element.
  * @param {*} cardInfo Metadata of a card.
  * @returns Card element.
