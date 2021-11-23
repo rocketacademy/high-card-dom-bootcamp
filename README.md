@@ -1,2 +1,2 @@
 # Rocket Academy Coding Bootcamp: High Card
-Published via Netlify: https://xmas-match-game.netlify.app/
+Published via GitHub Pages: https://ameliawibi.github.io/high-card-bootcamp/index.html
