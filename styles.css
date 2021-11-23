@@ -23,3 +23,13 @@
 .red {
   color: red;
 }
+
+.button {
+  margin-right: 10px;
+}
+
+.cardrow {
+  background-color: #dad8d7;
+  margin: 15px;
+  padding: 20px;
+}
