@@ -1,17 +1,19 @@
 // SET GLOBAL VARIABLES
 
-let playersTurn = 1;
 let player1Card;
-
-const player1Button = document.createElement('button');
-
-const player2Button = document.createElement('button');
-
-const cardRow = document.createElement('div');
+let player2Card;
+const player1Hand = [];
+const player2Hand = [];
 
 const gameInfo = document.createElement('div');
 
-let canClick = true;
+const player1Button = document.createElement('button');
+const player2Button = document.createElement('button');
+
+const p1CardRow = document.createElement('div');
+p1CardRow.classList.add('cardrow');
+const p2CardRow = document.createElement('div');
+p2CardRow.classList.add('cardrow');
 
 // HELPER FUNCTIONS
 
@@ -103,6 +105,8 @@ const makeDeck = () => {
   return newDeck;
 };
 
+const deck = shuffleCards(makeDeck());
+
 const createCard = (cardInfo) => {
   const suit = document.createElement('div');
   suit.classList.add('suit', cardInfo.color);
@@ -127,40 +131,51 @@ const output = (message) => {
   gameInfo.innerText = message;
 };
 
+// create helper function to sort array by descending order
+const sortArray = (array) => {
+  array.sort((a, b) => b.rank - a.rank);
+};
+
+// calculate difference between highest and lowest rank in hand
+const calcRankDiff = (array) => {
+  sortArray(array);
+  const rankDiff = array[0].rank - array[array.length - 1].rank;
+  return rankDiff;
+};
+
 // PLAYER ACTION FUNCTIONS
 
 const player1Click = () => {
-  if (playersTurn === 1 && canClick === true) {
-    canClick = false;
+  player1Card = deck.pop();
+  player1Hand.push(player1Card);
+  const cardElement = createCard(player1Card);
+  p1CardRow.appendChild(cardElement);
 
-    player1Card = deck.pop();
-
-    const cardElement = createCard(player1Card);
-
-    // empty card container in case this is not first time picking card
-    cardRow.innerHTML = '';
-    output('Now Player 2, pick a card!');
-    cardRow.appendChild(cardElement);
-    playersTurn = 2;
-    canClick = true;
+  if (player1Hand.length < 2 || player2Hand.length < 2) {
+    output('Y\'all gotta draw more cards!');
+  } else if (player1Hand.length > 1 && player2Hand > 1) {
+    if (calcRankDiff(player1Hand) > calcRankDiff(player2Hand)) {
+      output('Player 1 wins!');
+    } else if (calcRankDiff(player1Hand) < calcRankDiff(player2Hand)) {
+      output('Player 2 wins!');
+    } else {
+      output('It\'s a tie!');
+    }
   }
 };
 
 const player2Click = () => {
-  if (playersTurn === 2 && canClick === true) {
-    canClick = false;
+  player2Card = deck.pop();
+  player2Hand.push(player2Card);
+  const cardElement = createCard(player2Card);
+  p2CardRow.appendChild(cardElement);
 
-    const player2Card = deck.pop();
-    const cardElement = createCard(player2Card);
-
-    cardRow.appendChild(cardElement);
-
-    playersTurn = 1;
-    canClick = true;
-
-    if (player1Card.rank > player2Card.rank) {
+  if (player1Hand.length < 2 || player2Hand.length < 2) {
+    output('Y\'all gotta draw more cards!');
+  } else if (player2Hand.length > 1 && player1Hand.length > 1) {
+    if (calcRankDiff(player1Hand) > calcRankDiff(player2Hand)) {
       output('Player 1 wins!');
-    } else if (player1Card.rank < player2Card.rank) {
+    } else if (calcRankDiff(player1Hand) < calcRankDiff(player2Hand)) {
       output('Player 2 wins!');
     } else {
       output('It\'s a tie!');
@@ -172,22 +187,23 @@ const player2Click = () => {
 
 const initGame = () => {
   // fill game info with instructions
-  document.body.appendChild(cardRow);
-
-  output('It\'s Player 1\'s turn! Click to draw a card!');
+  output('Draw as many cards as you want! The player with the greatest difference between their highest card and lowest card wins!');
   document.body.appendChild(gameInfo);
 
-  // add text to player buttons
+  document.body.appendChild(p1CardRow);
+
   player1Button.innerText = 'Player 1 Draw';
+  player1Button.classList.add('button');
   document.body.appendChild(player1Button);
 
+  document.body.appendChild(p2CardRow);
+
   player2Button.innerText = 'Player 2 Draw';
+  player2Button.classList.add('button');
   document.body.appendChild(player2Button);
 
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
 };
-
-const deck = shuffleCards(makeDeck());
 
 initGame();
