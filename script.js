@@ -87,14 +87,8 @@ const makeDeck = () => {
         cardColour = 'red';
       }
 
-      // Create a new card info with the suit symbol, suit, name,
-      // display name, colour, and rank.
-      // -  suitSymbol: '♦️',
-      // -  suit: 'diamond',
-      // -  name: 'queen',
-      // -  displayName: 'Q',
-      // -  colour: 'red',
-      // -  rank: 12,
+      // Create a new card info with the suit symbol ('♦️'), suit ('diamond'),
+      // name ('queen'), display name ('Q'), colour ('red'), and rank (12).
       const card = {
         suitSymbol: suitsSymbol[suitIndex],
         suit: suits[suitIndex],
@@ -170,20 +164,20 @@ const player2Click = () => {
   }
 };
 
-const initGame = () => {
+const initalizeGame = () => {
   // fill game info div with starting instructions
   gameInfo.innerText = 'It\'s player 1 turn. Click to draw a card!';
   document.body.appendChild(gameInfo);
 
-  // initialize button functionality
+  // initialize button functionality for player 1
   player1Button.innerText = 'Player 1 Draw';
   document.body.appendChild(player1Button);
+  player1Button.addEventListener('click', player1Click);
 
+  // initialize button functionality for player 2
   player2Button.innerText = 'Player 2 Draw';
   document.body.appendChild(player2Button);
-
-  player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
 };
 
-initGame();
+initalizeGame();
