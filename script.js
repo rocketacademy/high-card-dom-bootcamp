@@ -106,18 +106,18 @@ let player1Card;
 
 // create two buttons
 const player1Button = document.createElement('button');
-player1Button.innerText = 'Player 1 Draw';
-document.body.appendChild(player1Button);
+// player1Button.innerText = 'Player 1 Draw';
+// document.body.appendChild(player1Button);
 
 const player2Button = document.createElement('button');
-player2Button.innerText = 'Player 2 Draw';
-document.body.appendChild(player2Button);
+// player2Button.innerText = 'Player 2 Draw';
+// document.body.appendChild(player2Button);
 
 // Create game info div as global value
 // fill game info div with starting instructions
 const gameInfo = document.createElement('div');
-gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
-document.body.appendChild(gameInfo);
+// gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
+// document.body.appendChild(gameInfo);
 
 //////////////////////////////////
 
@@ -129,34 +129,37 @@ const output = (message) => {
 
 // Add an event listener on player 1's button to draw card and switch
 // to player 2's turn
-player1Button.addEventListener('click', () => {
-  if (playersTurn === 1) {
-    player1Card = deck.pop();
-    playersTurn = 2;
-  }
-});
+// player1Button.addEventListener('click', () => {
+//   if (playersTurn === 1) {
+//     player1Card = deck.pop();
+//     playersTurn = 2;
+//     console.log(`playersTurn of p1button`,playersTurn)
+//   }
+// });
 
 // Add event listener on player 2's button to draw card and determine winner
 // Switch back to player 1's turn to repeat game
-player2Button.addEventListener('click', () => {
-  if (playersTurn === 2) {
-    const player2Card = deck.pop();
-    playersTurn = 1;
+// player2Button.addEventListener('click', () => {
+//   if (playersTurn === 2) {
+//     const player2Card = deck.pop();
+//     playersTurn = 1;
 
-    if (player1Card.rank > player2Card.rank) {
-      output('player 1 wins');
-    } else if (player1Card.rank < player2Card.rank) {
-      output('player 2 wins');
-    } else {
-      output('tie');
-    }
-  }
-});
+//     if (player1Card.rank > player2Card.rank) {
+//       output('player 1 wins');
+//     } else if (player1Card.rank < player2Card.rank) {
+//       output('player 2 wins');
+//     } else {
+//       output('tie');
+//     }
+//   }
+// });
 
 const player1Click = () => {
+  console.log(`playersTurn`, playersTurn)
   if (playersTurn === 1) {
     // Pop player 1's card metadata from the deck
     player1Card = deck.pop();
+    console.log(`player1 card`,player1Card)
 
     // Create card element from card metadata
     const cardElement = createCard(player1Card);
@@ -164,7 +167,7 @@ const player1Click = () => {
     cardContainer.innerHTML = '';
     // Append the card element to the card container
     cardContainer.appendChild(cardElement);
-
+    console.log(cardElement)
     // Switch to player 2's turn
     playersTurn = 2;
   }
@@ -174,6 +177,7 @@ const player2Click = () => {
   if (playersTurn === 2) {
     // Pop player 2's card metadata from the deck
     const player2Card = deck.pop();
+    console.log(`player2 card`, player2Card);
 
     // Create card element from card metadata
     const cardElement = createCard(player2Card);
@@ -194,6 +198,9 @@ const player2Click = () => {
   }
 };
 
+// Add the cardContainer DOM element as a global variable.
+let cardContainer;
+
 const initGame = () => {
   // initialize button functionality
   player1Button.innerText = 'Player 1 Draw';
@@ -204,6 +211,7 @@ const initGame = () => {
 
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
+
 
   // fill game info div with starting instructions
   gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
@@ -250,12 +258,12 @@ const createCard = (cardInfo) => {
 
   const name = document.createElement('div');
   name.classList.add(cardInfo.displayName, cardInfo.colour);
-  name.innerText = '3';
+  name.innerText = cardInfo.displayName;
 
   ///////////////////////////
   // Update Deck Creation to Include MORE Visual Card Attributes
 
-  const displayName = document.createElement(`div`);
+  // const displayName = document.createElement(`div`);
 
   ////////////////////////////////
 
@@ -268,6 +276,6 @@ const createCard = (cardInfo) => {
   return card;
 };
 
-////////////////////////
-// Add the cardContainer DOM element as a global variable.
-let cardContainer;
+
+
+initGame()
