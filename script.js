@@ -253,7 +253,7 @@ const cardInfo = {
 // Create a visual card from sample card
 const createCard = (cardInfo) => {
   const suit = document.createElement('div');
-  suit.classList.add('suit');
+  suit.classList.add('suit', cardInfo.colour);
   suit.innerText = cardInfo.suitSymbol;
 
   const name = document.createElement('div');
