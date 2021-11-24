@@ -182,7 +182,7 @@ const arrangeCardsDisplay = (playerNum) => {
     if (player1Cards.length > 2) {
       sortedCards.sort(compareNumbers);
       player1CardList.innerHTML = '';
-      console.log('in 1 > 2', sortedCards);
+      console.log('in 1 > 2', sortedCards); 
       addCardOnList(1, sortedCards[0]);
       console.log('in 1 > 2', sortedCards[0]);
       addCardOnList(1, sortedCards[sortedCards.length - 1]);
