@@ -1,3 +1,73 @@
 body {
-  background-color: pink;
+  background-color: rgb(178, 228, 225);
+  font-family: "Roboto", sans-serif;
+  margin-left: 50px;
+}
+
+.card {
+  margin: 10px;
+  padding: 10px;
+  background-color: white;
+  width: 50px;
+  text-align: center;
+  border: 2px solid black;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.suit {
+  margin: 5px;
+  font-size: 20px;
+}
+
+.name {
+  margin: 5px;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.red {
+  color: red;
+}
+
+.black {
+  color: black;
+}
+
+.card-row {
+  background-color: lightseagreen;
+  border-radius: 8px;
+  padding: 10px;
+  margin-right: 50px;
+}
+
+.output {
+  margin: 10px 0px 10px 0px;
+  font-size: 18px;
+  color: darkslategrey;
+}
+
+button {
+  margin: 0px 10px 0px 0px;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  width: 150px;
+  background-color: lightgray;
+  border-radius: 2px;
+  border: 1px solid darkgray;
+}
+
+h1 {
+  font-size: 38px;
+}
+
+input {
+  background-color: white;
+}
+
+p {
+  font-size: 16px;
+  margin: 5px 0px 0px 0px;
+  color: seagreen;
 }
