@@ -27,3 +27,14 @@ body {
 .red {
   color: red;
 }
+
+.card-container {
+  margin: 5px;
+  border: 5px solid black;
+  height: 105px;
+}
+
+.card-container-title {
+  margin-bottom: 0px;
+  margin-top: 10px;
+}

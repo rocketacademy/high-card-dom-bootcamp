@@ -1,7 +1,7 @@
 /**
- * Create a card element.
- * @param {*} cardInfo Metadata of a card.
- * @returns Card element.
+ * Create a card element
+ * @param {*} cardInfo Metadata of a card
+ * @returns Card element
  */
 const createCard = (cardInfo) => {
   const name = document.createElement('div');
@@ -21,15 +21,21 @@ const createCard = (cardInfo) => {
   return card;
 };
 
-const cardContainer = document.createElement('div');
-cardContainer.classList.add('card-container');
-document.body.appendChild(cardContainer);
+const player1CardList = document.createElement('div');
+const player2CardList = document.createElement('div');
+const playerInputBox = document.createElement('input');
 
 // Get a random index ranging from 0 (inclusive) to max (exclusive).
 const getRandomIndex = (max) => Math.floor(Math.random() * max);
 
-// Shuffle an array of cards
+/**
+ * Shuffle an array of cards
+ * @param {*} cards Deck of cards
+ * @returns Shuffled cards
+ */
 const shuffleCards = (cards) => {
+  const shuffledCards = cards;
+
   // Loop over the card deck array once
   for (let currentIndex = 0; currentIndex < cards.length; currentIndex += 1) {
     // Select a random index in the deck
@@ -39,18 +45,18 @@ const shuffleCards = (cards) => {
     // Select the card that corresponds to currentIndex
     const currentCard = cards[currentIndex];
     // Swap positions of randomCard and currentCard in the deck
-    cards[currentIndex] = randomCard;
-    cards[randomIndex] = currentCard;
+    shuffledCards[currentIndex] = randomCard;
+    shuffledCards[randomIndex] = currentCard;
   }
   // Return the shuffled deck
-  return cards;
+  return shuffledCards;
 };
 
 /**
- * Make a new card deck.
- * @returns An array of cards.
+ * Make a new card deck
+ * @returns An array of cards
  */
-const makeDeck = () => {
+const createDeck = () => {
   // Initialise an empty deck array
   const newDeck = [];
   // Initialise an array of the 4 suits in our deck. We will loop over this array.
@@ -95,7 +101,7 @@ const makeDeck = () => {
         name: cardName,
         displayName: cardDisplayName,
         colour: cardColour,
-        rank: (rankCounter === 1) ? 14 : rankCounter,
+        rank: rankCounter,
       };
 
       // Add the new card to the deck
@@ -107,10 +113,10 @@ const makeDeck = () => {
   return newDeck;
 };
 
-const deck = shuffleCards(makeDeck());
+const deck = shuffleCards(createDeck());
 
-let playersTurn = 1; // matches with starting instructions
-let player1Card;
+const player1Cards = [];
+const player2Cards = [];
 
 const player1Button = document.createElement('button');
 const player2Button = document.createElement('button');
@@ -123,61 +129,210 @@ const output = (message) => {
   gameInfo.innerText = message;
 };
 
-const player1Click = () => {
-  if (playersTurn === 1) {
-    // Pop player 1's card metadata from the deck
-    player1Card = deck.pop();
+/**
+ * Function to sort array by card rank
+ * @param {*} a First number
+ * @param {*} b Second number
+ * @returns Compare function
+ */
+const compareNumbers = (a, b) => a.rank - b.rank;
 
-    // Create card element from card metadata
-    const cardElement = createCard(player1Card);
-    // Empty cardContainer in case this is not the 1st round of gameplay
-    cardContainer.innerHTML = '';
-    // Append the card element to the card container
-    cardContainer.appendChild(cardElement);
+/**
+ * Determine winner between the players
+ */
+const determineWinner = () => {
+  let player1Score = 0;
+  let player2Score = 0;
 
-    // Switch to player 2's turn
-    playersTurn = 2;
+  player1Cards.sort(compareNumbers);
+  player1Score = player1Cards[player1Cards.length - 1].rank - player1Cards[0].rank;
+
+  player2Cards.sort(compareNumbers);
+  player2Score = player2Cards[player2Cards.length - 1].rank - player2Cards[0].rank;
+
+  if (player1Score > player2Score) {
+    output(`Player 1: ${player1Score} vs Player 2: ${player2Score} -- Player 1 wins!`);
+  } else if (player1Score < player2Score) {
+    output(`Player 1: ${player1Score} vs Player 2: ${player2Score} -- Player 2 wins!`);
+  } else {
+    output(`Player 1: ${player1Score} vs Player 2: ${player2Score} -- Tie!`);
   }
 };
 
-const player2Click = () => {
-  if (playersTurn === 2) {
-    // Pop player 2's card metadata from the deck
-    const player2Card = deck.pop();
+/**
+ * Add card in to player's card list
+ * @param {*} playerNum Number of the player who draws a card
+ * @param {*} playerCard New card
+ */
+const addCardOnList = (playerNum, playerCard) => {
+  // Create card element from card metadata
+  const cardElement = createCard(playerCard);
 
-    // Create card element from card metadata
-    const cardElement = createCard(player2Card);
-    // Append card element to card container
-    cardContainer.appendChild(cardElement);
+  // Get card list for player
+  const cardListContainer = document.getElementById(`player-${playerNum}-card-list`);
 
-    // Switch to player 1's turn
-    playersTurn = 1;
+  // Add card to the end of player's card list
+  cardListContainer.appendChild(cardElement);
+};
 
-    // Determine and output winner
-    if (player1Card.rank > player2Card.rank) {
-      output('Player 1 wins!');
-    } else if (player1Card.rank < player2Card.rank) {
-      output('Player 2 wins!');
+const arrangeCardsDisplay = (playerNum) => {
+  const sortedCards = (playerNum === 1) ? player1Cards.slice() : player2Cards.slice();
+
+  if (playerNum === 1) {
+    if (player1Cards.length > 2) {
+      sortedCards.sort(compareNumbers);
+      player1CardList.innerHTML = '';
+      console.log('in 1 > 2', sortedCards);
+      addCardOnList(1, sortedCards[0]);
+      console.log('in 1 > 2', sortedCards[0]);
+      addCardOnList(1, sortedCards[sortedCards.length - 1]);
+      console.log('in 1 > 2', sortedCards[sortedCards.length - 1]);
+
+      for (let i = 1; i < sortedCards.length - 1; i += 1) {
+        addCardOnList(1, sortedCards[i]);
+      }
     } else {
-      output('Tie!');
+      addCardOnList(1, player1Cards[player1Cards.length - 1]);
     }
+  } else if (player2Cards.length > 2) {
+    sortedCards.sort(compareNumbers);
+    player2CardList.innerHTML = '';
+
+    addCardOnList(2, sortedCards[0]);
+    addCardOnList(2, sortedCards[sortedCards.length - 1]);
+
+    for (let j = 1; j < sortedCards.length - 1; j += 1) {
+      addCardOnList(2, sortedCards[j]);
+    }
+  } else {
+    addCardOnList(2, player2Cards[player2Cards.length - 1]);
   }
 };
 
+// Default number of cards per player
+let playerNumOfCards = 3;
+
+/**
+ * Deal card from the deck to the player
+ * @param {*} playerNum Number of the player to deal the card to
+ */
+const dealCardToPlayer = (playerNum) => {
+  // Pop player's card metadata from the deck
+  const playerCard = deck.pop();
+
+  // Push dealt card to player card array
+  if (playerNum === 1) player1Cards.push(playerCard);
+  else player2Cards.push(playerCard);
+};
+
+/**
+ * Is it start of the game?
+ * @returns True, if it's start of game. False, otherwise.
+ */
+const isStartOfGame = () => ((player1Cards.length === 0)
+  && (player2Cards.length === 0));
+
+/**
+ * Is it end of the game?
+ * @returns True, if it's end of game. False, otherwise.
+ */
+const isEndOfGame = () => ((player1Cards.length === playerNumOfCards)
+  && (player2Cards.length === playerNumOfCards));
+
+/**
+ * Do preparation at the start of the game
+ */
+const prepareGame = () => {
+  playerInputBox.disabled = true;
+
+  // Set number of cards
+  const numOfCardsElement = document.getElementById('numOfCards');
+  if (numOfCardsElement.value === '') playerInputBox.value = playerNumOfCards;
+  playerNumOfCards = parseInt(numOfCardsElement.value, 10);
+};
+
+/**
+ * Handle players' draw button click
+ * @param {*} playerNum Number of the player who clicks the draw button
+ */
+const playerClick = (playerNum) => {
+  if (isStartOfGame()) {
+    prepareGame();
+    player1CardList.innerHTML = '';
+    player2CardList.innerHTML = '';
+    output('Draw a card!');
+  }
+
+  // Check if player 1 has all the cards
+  if ((playerNum === 1) && (player1Cards.length === playerNumOfCards)) {
+    output(`Player ${playerNum} already has ${playerNumOfCards} cards!`);
+    return;
+  }
+
+  // Check if player 2 has all the cards
+  if ((playerNum === 2) && (player2Cards.length === playerNumOfCards)) {
+    output(`Player ${playerNum} already has ${playerNumOfCards} cards!`);
+    return;
+  }
+
+  dealCardToPlayer(playerNum);
+  arrangeCardsDisplay(playerNum);
+
+  if (isEndOfGame()) {
+    determineWinner();
+    playerInputBox.disabled = false;
+    player1Cards.length = 0;
+    player2Cards.length = 0;
+  }
+};
+
+/**
+ * Initialize the game at the very beginning
+ */
 const initalizeGame = () => {
-  // fill game info div with starting instructions
-  gameInfo.innerText = 'It\'s player 1 turn. Click to draw a card!';
+  // Initialize input box to get how many cards per player
+  playerInputBox.setAttribute('id', 'numOfCards');
+  playerInputBox.setAttribute('placeholder', 'How many cards?');
+  document.body.appendChild(playerInputBox);
+
+  // Initialize draw button for player 1
+  player1Button.innerText = 'Player 1 Draw';
+  player1Button.addEventListener('click', () => playerClick(1));
+  document.body.appendChild(player1Button);
+
+  // Initialize draw button for player 2
+  player2Button.innerText = 'Player 2 Draw';
+  player2Button.addEventListener('click', () => playerClick(2));
+  document.body.appendChild(player2Button);
+
+  // Fill game info div with starting instructions
+  gameInfo.innerText = 'Draw a card!';
   document.body.appendChild(gameInfo);
 
-  // initialize button functionality for player 1
-  player1Button.innerText = 'Player 1 Draw';
-  document.body.appendChild(player1Button);
-  player1Button.addEventListener('click', player1Click);
+  // Initialize player 1 card list area
+  player1CardList.setAttribute('id', 'player-1-card-list');
+  player1CardList.classList.add('card-container');
 
-  // initialize button functionality for player 2
-  player2Button.innerText = 'Player 2 Draw';
-  document.body.appendChild(player2Button);
-  player2Button.addEventListener('click', player2Click);
+  // Set player 1 card list area title
+  const player1CardListTitle = document.createElement('div');
+  player1CardListTitle.classList.add('card-container-title');
+  player1CardListTitle.innerText = 'Player 1 Cards';
+
+  // Add player 1 card list area to body
+  document.body.appendChild(player1CardListTitle);
+  document.body.appendChild(player1CardList);
+
+  // Initialize player 2 card list area
+  player2CardList.setAttribute('id', 'player-2-card-list');
+  player2CardList.classList.add('card-container');
+
+  // Set player 2 card list area title
+  const player2CardListTitle = document.createElement('div');
+  player2CardListTitle.classList.add('card-container-title');
+  player2CardListTitle.innerText = 'Player 2 Cards';
+
+  // Add player 2 card list area to body
+  document.body.appendChild(player2CardListTitle);
+  document.body.appendChild(player2CardList);
 };
-
 initalizeGame();
