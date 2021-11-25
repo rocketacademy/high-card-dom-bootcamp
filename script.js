@@ -123,6 +123,9 @@ const player2Button = document.createElement('button');
 
 const gameInfo = document.createElement('div');
 
+// Default number of cards per player
+let playerNumOfCards = 1;
+
 // Create a helper function for output to abstract complexity
 // of DOM manipulation away from game logic
 const output = (message) => {
@@ -144,12 +147,19 @@ const determineWinner = () => {
   let player1Score = 0;
   let player2Score = 0;
 
-  player1Cards.sort(compareNumbers);
-  player1Score = player1Cards[player1Cards.length - 1].rank - player1Cards[0].rank;
+  // Get player's scores
+  if (playerNumOfCards === 1) {
+    player1Score = player1Cards[0].rank;
+    player2Score = player2Cards[0].rank;
+  } else {
+    player1Cards.sort(compareNumbers);
+    player1Score = player1Cards[player1Cards.length - 1].rank - player1Cards[0].rank;
 
-  player2Cards.sort(compareNumbers);
-  player2Score = player2Cards[player2Cards.length - 1].rank - player2Cards[0].rank;
+    player2Cards.sort(compareNumbers);
+    player2Score = player2Cards[player2Cards.length - 1].rank - player2Cards[0].rank;
+  }
 
+  // Print out result
   if (player1Score > player2Score) {
     output(`Player 1: ${player1Score} vs Player 2: ${player2Score} -- Player 1 wins!`);
   } else if (player1Score < player2Score) {
@@ -175,40 +185,49 @@ const addCardOnList = (playerNum, playerCard) => {
   cardListContainer.appendChild(cardElement);
 };
 
+/**
+ * Arrange displayed cards for players
+ * @param {*} playerNum Number of the player
+ */
 const arrangeCardsDisplay = (playerNum) => {
   const sortedCards = (playerNum === 1) ? player1Cards.slice() : player2Cards.slice();
 
   if (playerNum === 1) {
     if (player1Cards.length > 2) {
-      sortedCards.sort(compareNumbers);
       player1CardList.innerHTML = '';
 
-      addCardOnList(1, sortedCards[0]);
-      addCardOnList(1, sortedCards[sortedCards.length - 1]);
+      // Sort the cards to get high/low rank cards easier
+      sortedCards.sort(compareNumbers);
 
+      // Print out the highest and lowest rank cards
+      addCardOnList(playerNum, sortedCards[0]);
+      addCardOnList(playerNum, sortedCards[sortedCards.length - 1]);
+
+      // Print out the rest of the cards
       for (let i = 1; i < sortedCards.length - 1; i += 1) {
         addCardOnList(1, sortedCards[i]);
       }
     } else {
-      addCardOnList(1, player1Cards[player1Cards.length - 1]);
+      addCardOnList(playerNum, player1Cards[player1Cards.length - 1]);
     }
   } else if (player2Cards.length > 2) {
-    sortedCards.sort(compareNumbers);
     player2CardList.innerHTML = '';
 
-    addCardOnList(2, sortedCards[0]);
-    addCardOnList(2, sortedCards[sortedCards.length - 1]);
+    // Sort the cards to get high/low rank cards easier
+    sortedCards.sort(compareNumbers);
 
+    // Print out the highest and lowest rank cards
+    addCardOnList(playerNum, sortedCards[0]);
+    addCardOnList(playerNum, sortedCards[sortedCards.length - 1]);
+
+    // Print out the rest of the cards
     for (let j = 1; j < sortedCards.length - 1; j += 1) {
-      addCardOnList(2, sortedCards[j]);
+      addCardOnList(playerNum, sortedCards[j]);
     }
   } else {
-    addCardOnList(2, player2Cards[player2Cards.length - 1]);
+    addCardOnList(playerNum, player2Cards[player2Cards.length - 1]);
   }
 };
-
-// Default number of cards per player
-let playerNumOfCards = 3;
 
 /**
  * Deal card from the deck to the player
@@ -248,6 +267,15 @@ const prepareGame = () => {
   if (numOfCardsElement.value === '') playerInputBox.value = playerNumOfCards;
   playerNumOfCards = parseInt(numOfCardsElement.value, 10);
 
+  // Automatically change number of cards if input is out of range
+  if (playerNumOfCards < 1) {
+    playerNumOfCards = 1;
+    document.getElementById('numOfCards').value = playerNumOfCards;
+  } else if (playerNumOfCards > 5) {
+    playerNumOfCards = 5;
+    document.getElementById('numOfCards').value = playerNumOfCards;
+  }
+
   // Reset deck and shuffle again
   deck = shuffleCards(createDeck());
 };
@@ -266,13 +294,13 @@ const playerClick = (playerNum) => {
 
   // Check if player 1 has all the cards
   if ((playerNum === 1) && (player1Cards.length === playerNumOfCards)) {
-    output(`Player ${playerNum} already has ${playerNumOfCards} cards!`);
+    output(`Player ${playerNum} already has ${playerNumOfCards} card(s)!`);
     return;
   }
 
   // Check if player 2 has all the cards
   if ((playerNum === 2) && (player2Cards.length === playerNumOfCards)) {
-    output(`Player ${playerNum} already has ${playerNumOfCards} cards!`);
+    output(`Player ${playerNum} already has ${playerNumOfCards} card(s)!`);
     return;
   }
 
@@ -293,7 +321,7 @@ const playerClick = (playerNum) => {
 const initalizeGame = () => {
   // Initialize input box to get how many cards per player
   playerInputBox.setAttribute('id', 'numOfCards');
-  playerInputBox.setAttribute('placeholder', 'How many cards?');
+  playerInputBox.setAttribute('placeholder', 'How many cards? (1-5)');
   document.body.appendChild(playerInputBox);
 
   // Initialize draw button for player 1
