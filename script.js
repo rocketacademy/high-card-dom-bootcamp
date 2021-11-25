@@ -133,6 +133,25 @@ const output = (message) => {
 };
 
 /**
+ * Print out results
+ * @param {*} player1Score Score for player 1
+ * @param {*} player2Score Score for player 2
+ */
+const printResult = (player1Score, player2Score) => {
+  if (player1Score > player2Score) {
+    output('Player 1 Wins!');
+  } else if (player1Score < player2Score) {
+    output('Player 2 Wins!');
+  } else {
+    output('Tie!');
+  }
+
+  // Print players' scores
+  document.getElementById('player-1-card-list-title').innerText += ` (Score: ${player1Score})`;
+  document.getElementById('player-2-card-list-title').innerText += ` (Score: ${player2Score})`;
+};
+
+/**
  * Function to sort array by card rank
  * @param {*} a First number
  * @param {*} b Second number
@@ -159,14 +178,7 @@ const determineWinner = () => {
     player2Score = player2Cards[player2Cards.length - 1].rank - player2Cards[0].rank;
   }
 
-  // Print out result
-  if (player1Score > player2Score) {
-    output(`Player 1: ${player1Score} vs Player 2: ${player2Score} -- Player 1 wins!`);
-  } else if (player1Score < player2Score) {
-    output(`Player 1: ${player1Score} vs Player 2: ${player2Score} -- Player 2 wins!`);
-  } else {
-    output(`Player 1: ${player1Score} vs Player 2: ${player2Score} -- Tie!`);
-  }
+  printResult(player1Score, player2Score);
 };
 
 /**
@@ -190,9 +202,11 @@ const addCardOnList = (playerNum, playerCard) => {
  * @param {*} playerNum Number of the player
  */
 const arrangeCardsDisplay = (playerNum) => {
+  // Copy cards into another array in preparation for sorting
   const sortedCards = (playerNum === 1) ? player1Cards.slice() : player2Cards.slice();
 
   if (playerNum === 1) {
+    // Only need to do rearranging of cards when there are more than 2 cards
     if (player1Cards.length > 2) {
       player1CardList.innerHTML = '';
 
@@ -270,14 +284,28 @@ const prepareGame = () => {
   // Automatically change number of cards if input is out of range
   if (playerNumOfCards < 1) {
     playerNumOfCards = 1;
-    document.getElementById('numOfCards').value = playerNumOfCards;
   } else if (playerNumOfCards > 5) {
     playerNumOfCards = 5;
-    document.getElementById('numOfCards').value = playerNumOfCards;
   }
+
+  // Re-set number of cards after parsing
+  document.getElementById('numOfCards').value = playerNumOfCards;
 
   // Reset deck and shuffle again
   deck = shuffleCards(createDeck());
+};
+
+/**
+ * Reset screen to beginning of the game
+ */
+const resetScreen = () => {
+  player1CardList.innerHTML = '';
+  player2CardList.innerHTML = '';
+
+  output('Draw a card!');
+
+  document.getElementById('player-1-card-list-title').innerText = 'Player 1 Cards';
+  document.getElementById('player-2-card-list-title').innerText = 'Player 2 Cards';
 };
 
 /**
@@ -287,9 +315,7 @@ const prepareGame = () => {
 const playerClick = (playerNum) => {
   if (isStartOfGame()) {
     prepareGame();
-    player1CardList.innerHTML = '';
-    player2CardList.innerHTML = '';
-    output('Draw a card!');
+    resetScreen();
   }
 
   // Check if player 1 has all the cards
@@ -309,6 +335,7 @@ const playerClick = (playerNum) => {
 
   if (isEndOfGame()) {
     determineWinner();
+
     playerInputBox.disabled = false;
     player1Cards.length = 0;
     player2Cards.length = 0;
@@ -319,24 +346,9 @@ const playerClick = (playerNum) => {
  * Initialize the game at the very beginning
  */
 const initalizeGame = () => {
-  // Initialize input box to get how many cards per player
-  playerInputBox.setAttribute('id', 'numOfCards');
-  playerInputBox.setAttribute('placeholder', 'How many cards? (1-5)');
-  document.body.appendChild(playerInputBox);
-
-  // Initialize draw button for player 1
-  player1Button.innerText = 'Player 1 Draw';
-  player1Button.addEventListener('click', () => playerClick(1));
-  document.body.appendChild(player1Button);
-
-  // Initialize draw button for player 2
-  player2Button.innerText = 'Player 2 Draw';
-  player2Button.addEventListener('click', () => playerClick(2));
-  document.body.appendChild(player2Button);
-
-  // Fill game info div with starting instructions
-  gameInfo.innerText = 'Draw a card!';
-  document.body.appendChild(gameInfo);
+  // Prepare game box area
+  const gameBoxDiv = document.createElement('div');
+  gameBoxDiv.classList.add('game-box-div');
 
   // Initialize player 1 card list area
   player1CardList.setAttribute('id', 'player-1-card-list');
@@ -344,12 +356,13 @@ const initalizeGame = () => {
 
   // Set player 1 card list area title
   const player1CardListTitle = document.createElement('div');
+  player1CardListTitle.setAttribute('id', 'player-1-card-list-title');
   player1CardListTitle.classList.add('card-container-title');
   player1CardListTitle.innerText = 'Player 1 Cards';
 
   // Add player 1 card list area to body
-  document.body.appendChild(player1CardListTitle);
-  document.body.appendChild(player1CardList);
+  gameBoxDiv.appendChild(player1CardListTitle);
+  gameBoxDiv.appendChild(player1CardList);
 
   // Initialize player 2 card list area
   player2CardList.setAttribute('id', 'player-2-card-list');
@@ -357,11 +370,48 @@ const initalizeGame = () => {
 
   // Set player 2 card list area title
   const player2CardListTitle = document.createElement('div');
+  player2CardListTitle.setAttribute('id', 'player-2-card-list-title');
   player2CardListTitle.classList.add('card-container-title');
   player2CardListTitle.innerText = 'Player 2 Cards';
 
   // Add player 2 card list area to body
-  document.body.appendChild(player2CardListTitle);
-  document.body.appendChild(player2CardList);
+  gameBoxDiv.appendChild(player2CardListTitle);
+  gameBoxDiv.appendChild(player2CardList);
+
+  // Fill game info div with starting instructions
+  gameInfo.innerText = 'Draw a card!';
+  gameInfo.classList.add('game-info');
+  gameBoxDiv.appendChild(gameInfo);
+
+  document.body.appendChild(gameBoxDiv);
+
+  // Prepare input box area
+  const inputDiv = document.createElement('div');
+  inputDiv.classList.add('input-div');
+
+  // Initialize input box to get how many cards per player
+  playerInputBox.setAttribute('id', 'numOfCards');
+  playerInputBox.setAttribute('placeholder', 'How many cards? (1-5)');
+  playerInputBox.classList.add('input');
+  inputDiv.appendChild(playerInputBox);
+  document.body.appendChild(inputDiv);
+
+  // Prepare buttons box area
+  const buttonsDiv = document.createElement('div');
+  buttonsDiv.classList.add('buttons-div');
+
+  // Initialize draw button for player 1
+  player1Button.innerText = 'Player 1 Draw';
+  player1Button.classList.add('button');
+  player1Button.addEventListener('click', () => playerClick(1));
+  buttonsDiv.appendChild(player1Button);
+
+  // Initialize draw button for player 2
+  player2Button.innerText = 'Player 2 Draw';
+  player2Button.classList.add('button');
+  player2Button.addEventListener('click', () => playerClick(2));
+  buttonsDiv.appendChild(player2Button);
+
+  document.body.appendChild(buttonsDiv);
 };
 initalizeGame();
