@@ -113,7 +113,7 @@ const createDeck = () => {
   return newDeck;
 };
 
-const deck = shuffleCards(createDeck());
+let deck = shuffleCards(createDeck());
 
 const player1Cards = [];
 const player2Cards = [];
@@ -182,11 +182,9 @@ const arrangeCardsDisplay = (playerNum) => {
     if (player1Cards.length > 2) {
       sortedCards.sort(compareNumbers);
       player1CardList.innerHTML = '';
-      console.log('in 1 > 2', sortedCards); 
+
       addCardOnList(1, sortedCards[0]);
-      console.log('in 1 > 2', sortedCards[0]);
       addCardOnList(1, sortedCards[sortedCards.length - 1]);
-      console.log('in 1 > 2', sortedCards[sortedCards.length - 1]);
 
       for (let i = 1; i < sortedCards.length - 1; i += 1) {
         addCardOnList(1, sortedCards[i]);
@@ -249,6 +247,9 @@ const prepareGame = () => {
   const numOfCardsElement = document.getElementById('numOfCards');
   if (numOfCardsElement.value === '') playerInputBox.value = playerNumOfCards;
   playerNumOfCards = parseInt(numOfCardsElement.value, 10);
+
+  // Reset deck and shuffle again
+  deck = shuffleCards(createDeck());
 };
 
 /**
