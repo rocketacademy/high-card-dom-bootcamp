@@ -5,11 +5,11 @@
 let playersTurn = 1; // matches with starting instructions
 let player1Card;
 
-const player1Button = document.createElement('button');
+const player1Button = document.createElement("button");
 
-const player2Button = document.createElement('button');
+const player2Button = document.createElement("button");
 
-const gameInfo = document.createElement('div');
+const gameInfo = document.createElement("div");
 
 let cardContainer;
 
@@ -43,9 +43,9 @@ const makeDeck = () => {
   // Initialise an empty deck array
   const newDeck = [];
   // Initialise an array of the 4 suits in our deck. We will loop over this array.
-  const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
-  const suitSymbols = ['♥', '♦️', '♣', '♠'];
-  const suitColours = ['red', 'red', 'black', 'black'];
+  const suits = ["hearts", "diamonds", "clubs", "spades"];
+  const suitSymbols = ["♥", "♦️", "♣", "♠"];
+  const suitColours = ["red", "red", "black", "black"];
 
   // Loop over the suits
   for (let suitIndex = 0; suitIndex < suits.length; suitIndex += 1) {
@@ -63,18 +63,18 @@ const makeDeck = () => {
       let displayName = `${rankCounter}`;
 
       // If rank is 1, 11, 12, or 13, set cardName to the ace or face card's name
-      if (cardName === '1') {
-        cardName = 'ace';
-        displayName = 'A';
-      } else if (cardName === '11') {
-        cardName = 'jack';
-        displayName = 'J';
-      } else if (cardName === '12') {
-        cardName = 'queen';
-        displayName = 'Q';
-      } else if (cardName === '13') {
-        cardName = 'king';
-        displayName = 'K';
+      if (cardName === "1") {
+        cardName = "ace";
+        displayName = "A";
+      } else if (cardName === "11") {
+        cardName = "jack";
+        displayName = "J";
+      } else if (cardName === "12") {
+        cardName = "queen";
+        displayName = "Q";
+      } else if (cardName === "13") {
+        cardName = "king";
+        displayName = "K";
       }
 
       // Create a new card with the current name
@@ -105,17 +105,17 @@ const output = (message) => {
 
 // createCard function
 const createCard = (cardInfo) => {
-  const suit = document.createElement('div');
+  const suit = document.createElement("div");
   suit.classList.add(cardInfo.suit, cardInfo.colour);
   suit.innerText = cardInfo.suitSymbol;
 
-  const name = document.createElement('div');
+  const name = document.createElement("div");
   name.classList.add(cardInfo.displayName, cardInfo.colour);
   name.innerText = cardInfo.displayName;
   console.log(name.innerText);
 
-  const card = document.createElement('div');
-  card.classList.add('card', 'whiteBackground');
+  const card = document.createElement("div");
+  card.classList.add("card", "whiteBackground");
 
   card.appendChild(name);
   card.appendChild(suit);
@@ -124,8 +124,8 @@ const createCard = (cardInfo) => {
 };
 
 // creating a container element for the cards
-cardContainer = document.createElement('div');
-cardContainer.classList.add('card-container');
+cardContainer = document.createElement("div");
+cardContainer.classList.add("card-container");
 document.body.appendChild(cardContainer);
 
 const deck = shuffleCards(makeDeck());
@@ -142,7 +142,7 @@ const player1Click = () => {
     // Create card element from card metadata
     const cardElement = createCard(player1Card);
     // Empty cardContainer in case this is not the 1st round of gameplay
-    cardContainer.innerHTML = '';
+    cardContainer.innerHTML = "";
     // Append the card element to the card container
     cardContainer.appendChild(cardElement);
     // Switch to player 2's turn
@@ -166,11 +166,11 @@ const player2Click = () => {
 
     // Determine and output winner
     if (player1Card.rank > player2Card.rank) {
-      output('player 1 wins');
+      output("player 1 wins");
     } else if (player1Card.rank < player2Card.rank) {
-      output('player 2 wins');
+      output("player 2 wins");
     } else {
-      output('tie');
+      output("tie");
     }
   }
 };
@@ -178,17 +178,17 @@ const player2Click = () => {
 // initiate game function
 const initGame = () => {
   // initialize button functionality
-  player1Button.innerText = 'Player 1 Draw';
+  player1Button.innerText = "Player 1 Draw";
   document.body.appendChild(player1Button);
 
-  player2Button.innerText = 'Player 2 Draw';
+  player2Button.innerText = "Player 2 Draw";
   document.body.appendChild(player2Button);
 
-  player1Button.addEventListener('click', player1Click);
-  player2Button.addEventListener('click', player2Click);
+  player1Button.addEventListener("click", player1Click);
+  player2Button.addEventListener("click", player2Click);
 
   // fill game info div with starting instructions
-  gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
+  gameInfo.innerText = "Its player 1 turn. Click to draw a card!";
   document.body.appendChild(gameInfo);
 };
 
