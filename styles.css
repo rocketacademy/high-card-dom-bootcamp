@@ -1,3 +1,72 @@
 body {
   background-color: pink;
 }
+
+.card {
+  margin: 10px;
+  padding: 10px;
+  background-color: grey;
+  width: 50px;
+  text-align: center;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.suit {
+  margin: 5px;
+  font-size: 20px;
+}
+
+.name {
+  margin: 5px;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.red {
+  color: red;
+}
+
+.game-box-div {
+  border: 5px solid black;
+  height: 320px;
+  width: 465px;
+  padding: 10px;
+}
+
+.game-info {
+  margin: 10px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 20px;
+}
+
+.input-div {
+  margin: 10px 10px 10px 0;
+}
+
+.buttons-div {
+  margin: 10px 10px 10px 0;
+  padding: 0;
+}
+
+.button {
+  margin-right: 20px;
+}
+
+.input {
+  margin-right: 5px;
+  align-items: center;
+  width: 210px;
+}
+
+.card-container {
+  margin: 5px;
+  height: 105px;
+  border: 2px solid black;
+}
+
+.card-container-title {
+  margin: 10px 0 0 10px;
+}
