@@ -154,52 +154,103 @@ const output = (message) => {
 //   }
 // });
 
-const player1Click = () => {
-  console.log(`playersTurn`, playersTurn)
-  if (playersTurn === 1) {
-    // Pop player 1's card metadata from the deck
-    player1Card = deck.pop();
-    console.log(`player1 card`,player1Card)
 
-    // Create card element from card metadata
-    const cardElement = createCard(player1Card);
-    // Empty cardContainer in case this is not the 1st round of gameplay
-    cardContainer.innerHTML = '';
-    // Append the card element to the card container
-    cardContainer.appendChild(cardElement);
-    console.log(cardElement)
-    // Switch to player 2's turn
-    playersTurn = 2;
+// Add the cardContainer DOM element as a global variable.
+let cardContainer;
+// a global boolean variable to represent whether the user has recently clicked and we are waiting for the delay to end.
+let canClick = true;
+///...REPLACE BY PLAYER CLICK CALLBACKS ..... //
+// const player1Click = () => {
+//   console.log(`playersTurn`, playersTurn)
+//   if (playersTurn === 1) {
+//     // Pop player 1's card metadata from the deck
+//     player1Card = deck.pop();
+//     console.log(`player1 card`,player1Card)
+
+//     // Create card element from card metadata
+//     const cardElement = createCard(player1Card);
+//     // Empty cardContainer in case this is not the 1st round of gameplay
+//     cardContainer.innerHTML = '';
+//     // Append the card element to the card container
+//     cardContainer.appendChild(cardElement);
+//     console.log(cardElement)
+//     // Switch to player 2's turn
+//     playersTurn = 2;
+//   }
+// };
+
+// const player2Click = () => {
+//   if (playersTurn === 2) {
+//     // Pop player 2's card metadata from the deck
+//     const player2Card = deck.pop();
+//     console.log(`player2 card`, player2Card);
+
+//     // Create card element from card metadata
+//     const cardElement = createCard(player2Card);
+//     // Append card element to card container
+//     cardContainer.appendChild(cardElement);
+
+//     // Switch to player 1's turn
+//     playersTurn = 1;
+
+//     // Determine and output winner
+//     if (player1Card.rank > player2Card.rank) {
+//       output('player 1 wins');
+//     } else if (player1Card.rank < player2Card.rank) {
+//       output('player 2 wins');
+//     } else {
+//       output('tie');
+//     }
+//   }
+// };
+///...REPLACE BY PLAYER CLICK CALLBACKS ..... //
+
+
+// REPLACE BY PLAYER CLICK CALLBACKS
+const player1Click = () => {
+  if (playersTurn === 1 && canClick === true) {
+    canClick = false;
+
+    setTimeout(() => {
+      player1Card = deck.pop();
+
+      const cardElement = createCard(player1Card);
+
+      // in case this is not the 1st time
+      // in the entire app,
+      // empty the card container
+      cardContainer.innerHTML = '';
+
+      cardContainer.appendChild(cardElement);
+      playersTurn = 2;
+      canClick = true;
+    }, 2000);
   }
 };
 
 const player2Click = () => {
-  if (playersTurn === 2) {
-    // Pop player 2's card metadata from the deck
-    const player2Card = deck.pop();
-    console.log(`player2 card`, player2Card);
+  if (playersTurn === 2 && canClick === true) {
+    canClick = false;
 
-    // Create card element from card metadata
-    const cardElement = createCard(player2Card);
-    // Append card element to card container
-    cardContainer.appendChild(cardElement);
+    setTimeout(() => {
+      const player2Card = deck.pop();
+      const cardElement = createCard(player2Card);
 
-    // Switch to player 1's turn
-    playersTurn = 1;
+      cardContainer.appendChild(cardElement);
 
-    // Determine and output winner
-    if (player1Card.rank > player2Card.rank) {
-      output('player 1 wins');
-    } else if (player1Card.rank < player2Card.rank) {
-      output('player 2 wins');
-    } else {
-      output('tie');
-    }
+      playersTurn = 1;
+      canClick = true;
+
+      if (player1Card.rank > player2Card.rank) {
+        output('player 1 wins');
+      } else if (player1Card.rank < player2Card.rank) {
+        output('player 2 wins');
+      } else {
+        output('tie');
+      }
+    }, 2000);
   }
 };
-
-// Add the cardContainer DOM element as a global variable.
-let cardContainer;
 
 const initGame = () => {
   // initialize button functionality
@@ -260,13 +311,7 @@ const createCard = (cardInfo) => {
   name.classList.add(cardInfo.displayName, cardInfo.colour);
   name.innerText = cardInfo.displayName;
 
-  ///////////////////////////
-  // Update Deck Creation to Include MORE Visual Card Attributes
-
-  // const displayName = document.createElement(`div`);
-
-  ////////////////////////////////
-
+  
   const card = document.createElement('div');
   card.classList.add('card');
 
@@ -274,6 +319,11 @@ const createCard = (cardInfo) => {
   card.appendChild(suit);
 
   return card;
+
+
+  // const cardEl = document.createElement('p');
+  // cardEl.innerText = cardInfo.displayName; // also output the other attributes
+  // return cardEl;
 };
 
 
