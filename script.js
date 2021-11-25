@@ -21,7 +21,6 @@ const shuffleCards = (cards) => {
 };
 
 const makeDeck = () => {
-  // TODO
   // Initialise an empty deck array
   const newDeck = [];
   // Initialise an array of the 4 suits in our deck. We will loop over this array.
@@ -46,27 +45,23 @@ const makeDeck = () => {
       // If rank is 1, 11, 12, or 13, set cardName to the ace or face card's name
       if (cardName === '1') {
         cardName = 'ace';
+        currentDisplayName = 'A';
       } else if (cardName === '11') {
         cardName = 'jack';
+        currentDisplayName = 'J';
       } else if (cardName === '12') {
         cardName = 'queen';
+        currentDisplayName = 'Q';
       } else if (cardName === '13') {
         cardName = 'king';
+        currentDisplayName = 'K';
       }
       if (currentSuit === 'hearts' || currentSuit === 'diamonds') {
         currentColor = 'red';
       } else {
         currentColor = 'black';
       }
-      if (cardName === '1') {
-        currentDisplayName = 'A';
-      } else if (cardName === '11') {
-        currentDisplayName = 'J';
-      } else if (cardName === '12') {
-        currentDisplayName = 'Q';
-      } else if (cardName === '13') {
-        currentDisplayName = 'K';
-      }
+
       // Create a new card with the current name, suit, and rank
       const card = {
         name: cardName,
@@ -97,12 +92,17 @@ const gameInit = () => {
   document.body.appendChild(btnPlayer1);
   document.body.appendChild(btnPlayer2);
 
+  cardContainer.classList.add('class-container');
+  document.body.appendChild(cardContainer);
+
   btnPlayer1.addEventListener('click', () => player1Click());
   btnPlayer2.addEventListener('click', () => player2Click());
 };
 
+// globals
 let playerTurn = 1;
 let player1Card;
+let canDraw = true;
 
 // create 2 buttons player1draw and player2draw
 // click on player1 first then player 2 can be clicked
@@ -111,48 +111,53 @@ let player1Card;
 const btnPlayer1 = document.createElement('button');
 const btnPlayer2 = document.createElement('button');
 const gameInfo = document.createElement('div');
+const cardContainer = document.createElement('div');
 
 const output = (message) => {
   gameInfo.innerText = message;
 };
 
 const player1Click = () => {
-  if (playerTurn === 1) {
-    player1Card = deck.pop();
-    output('Player 2 please press the button.');
-    const cardElement = makeCard(player1Card);
-    cardContainer.innerHTML = '';
-    cardContainer.appendChild(cardElement);
-    playerTurn = 2;
+  if (playerTurn === 1 && canDraw === true) {
+    canDraw = false;
+    setTimeout(function () {
+      player1Card = deck.pop();
+      output('Player 2 please press the button.');
+      const cardElement = makeCard(player1Card);
+      cardContainer.innerHTML = '';
+      cardContainer.appendChild(cardElement);
+      playerTurn = 2;
+      canDraw = true;
+    }, 2000);
   }
 };
 
 const player2Click = () => {
-  if (playerTurn === 2) {
-    const player2Card = deck.pop();
-    const cardElement = makeCard(player2Card);
-    cardContainer.appendChild(cardElement);
-    playerTurn = 1;
-    if (player1Card.rank > player2Card.rank) {
-      output(
-        `Player 1 wins with this card: ${player1Card.rank} over: ${player2Card.rank}`
-      );
-    } else if (player1Card.rank < player2Card.rank) {
-      output(
-        `Player 2 wins with this card: ${player1Card.rank} over: ${player2Card.rank}.`
-      );
-    } else {
-      output(`It is a draw.`);
-    }
+  if (playerTurn === 2 && canDraw === true) {
+    canDraw = false;
+    setTimeout(function () {
+      const player2Card = deck.pop();
+      const cardElement = makeCard(player2Card);
+      cardContainer.appendChild(cardElement);
+      playerTurn = 1;
+      if (player1Card.rank > player2Card.rank) {
+        output(
+          `Player 1 wins with this card: ${player1Card.rank} over: ${player2Card.rank}`
+        );
+      } else if (player1Card.rank < player2Card.rank) {
+        output(
+          `Player 2 wins with this card: ${player1Card.rank} over: ${player2Card.rank}.`
+        );
+      } else {
+        output(`It is a draw.`);
+      }
+    }, 2000);
   }
 };
 
 gameInit();
 
-const cardContainer = document.createElement('div');
-cardContainer.classList.add('class-container');
-document.body.appendChild(cardContainer);
-
+// to create the card
 const makeCard = (cardInfo) => {
   const card = document.createElement('div');
   const cardName = document.createElement('div');
