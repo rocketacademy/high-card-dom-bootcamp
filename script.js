@@ -146,41 +146,45 @@ const calcRankDiff = (array) => {
 // PLAYER ACTION FUNCTIONS
 
 const player1Click = () => {
-  player1Card = deck.pop();
-  player1Hand.push(player1Card);
-  const cardElement = createCard(player1Card);
-  p1CardRow.appendChild(cardElement);
+  setTimeout(() => {
+    player1Card = deck.pop();
+    player1Hand.push(player1Card);
+    const cardElement = createCard(player1Card);
+    p1CardRow.appendChild(cardElement);
 
-  if (player1Hand.length < 2 || player2Hand.length < 2) {
-    output('Y\'all gotta draw more cards!');
-  } else if (player1Hand.length > 1 && player2Hand > 1) {
-    if (calcRankDiff(player1Hand) > calcRankDiff(player2Hand)) {
-      output('Player 1 wins!');
-    } else if (calcRankDiff(player1Hand) < calcRankDiff(player2Hand)) {
-      output('Player 2 wins!');
-    } else {
-      output('It\'s a tie!');
+    if (player1Hand.length < 2 || player2Hand.length < 2) {
+      output('Y\'all gotta draw more cards!');
+    } else if (player1Hand.length > 1 && player2Hand > 1) {
+      if (calcRankDiff(player1Hand) > calcRankDiff(player2Hand)) {
+        output('Player 1 wins!');
+      } else if (calcRankDiff(player1Hand) < calcRankDiff(player2Hand)) {
+        output('Player 2 wins!');
+      } else {
+        output('It\'s a tie!');
+      }
     }
-  }
+  }, 1000);
 };
 
 const player2Click = () => {
-  player2Card = deck.pop();
-  player2Hand.push(player2Card);
-  const cardElement = createCard(player2Card);
-  p2CardRow.appendChild(cardElement);
+  setTimeout(() => {
+    player2Card = deck.pop();
+    player2Hand.push(player2Card);
+    const cardElement = createCard(player2Card);
+    p2CardRow.appendChild(cardElement);
 
-  if (player1Hand.length < 2 || player2Hand.length < 2) {
-    output('Y\'all gotta draw more cards!');
-  } else if (player2Hand.length > 1 && player1Hand.length > 1) {
-    if (calcRankDiff(player1Hand) > calcRankDiff(player2Hand)) {
-      output('Player 1 wins!');
-    } else if (calcRankDiff(player1Hand) < calcRankDiff(player2Hand)) {
-      output('Player 2 wins!');
-    } else {
-      output('It\'s a tie!');
+    if (player1Hand.length < 2 || player2Hand.length < 2) {
+      output('Y\'all gotta draw more cards!');
+    } else if (player2Hand.length > 1 && player1Hand.length > 1) {
+      if (calcRankDiff(player1Hand) > calcRankDiff(player2Hand)) {
+        output('Player 1 wins!');
+      } else if (calcRankDiff(player1Hand) < calcRankDiff(player2Hand)) {
+        output('Player 2 wins!');
+      } else {
+        output('It\'s a tie!');
+      }
     }
-  }
+  }, 1000);
 };
 
 // INITIALISE GAME
