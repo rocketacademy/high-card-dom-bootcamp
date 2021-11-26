@@ -97,12 +97,12 @@ const makeDeck = () => {
 const deck = shuffleCards(makeDeck());
 
 const sortArray = (array) => {
-  array.sort((a,b) =>b.rank - a.rank);
+  array.sort((a,b) =>b - a);
 };
 
 const rankDiff = (array) => {
   sortArray(array);
-  const rankDifference = array[0].rank - array[array.length - 1].rank;
+  const rankDifference = array[0] - array[array.length - 1];
   return rankDifference;
 }
 
@@ -145,15 +145,14 @@ const player1Click = () => {
     canClick = false;
     setTimeout(() => {
       player1Card = deck.pop();
-      player1Hand.push(player1Card)
+      player1Hand.push(player1Card.rank)
       const cardElement = createCard(player1Card);
       // in case this is not the 1st time
       // in the entire app,
       container1.appendChild(cardElement) 
-      
       canClick = true;
     }, 2000);
-  }
+  } 
 };
 
 const player2Click = () => {
@@ -161,23 +160,26 @@ const player2Click = () => {
     canClick = false;
     setTimeout(() => {
       const player2Card = deck.pop();
-      player2Hand.push(player2Card)
+      player2Hand.push(player2Card.rank)
       const cardElement = createCard2(player2Card);
-     container2.appendChild(cardElement) 
-      
-    canClick = true;
-    }, 2000);
-
-  }   difference1 = rankDiff(player1Hand);
+      container2.appendChild(cardElement) 
+      difference1 = rankDiff(player1Hand);
       difference2 = rankDiff(player2Hand);
+      console.log(difference1)
+      console.log(difference2)
       if (difference1 > difference2){
       output('Player 1 wins!')
       } else if (difference1 < difference2){
       output('Player 2 wins!')
     } else if ( difference1 == difference2){
       output("its a tie!")
+    
     } 
+    canClick = true;
+    }, 2000);
+  }
 };
+
 const initGame = () => {
 for (i=0;i<1;i++){
 
@@ -251,6 +253,7 @@ player1EndButton.addEventListener('click', function(){
     player2EndButton.disabled= false;
     player1Button.disabled= true;
     player1EndButton.disabled= true;
+    gameInfo.innerText = "It's Player 2's turn now. Click to draw a card!"
   
   });
 player2EndButton.addEventListener('click', function(){ 
@@ -259,6 +262,7 @@ player2EndButton.addEventListener('click', function(){
     player2EndButton.disabled= true;
     player1Button.disabled= false;
     player1EndButton.disabled= false;
+    gameInfo.innerText = "It's Player 1's turn now. Click to draw a card!"
   });
 }
 };
