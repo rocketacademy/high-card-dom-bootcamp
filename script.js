@@ -153,7 +153,7 @@ const player2Click = () => {
     setTimeout(() => {
       const player2Card = deck.pop();
       const cardElement = createCard2(player2Card);
-      let innerContainer = document.getElementsByClassName('inner-container')
+      let innerContainer = document.querySelector("#inner1:last-child")
       console.log(innerContainer)
       innerContainer.appendChild(cardElement)
       

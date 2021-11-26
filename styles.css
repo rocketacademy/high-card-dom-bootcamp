@@ -19,10 +19,9 @@
   display: block;
   margin-left: 70%;
 }
-.card-container {
-  display: block;
+.inner-container {
+  display: flex;
 }
-
 .suit {
   margin: 5px;
   font-size: 20px;
