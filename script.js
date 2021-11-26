@@ -2,6 +2,7 @@
 let playersTurn = 1; // matches with starting instructions
 let player1Card;
 let cardContainer;
+
 let canClick = true;
 
 const gameInfo = document.createElement('h2');
@@ -124,15 +125,23 @@ const output =(message) => {
 // Create a helper function for output to abstract complexity
 // of DOM manipulation away from game logic
 const player1Click = () => {
+ 
+
   if (playersTurn === 1 && canClick === true) {
     canClick = false;
     setTimeout(() => {
+  
       player1Card = deck.pop();
       const cardElement = createCard(player1Card);
       // in case this is not the 1st time
       // in the entire app,
       // empty the card container
-      cardContainer.appendChild(cardElement);
+      let innerContainer = document.createElement('div');
+      innerContainer.setAttribute('id',"inner1")
+      innerContainer.classList.add('inner-container');
+      cardContainer.append(innerContainer);
+      innerContainer.appendChild(cardElement)
+    
       canClick = true;
     }, 2000);
   }
@@ -144,7 +153,10 @@ const player2Click = () => {
     setTimeout(() => {
       const player2Card = deck.pop();
       const cardElement = createCard2(player2Card);
-      cardContainer.appendChild(cardElement);
+      let innerContainer = document.getElementsByClassName('inner-container')
+      console.log(innerContainer)
+      innerContainer.appendChild(cardElement)
+      
       canClick = true;
       if (player1Card.rank > player2Card.rank) {
         output('player 1 wins');
@@ -158,7 +170,7 @@ const player2Click = () => {
 };
 const initGame = () => {
 for (i=0;i<1;i++){
-  
+ 
 const player1Button = document.createElement('button');
 player1Button.classList.add('p1button')
 document.body.appendChild(player1Button)
@@ -194,6 +206,8 @@ document.body.appendChild(player2EndButton);
 cardContainer = document.createElement('div');
 cardContainer.classList.add('card-container');
 document.body.appendChild(cardContainer);
+
+
 
 
 player1Button.addEventListener('click', player1Click);
