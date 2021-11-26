@@ -218,7 +218,7 @@ const player2Click = () => {
     // Determine and output winner
     if (player1difference > player2difference) {
       output('player 1 wins');
-    } else if (player2difference < player1difference) {
+    } else if (player2difference > player1difference) {
       output('player 2 wins');
     } else {
       output('tie');
