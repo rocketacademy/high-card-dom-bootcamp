@@ -139,16 +139,56 @@ const player2Click = () => {
     }
 };
 
-const compareCards = () => {
-    // Determine and output winner
-    if (player1Card.rank > player2Card.rank) {
-      output('player 1 wins');
-    } else if (player1Card.rank < player2Card.rank) {
-      output('player 2 wins');
-    } else {
-      output('tie');
-    }
+//Function to get largest and smallest card, then find difference
+const findDifference = (playerCard) => {
+  if (playerCard.length === 0) {
+    return - 1;
   }
+  //Return max value
+  let max = playerCard[0].rank;
+  let maxIndex = 0;
+  for (let i = 0; i < playerCard.length; i++) {
+    if (playerCard[i].rank > max) {
+      maxIndex = i;
+      max = playerCard[i].rank;
+    }
+    console.log(maxIndex);
+  }
+  console.log(`Max`, max)
+
+  //Return min value
+  let min = playerCard[0].rank;
+  let minIndex = 0;
+  for (let j = 0; j < playerCard.length; j++) {
+    if (playerCard[j].rank < min) {
+      minIndex = j;
+      min = playerCard[j].rank;
+    }
+    console.log(minIndex);
+  }
+  console.log(`Min`, min);
+  // Calculate difference between largest and smallest card
+  const answer = max - min;
+  return answer;
+  console.log(`answer`, answer)
+}
+
+const compareCards = (findDifference) => {
+  let player1Difference = findDifference(player1Card);
+  console.log(`player 1 difference`, player1Difference);
+  let player2Difference = findDifference(player2Card);
+  console.log(`player 2 difference`, player2Difference);
+  if (player1Difference > player2Difference) {
+    output (`player 1 wins`);
+  }
+  else if (player1Difference < player2Difference) {
+    output (`player 2 wins`);
+  }
+  else {
+    output (`tie`);
+  }
+}
+
 
 // Game initialisation 
 const initGame = () => {
@@ -162,7 +202,9 @@ const initGame = () => {
   document.body.appendChild(compareCardsButton);
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
-  compareCardsButton.addEventListener(`click`, compareCards);
+  compareCardsButton.addEventListener(`click`, () => {
+    compareCards(findDifference);
+  });
   // fill game info div with starting instructions
   gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
   document.body.appendChild(gameInfo);
