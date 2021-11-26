@@ -102,12 +102,11 @@ const gameInit = () => {
 };
 
 // globals
-let playerTurn = 1;
+let playerTurn = 0;
 let canDraw = true;
 let player1HandSize = 0;
 let player2HandSize = 0;
-let player1diff = 0;
-let player2diff = 0;
+let player = 1;
 
 const btnPlayer1 = document.createElement('button');
 const btnPlayer2 = document.createElement('button');
@@ -115,46 +114,38 @@ const gameInfo = document.createElement('div');
 const cardContainer = document.createElement('div');
 const player1container = document.createElement('div');
 const player2container = document.createElement('div');
+const player1CardRank = [];
+const player2CardRank = [];
 
 const output = (message) => {
   gameInfo.innerText = message;
 };
 
 const player1Click = () => {
-  // canDraw = false;
-  player1container.innerHTML = '';
-  setTimeout(function () {
-    let player1Card0 = deck.pop();
-    let player1Card1 = deck.pop();
-    output("Player 2's turn to draw.");
-    const cardElement0 = makeCard(player1Card0);
-    const cardElement1 = makeCard(player1Card1);
-    // player1container.innerHTML = '';
-    player1container.appendChild(cardElement0);
-    player1container.appendChild(cardElement1);
-    player1HandSize++;
-    player1diff = determineRank(player1Card0, player1Card1);
-    // canDraw = true;
-  }, 0);
+  if (player === 1) {
+    setTimeout(function () {
+      let player1Card = deck.pop();
+      player1CardRank.push(player1Card.rank);
+      output("Player 2's turn to draw.");
+      const cardElement = makeCard(player1Card);
+      player1container.appendChild(cardElement);
+      player = 2;
+    }, 0);
+  }
 };
 
 const player2Click = () => {
-  // canDraw = false;
-  player2container.innerHTML = '';
-  setTimeout(function () {
-    const player2Card0 = deck.pop();
-    const player2Card1 = deck.pop();
-    const cardElement0 = makeCard(player2Card0);
-    const cardElement1 = makeCard(player2Card1);
-    // player2container.innerHTML = '';
-    player2container.appendChild(cardElement0);
-    player2container.appendChild(cardElement1);
-    player2diff = determineRank(player2Card0, player2Card1);
-    // playerTurn = 1;
-    player2HandSize++;
-    determineWinner(player1diff, player2diff);
-    // canDraw = true;
-  }, 0);
+  if (player === 2) {
+    setTimeout(function () {
+      const player2Card0 = deck.pop();
+      player2CardRank.push(player2Card0.rank);
+      const cardElement0 = makeCard(player2Card0);
+      player2container.appendChild(cardElement0);
+      player = 1;
+      determineWinner(player1CardRank, player2CardRank);
+      playerTurn++;
+    }, 0);
+  }
 };
 
 // to create the card
@@ -184,18 +175,34 @@ const determineRank = function (card1, card2) {
   }
 };
 
-const determineWinner = function (player1Diff, player2Diff) {
-  if (player1diff > player2diff) {
-    output(
-      `Player 1 wins with a high/low card difference of: ${player1diff} over: ${player2diff}`
-    );
-  } else if (player1diff < player2diff) {
-    output(
-      `Player 2 wins with a high/low card difference of: ${player1diff} over: ${player2diff}.`
-    );
-  } else {
-    output(`It is a draw.`);
+const determineWinner = function (player1, player2) {
+  if (playerTurn >= 1) {
+    let player1Max = Math.max(...player1);
+    let player2Max = Math.max(...player2);
+    let player1Min = Math.min(...player1);
+    let player2Min = Math.min(...player2);
+    let player1Diff = player1Max - player1Min;
+    let player2Diff = player2Max - player2Min;
+    if (player1Diff > player2Diff) {
+      output(
+        `Player 1 wins with: ${player1Diff} against player 2: ${player2Diff}.`
+      );
+    } else if (player2Diff > player1Diff) {
+      output(
+        `Player 2 wins with: ${player2Diff} against player 2: ${player1Diff}.`
+      );
+    } else {
+      output(`It is a draw.`);
+    }
+  }
+  if (playerTurn === 0) {
+    if (player1 > player2) {
+      output(`Player 1 wins with: ${player1} against player 2: ${player2}`);
+    } else if (player2 > player1) {
+      output(`Player 2 wins with: ${player2} against player 1: ${player1}`);
+    } else {
+      output(`It is a draw.`);
+    }
   }
 };
-
 gameInit();
