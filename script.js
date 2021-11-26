@@ -32,10 +32,6 @@ let player2difference = 0;
 
 const gameInfo = document.createElement('div');
 
-// const cardContainer = document.createElement('div');
-// cardContainer.classList.add('card-container');
-// document.body.appendChild(cardContainer);
-
 // Get a random index ranging from 0 (inclusive) to max (exclusive).
 const getRandomIndex = (max) => Math.floor(Math.random() * max);
 
@@ -154,13 +150,16 @@ const deck = shuffleCards(makeDeck());
 const player1Click = () => {
   if (playersTurn === 1) {
     // Pop player 1's card metadata from the deck
+    
     player1Card = deck.pop();
     // Create card element from card metadata
     const cardElement = createCard(player1Card);
     // push the card player has drawn into the player1hand array
     player1hand.push(player1Card);
     // Append the card element to the card container
+    setTimeout(() => {
     player1div.appendChild(cardElement);
+
     if (player1highcard === 0 && player1lowcard === 0) {
       player1highcard = player1Card;
       player1lowcard = player1Card;
@@ -173,7 +172,6 @@ const player1Click = () => {
     if (player1Card.rank < player1lowcard.rank) {
       player1lowcard = player1Card;
     }
-
     console.log(player1highcard);
     console.log(player1lowcard);
 
@@ -181,6 +179,7 @@ const player1Click = () => {
     player1difference = player1highcard.rank - player1lowcard.rank;
     console.log(player1difference);
     playersTurn = 2;
+    }, 2000);
   }
 };
 
@@ -193,6 +192,7 @@ const player2Click = () => {
     // Create card element from card metadata
     const cardElement = createCard(player2Card);
     // Append card element to card container
+    setTimeout(() => {
     player2div.appendChild(cardElement);
 
     if (player2highcard === 0 && player2lowcard === 0) {
@@ -207,7 +207,6 @@ const player2Click = () => {
     if (player2Card.rank < player2lowcard.rank) {
       player2lowcard = player2Card;
     }
-
     // find the difference between the high card and low card
     player2difference = player2highcard.rank - player2lowcard.rank;
     console.log(player2difference);
@@ -223,6 +222,7 @@ const player2Click = () => {
     } else {
       output('tie');
     }
+    }, 2000);
   }
 };
 
