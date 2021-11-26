@@ -1,3 +1,56 @@
 body {
   background-color: pink;
 }
+
+.card {
+  margin: 10px;
+  padding: 10px;
+  background-color: white;
+  width: 50px;
+  text-align: center;
+  border-radius: 8px;
+  display: inline-block;
+}
+.high-card {
+  margin: 10px;
+  padding: 10px;
+  background-color: rgb(0, 238, 255);
+  width: 50px;
+  text-align: center;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.low-card {
+  margin: 10px;
+  padding: 10px;
+  background-color: rgb(132, 165, 42);
+  width: 50px;
+  text-align: center;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.game-info {
+  background-color: lightgrey;
+  margin: 20px auto;
+  padding: 20px;
+  width: 100%;
+  font-family: "Lucida Console", "Courier New", monospace;
+}
+
+.suit {
+  margin: 5px;
+  font-size: 20px;
+}
+
+.name {
+  margin: 5px;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.red {
+  color: red;
+}
