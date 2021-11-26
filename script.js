@@ -121,7 +121,7 @@ const output = (message) => {
 };
 
 const player1Click = () => {
-  canDraw = false;
+  // canDraw = false;
   player1container.innerHTML = '';
   setTimeout(function () {
     let player1Card0 = deck.pop();
@@ -134,12 +134,12 @@ const player1Click = () => {
     player1container.appendChild(cardElement1);
     player1HandSize++;
     player1diff = determineRank(player1Card0, player1Card1);
-    canDraw = true;
+    // canDraw = true;
   }, 0);
 };
 
 const player2Click = () => {
-  canDraw = false;
+  // canDraw = false;
   player2container.innerHTML = '';
   setTimeout(function () {
     const player2Card0 = deck.pop();
@@ -152,18 +152,8 @@ const player2Click = () => {
     player2diff = determineRank(player2Card0, player2Card1);
     // playerTurn = 1;
     player2HandSize++;
-    if (player1diff > player2diff) {
-      output(
-        `Player 1 wins with a high/low card difference of: ${player1diff} over: ${player2diff}`
-      );
-    } else if (player1diff < player2diff) {
-      output(
-        `Player 2 wins with a high/low card difference of: ${player1diff} over: ${player2diff}.`
-      );
-    } else {
-      output(`It is a draw.`);
-    }
-    canDraw = true;
+    determineWinner(player1diff, player2diff);
+    // canDraw = true;
   }, 0);
 };
 
@@ -191,6 +181,20 @@ const determineRank = function (card1, card2) {
     return card1.rank - card2.rank;
   } else {
     return card2.rank - card1.rank;
+  }
+};
+
+const determineWinner = function (player1Diff, player2Diff) {
+  if (player1diff > player2diff) {
+    output(
+      `Player 1 wins with a high/low card difference of: ${player1diff} over: ${player2diff}`
+    );
+  } else if (player1diff < player2diff) {
+    output(
+      `Player 2 wins with a high/low card difference of: ${player1diff} over: ${player2diff}.`
+    );
+  } else {
+    output(`It is a draw.`);
   }
 };
 
