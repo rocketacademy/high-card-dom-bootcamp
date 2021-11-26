@@ -1,9 +1,16 @@
 
 let playersTurn = 1; // matches with starting instructions
 let player1Card;
-let cardContainer;
-
+let player2Card;
+let container1;
+let innerContainer1;
+let container2;
+let innerContainer2;
+let player1Hand =[];
+let player2Hand =[];
 let canClick = true;
+let difference1 =0;
+let difference2 =0;
 
 const gameInfo = document.createElement('h2');
 gameInfo.classList.add('game-message')
@@ -89,6 +96,15 @@ const makeDeck = () => {
 
 const deck = shuffleCards(makeDeck());
 
+const sortArray = (array) => {
+  array.sort((a,b) =>b.rank - a.rank);
+};
+
+const rankDiff = (array) => {
+  sortArray(array);
+  const rankDifference = array[0].rank - array[array.length - 1].rank;
+  return rankDifference;
+}
 
 const createCard = (cardInfo) => {
   const suit = document.createElement('div');
@@ -125,23 +141,16 @@ const output =(message) => {
 // Create a helper function for output to abstract complexity
 // of DOM manipulation away from game logic
 const player1Click = () => {
- 
-
   if (playersTurn === 1 && canClick === true) {
     canClick = false;
     setTimeout(() => {
-  
       player1Card = deck.pop();
+      player1Hand.push(player1Card)
       const cardElement = createCard(player1Card);
       // in case this is not the 1st time
       // in the entire app,
-      // empty the card container
-      let innerContainer = document.createElement('div');
-      innerContainer.setAttribute('id',"inner1")
-      innerContainer.classList.add('inner-container');
-      cardContainer.append(innerContainer);
-      innerContainer.appendChild(cardElement)
-    
+      container1.appendChild(cardElement) 
+      
       canClick = true;
     }, 2000);
   }
@@ -152,60 +161,84 @@ const player2Click = () => {
     canClick = false;
     setTimeout(() => {
       const player2Card = deck.pop();
+      player2Hand.push(player2Card)
       const cardElement = createCard2(player2Card);
-      let innerContainer = document.querySelector("#inner1:last-child")
-      console.log(innerContainer)
-      innerContainer.appendChild(cardElement)
+     container2.appendChild(cardElement) 
       
-      canClick = true;
-      if (player1Card.rank > player2Card.rank) {
-        output('player 1 wins');
-      } else if (player1Card.rank < player2Card.rank) {
-        output('player 2 wins');
-      } else {
-        output('tie');
-      }
+    canClick = true;
     }, 2000);
-  }
+
+  }   difference1 = rankDiff(player1Hand);
+      difference2 = rankDiff(player2Hand);
+      if (difference1 > difference2){
+      output('Player 1 wins!')
+      } else if (difference1 < difference2){
+      output('Player 2 wins!')
+    } else if ( difference1 == difference2){
+      output("its a tie!")
+    } 
 };
 const initGame = () => {
 for (i=0;i<1;i++){
- 
+
+container1= document.createElement('div');
+container1.classList.add('p1container') 
+document.body.appendChild(container1)
+
+innerContainer1=document.createElement('div')
+
 const player1Button = document.createElement('button');
 player1Button.classList.add('p1button')
-document.body.appendChild(player1Button)
+player1Button.innerText = 'Player 1 Draw';
+innerContainer1.appendChild(player1Button)
+container1.appendChild(innerContainer1)
 
 const player1EndButton = document.createElement('button');
-player1EndButton.classList.add('p1endbutton')
-document.body.appendChild(player1EndButton)
+player1EndButton.classList.add('p1button')
+player1EndButton.innerText = 'Player 1 End'
+innerContainer1.appendChild(player1EndButton)
+container1.appendChild(innerContainer1)
+
+container2=document.createElement('div')
+container2.classList.add('p2container')
+document.body.appendChild(container2)
+
+innerContainer2=document.createElement('div')
 
 const player2Button = document.createElement('button');
 player2Button.classList.add('p2button')
-document.body.appendChild(player2Button)
+player2Button.innerText = 'Player 2 Draw';
+innerContainer2.appendChild(player2Button)
+container2.appendChild(innerContainer2)
 player2Button.disabled= true;
 
 const player2EndButton = document.createElement('button');
-player2EndButton.classList.add('p2endbutton')
-document.body.appendChild(player2EndButton)
+player2EndButton.classList.add('p2button')
+player2EndButton.innerText = 'Player 2 End'
+innerContainer2.appendChild(player2EndButton)
+container2.appendChild(innerContainer2)
 player2EndButton.disabled= true;
 
 
+
+
+
   // initialize button functionality
-player1Button.innerText = 'Player 1 Draw';
+/* 
 document.body.appendChild(player1Button);
 
-player1EndButton.innerText = 'Player 1 End'
+
 document.body.appendChild(player1EndButton);
 
-player2Button.innerText = 'Player 2 Draw';
+
 document.body.appendChild(player2Button);
 
-player2EndButton.innerText = 'Player 2 End'
-document.body.appendChild(player2EndButton);
+
+document.body.appendChild(player2EndButton); */
   
-cardContainer = document.createElement('div');
+/* cardContainer = document.createElement('div');
 cardContainer.classList.add('card-container');
-document.body.appendChild(cardContainer);
+document.body.appendChild(cardContainer); */
 
 
 
@@ -231,9 +264,3 @@ player2EndButton.addEventListener('click', function(){
 };
 
 initGame();
-
-
-
-
-
-// Please implement exercise logic here

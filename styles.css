@@ -6,7 +6,7 @@
   height: 70px;
   text-align: center;
   border-radius: 8px;
-  display: block;
+  display: flex;
 }
 .card2 {
   margin: 10px;
@@ -16,10 +16,13 @@
   height: 70px;
   text-align: center;
   border-radius: 8px;
-  display: block;
-  margin-left: 70%;
+  display: flex;
 }
-.inner-container {
+.p2container {
+  display: flex;
+}
+
+.p1container {
   display: flex;
 }
 .suit {
@@ -39,5 +42,24 @@
 }
 .game-message {
   color: white;
-  text-align: center;
+  text-align: left;
+}
+
+.p1button {
+  display: block;
+  width: 100px;
+  height: 30px;
+  margin: 10px;
+}
+
+.p2button {
+  display: block;
+  width: 100px;
+  height: 30px;
+  margin: 10px;
+}
+
+.buttoncont {
+  display: block;
+  margin: 20px;
 }
