@@ -173,7 +173,7 @@ document.body.appendChild(inputContainer);
 let cardsNum = 0;
 cbtn.addEventListener("click", function () {
   cardsNum = box.value;
-  gameInfo.innerText = `Hi Players, please draw ${cardsNum} cards`;
+  gameInfo.innerText = `Hi Players, please draw ${cardsNum} cards (Card takes 2 seconds to load)`;
   inputContainer.style.display = "none";
   drawButtonsContainer.style.display = "block";
 });
@@ -208,43 +208,57 @@ let player1Hand = [];
 let player2Hand = [];
 let player1RankDiff;
 let player2RankDiff;
+let canClick = true;
 
 player1Button.addEventListener("click", () => {
-  if (player1Drawn < cardsNum) {
-    // Pop player 1's card metadata from the deck
-    player1Card = deck.pop();
-    player1Hand.push(player1Card);
+  if (canClick === true) {
+    canClick = false;
+    setTimeout(() => {
+      if (player1Drawn < cardsNum) {
+        // Pop player 1's card metadata from the deck
+        player1Card = deck.pop();
+        player1Hand.push(player1Card);
 
-    // Create card element from card metadata
-    const cardElement = createCard(player1Card, 1, player1Drawn);
-    cardContainer.appendChild(cardElement);
-    player1Drawn += 1;
-  }
+        // Create card element from card metadata
+        const cardElement = createCard(player1Card, 1, player1Drawn);
+        cardContainer.appendChild(cardElement);
+        player1Drawn += 1;
+      }
 
-  if (player1Drawn == cardsNum) {
-    player1RankDiff = findPlayer1Result();
-  }
-  if (player2Drawn == cardsNum && player1Drawn == cardsNum) {
-    gameOutcome();
+      if (player1Drawn == cardsNum) {
+        player1RankDiff = findPlayer1Result();
+      }
+      if (player2Drawn == cardsNum && player1Drawn == cardsNum) {
+        gameOutcome();
+      }
+      canClick = true;
+    }, 2000);
   }
 });
 
 // Add event listener on player 2's button to draw card and determine winner
 player2Button.addEventListener("click", () => {
-  if (player2Drawn < cardsNum) {
-    // Pop player 2's card metadata from the deck
-    player2Card = deck.pop();
-    player2Hand.push(player2Card);
-    // Create card element from card metadata
-    const cardElement = createCard(player2Card, 2, player2Drawn);
+  if (canClick === true) {
+    canClick = false;
 
-    cardContainer2.appendChild(cardElement);
-    player2Drawn += 1;
-  }
-  if (player2Drawn == cardsNum) {
-    player2RankDiff = findPlayer2Result();
-  }
-  if (player2Drawn == cardsNum && player1Drawn == cardsNum) {
-    gameOutcome();
+    setTimeout(() => {
+      if (player2Drawn < cardsNum) {
+        // Pop player 2's card metadata from the deck
+        player2Card = deck.pop();
+        player2Hand.push(player2Card);
+        // Create card element from card metadata
+        const cardElement = createCard(player2Card, 2, player2Drawn);
+
+        cardContainer2.appendChild(cardElement);
+        player2Drawn += 1;
+      }
+      if (player2Drawn == cardsNum) {
+        player2RankDiff = findPlayer2Result();
+      }
+      if (player2Drawn == cardsNum && player1Drawn == cardsNum) {
+        gameOutcome();
+      }
+      canClick = true;
+    }, 2000);
   }
 });
