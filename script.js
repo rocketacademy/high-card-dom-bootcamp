@@ -91,6 +91,8 @@ const gameInit = () => {
   document.body.appendChild(gameInfo);
   document.body.appendChild(btnPlayer1);
   document.body.appendChild(btnPlayer2);
+  cardContainer.appendChild(player1container);
+  cardContainer.appendChild(player2container);
 
   cardContainer.classList.add('class-container');
   document.body.appendChild(cardContainer);
@@ -101,61 +103,75 @@ const gameInit = () => {
 
 // globals
 let playerTurn = 1;
-let player1Card;
 let canDraw = true;
-
-// create 2 buttons player1draw and player2draw
-// click on player1 first then player 2 can be clicked
-// once player2 is clicked, compare both cards and output winner
+let player1HandSize = 0;
+let player2HandSize = 0;
+let player1diff = 0;
+let player2diff = 0;
 
 const btnPlayer1 = document.createElement('button');
 const btnPlayer2 = document.createElement('button');
 const gameInfo = document.createElement('div');
 const cardContainer = document.createElement('div');
+const player1container = document.createElement('div');
+const player2container = document.createElement('div');
 
 const output = (message) => {
   gameInfo.innerText = message;
 };
 
 const player1Click = () => {
-  if (playerTurn === 1 && canDraw === true) {
+  if (player1HandSize < 2) {
     canDraw = false;
     setTimeout(function () {
-      player1Card = deck.pop();
-      output('Player 2 please press the button.');
-      const cardElement = makeCard(player1Card);
-      cardContainer.innerHTML = '';
-      cardContainer.appendChild(cardElement);
-      playerTurn = 2;
+      let player1Card0 = deck.pop();
+      let player1Card1 = deck.pop();
+      output("Player 2's turn to draw.");
+      const cardElement0 = makeCard(player1Card0);
+      const cardElement1 = makeCard(player1Card1);
+      // player1container.innerHTML = '';
+      player1container.appendChild(cardElement0);
+      player1container.appendChild(cardElement1);
+      player1HandSize++;
+      player1diff = determineRank(player1Card0, player1Card1);
       canDraw = true;
-    }, 2000);
+    }, 0);
+  } else {
+    output("Its player 2's turn.");
   }
 };
 
 const player2Click = () => {
-  if (playerTurn === 2 && canDraw === true) {
+  if (player2HandSize < 2) {
     canDraw = false;
     setTimeout(function () {
-      const player2Card = deck.pop();
-      const cardElement = makeCard(player2Card);
-      cardContainer.appendChild(cardElement);
-      playerTurn = 1;
-      if (player1Card.rank > player2Card.rank) {
+      const player2Card0 = deck.pop();
+      const player2Card1 = deck.pop();
+      const cardElement0 = makeCard(player2Card0);
+      const cardElement1 = makeCard(player2Card1);
+      // player2container.innerHTML = '';
+      player2container.appendChild(cardElement0);
+      player2container.appendChild(cardElement1);
+      player2diff = determineRank(player2Card0, player2Card1);
+      // playerTurn = 1;
+      player2HandSize++;
+      if (player1diff > player2diff) {
         output(
-          `Player 1 wins with this card: ${player1Card.rank} over: ${player2Card.rank}`
+          `Player 1 wins with a high/low card difference of: ${player1diff} over: ${player2diff}`
         );
-      } else if (player1Card.rank < player2Card.rank) {
+      } else if (player1diff < player2diff) {
         output(
-          `Player 2 wins with this card: ${player1Card.rank} over: ${player2Card.rank}.`
+          `Player 2 wins with a high/low card difference of: ${player1diff} over: ${player2diff}.`
         );
       } else {
         output(`It is a draw.`);
       }
-    }, 2000);
+      canDraw = true;
+    }, 0);
+  } else {
+    playerTurn = 1;
   }
 };
-
-gameInit();
 
 // to create the card
 const makeCard = (cardInfo) => {
@@ -175,3 +191,13 @@ const makeCard = (cardInfo) => {
 
   return card;
 };
+
+const determineRank = function (card1, card2) {
+  if (card1.rank > card2.rank) {
+    return card1.rank - card2.rank;
+  } else {
+    return card2.rank - card1.rank;
+  }
+};
+
+gameInit();
