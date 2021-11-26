@@ -104,7 +104,7 @@ const findPlayer1Result = () => {
       highRankID = i;
     }
   }
-
+  //give the highest and lowest card its own background shade
   document.getElementById(`1-${lowRankID}`).className = "low-card";
   document.getElementById(`1-${highRankID}`).className = "high-card";
   return highRank - lowRank;
@@ -125,7 +125,7 @@ const findPlayer2Result = () => {
       highRankID = i;
     }
   }
-
+  //give the highest and lowest card its own background shade
   document.getElementById(`2-${lowRankID}`).className = "low-card";
   document.getElementById(`2-${highRankID}`).className = "high-card";
   return highRank - lowRank;
@@ -152,7 +152,7 @@ const gameOutcome = () => {
     );
   }
 };
-
+//initialise the containers and buttons
 let cardContainer = document.createElement("div");
 cardContainer.classList.add("card-container");
 document.body.appendChild(cardContainer);
@@ -236,7 +236,6 @@ player1Button.addEventListener("click", () => {
   }
 });
 
-// Add event listener on player 2's button to draw card and determine winner
 player2Button.addEventListener("click", () => {
   if (canClick === true) {
     canClick = false;
