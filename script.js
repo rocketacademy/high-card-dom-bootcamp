@@ -100,11 +100,19 @@ let playersTurn = 1;
 // Use let for player1Card object because player1Card will be reassigned
 let player1Card;
 let player2Card;
+let player1Hand = [];
+let player2Hand = [];
 
 // Create all the elements on the page first
 
-const cardContainer = document.createElement("div");
-cardContainer.classList.add('container')
+const cardContainerPlayer1 = document.createElement("div");
+cardContainerPlayer1.classList.add('card-container')
+
+const cardContainerPlayer2 = document.createElement("div");
+cardContainerPlayer2.classList.add('card-container')
+
+const resultsContainer = document.createElement("div");
+resultsContainer.classList.add('card-container');
 
 const paperCard = document.createElement("div");
 paperCard.classList.add('card')
@@ -116,6 +124,8 @@ const player1Button = document.createElement('button');
 
 const player2Button = document.createElement('button');
 
+const dealButton = document.createElement('button');
+
 const gameInfo = document.createElement('div');
 
 // Function to create card body
@@ -126,7 +136,7 @@ const createCard = (cardInfo) => {
   suit.innerText = cardInfo.suitSymbol;
 
   const name = document.createElement('div');
-  name.classList.add(cardInfo.displayName, cardInfo.colour);
+  name.classList.add("name", cardInfo.colour);
   name.innerText = cardInfo.displayName;
 
   const card = document.createElement('div');
@@ -141,31 +151,68 @@ const createCard = (cardInfo) => {
 
 const player1Click = () => {
   if (playersTurn === 1){
-  player1Card = deck.pop();
-
+        player1Card = deck.pop();
+        player1Hand.push(player1Card);
+    
   // Create the body of card from card metadata
   const cardElement = createCard(player1Card);
-  cardContainer.innerHTML = "";
-  cardContainer.appendChild(cardElement)
-  console.log("Player 1's card", player1Card);
+  // cardContainer.innerHTML = "";
+  cardContainerPlayer1.appendChild(cardElement)
 playersTurn = 2;
 }
+output('player 2, please click to draw.')
 }
 
+const calcDifference = (playersHand) => {
+  let lowestCard;
+  let highestCard;
+  let cardDifference;
+
+  for (let i = 0; i < playersHand.length; i += 1) {
+    let currentRank = playersHand[i].rank;
+    for (i = 0; i < 13; i += 1){
+      if (i = currentRank){
+        lowestCard = currentRank;
+      }
+    }
+    for (i = 13; i > 0; i -= 1){
+      if (i = currentRank){
+        highestCard = currentRank;
+      }
+    }
+  }
+  cardDifference = highestCard - lowestCard;
+
+return cardDifference;
+}
 
 const player2Click = () => {
   if (playersTurn === 2) {
     // Pop player 2's card metadata from the deck
     player2Card = deck.pop();
+    player2Hand.push(player2Card);
     
     // Create card element from card metadata
     const cardElement = createCard(player2Card);    
     // Append card element to card container
-    cardContainer.appendChild(cardElement);
+    cardContainerPlayer2.appendChild(cardElement);
     
     // Switch to player 1's turn
     playersTurn = 1;
     
+    // // Determine player with the greatest difference in highest and lowest cards in hand
+    // let player1Difference = calcDifference(player1Hand);
+    // let player2Difference = calcDifference(player2Hand);
+
+    // // Determine and output winner based on difference
+    // if (player1Difference > player2Difference){
+    //   output ('player 1 wins!');
+    // } else if (player2Difference > player1Difference){
+    //   output ('player 2 wins!');
+    // } else {
+    //   output('tie');
+    // }
+
     // Determine and output winner
     if (player1Card.rank > player2Card.rank) {
       output('player 1 wins');
@@ -177,9 +224,19 @@ const player2Click = () => {
   }
 };
 
+const determineWinner = () => {
+  // put the arrays into calcDifference, then create if statements to determine outputs
+
+}
+
 const initGame = () => {
   
-  document.body.appendChild(cardContainer)
+  cardContainerPlayer1.innerHTML = "Player 1's Drawn Cards<br><br>";
+  cardContainerPlayer2.innerHTML = "Player 2's Drawn Cards<BR><BR>";
+  resultsContainer.innerHTML = "Results: <BR><BR>"
+  document.body.appendChild(cardContainerPlayer1);
+  document.body.appendChild(cardContainerPlayer2);
+  document.body.appendChild(resultsContainer);
 
   // initialize button functionality
   player1Button.innerText = 'Player 1 Draw';
@@ -188,12 +245,30 @@ const initGame = () => {
   player2Button.innerText = 'Player 2 Draw';
   document.body.appendChild(player2Button);
 
+  dealButton.innerText = 'Deal';
+  document.body.appendChild(dealButton);
+
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
+  dealButton.addEventListen('click', determineWinner);
 
   // fill game info div with starting instructions
-  gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
-  document.body.appendChild(gameInfo);
+  gameInfo.innerText = 'It is player 1 turn. Click to draw a card!';
+  resultsContainer.appendChild(gameInfo);
 };
 
 initGame();
+
+
+// ============= MORE COMFORTABLE PSEUDO CODE =====================
+// ============= HIGH / LOW CARD ==================================
+
+// Create arrays and push the cards drawn into those
+// Create game stages, where game stage 1 would prompt players to click once for their first card, game stage 2 = click again to compare differences
+// Create a for loop that would reflect the cards into cardContainer everytime "Player1Click" / "Player2Click" is activated
+// Create another loop that analyses the difference between the highest and lowest card in the hand, to determine the winner 
+
+
+// High / Low Card
+// The players can draw multiple cards each. The winner is the player who has the greatest difference in rank between the highest and lowest cards in his hand.
+// (DONE) Change the CSS of the game so that each players' cards are displayed in a row. 
