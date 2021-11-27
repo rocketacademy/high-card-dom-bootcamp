@@ -15,7 +15,7 @@ const player1Button = document.createElement('button');
 // player 1 variables
 const player1div = document.createElement('div');
 player1div.classList.add('player1container');
-document.body.appendChild(player1div);
+// document.body.appendChild(player1div);
 
 let player1highcard = 0;
 let player1lowcard = 0;
@@ -24,18 +24,40 @@ let player1difference = 0;
 const player2Button = document.createElement('button');
 // player 2 variables
 const player2div = document.createElement('div');
+// div to store the draw buttons
+let drawButtonsContainer = document.createElement("div");
+
 player2div.classList.add('player2container');
-document.body.appendChild(player2div);
+// document.body.appendChild(player2div);
 let player2highcard = 0;
 let player2lowcard = 0;
 let player2difference = 0;
 
 const gameInfo = document.createElement('div');
 
+// create submit button
+let inputContainer = document.createElement("div");
+const cbtn = document.createElement("BUTTON");
+cbtn.innerHTML = "Submit";
+
+let box = document.createElement("INPUT");
+box.setAttribute("type", "text");
+inputContainer.appendChild(box);
+inputContainer.appendChild(cbtn);
+document.body.appendChild(inputContainer);
+
+let cardsNum = 0;
+cbtn.addEventListener("click", function () {
+  cardsNum = box.value;
+  gameInfo.innerText = `Hi Players, please draw ${cardsNum} cards (Card takes 2 seconds to load)`;
+  inputContainer.style.display = "none";
+  drawButtonsContainer.style.display = "block";
+});
+
 // Get a random index ranging from 0 (inclusive) to max (exclusive).
 const getRandomIndex = (max) => Math.floor(Math.random() * max);
 
-// display message using output
+// display message using 
 const output = (message) => {
   gameInfo.innerText = message;
 };
@@ -79,13 +101,13 @@ const makeDeck = () => {
 
       // If rank is 1, 11, 12, or 13, set cardName to the ace or face card's name
       if (cardName === '1') {
-        cardName = 'ace';
+        cardName = 'A';
       } else if (cardName === '11') {
-        cardName = 'jack';
+        cardName = 'J';
       } else if (cardName === '12') {
-        cardName = 'queen';
+        cardName = 'Q';
       } else if (cardName === '13') {
-        cardName = 'king';
+        cardName = 'K';
       }
 
       if (currentSuit === 'diamonds') {
@@ -148,17 +170,24 @@ const deck = shuffleCards(makeDeck());
 
 // Player Action Callbacks
 const player1Click = () => {
+
   if (playersTurn === 1) {
+    output(`Player 2 Draw!`)
     // Pop player 1's card metadata from the deck
-    
     player1Card = deck.pop();
-    // Create card element from card metadata
-    const cardElement = createCard(player1Card);
-    // push the card player has drawn into the player1hand array
     player1hand.push(player1Card);
     // Append the card element to the card container
-    setTimeout(() => {
-    player1div.appendChild(cardElement);
+    // clear the player's div
+    player1div.innerHTML = '';
+    // sort the player1 hand
+    player1hand.sort((a,b) => a.rank - b.rank)
+    player1temphighcard = player1hand.pop();
+    player1hand.unshift(player1temphighcard);
+    // do a for loop to append it to player1div
+    for (let i=0; i < player1hand.length; i+=1) {
+      const cardElement = createCard(player1hand[i]);
+      player1div.appendChild(cardElement)
+    }
 
     if (player1highcard === 0 && player1lowcard === 0) {
       player1highcard = player1Card;
@@ -179,22 +208,30 @@ const player1Click = () => {
     player1difference = player1highcard.rank - player1lowcard.rank;
     console.log(player1difference);
     playersTurn = 2;
-    }, 2000);
   }
 };
 
 const player2Click = () => {
+
   if (playersTurn === 2) {
+    output(`Player 1 Draw!`)
     // Pop player 2's card metadata from the deck
     const player2Card = deck.pop();
     // push the card player has drawn into the player1hand array
     player2hand.push(player2Card);
-    // Create card element from card metadata
-    const cardElement = createCard(player2Card);
-    // Append card element to card container
-    setTimeout(() => {
-    player2div.appendChild(cardElement);
+    player2div.innerHTML = '';
+    // sort the player1 hand
+    player2hand.sort((a,b) => a.rank - b.rank)
+    let player2temphighcard = player2hand.pop();
+    player2hand.unshift(player2temphighcard);
 
+    // do a for loop to append it to player1div
+    for (let j=0; j < player2hand.length; j+=1) {
+      const cardElement = createCard(player2hand[j]);
+      player2div.appendChild(cardElement)
+    }
+
+    // Append card element to card container
     if (player2highcard === 0 && player2lowcard === 0) {
       player2highcard = player2Card;
       player2lowcard = player2Card;
@@ -211,35 +248,45 @@ const player2Click = () => {
     player2difference = player2highcard.rank - player2lowcard.rank;
     console.log(player2difference);
 
+    if (player2hand.length < cardsNum ){
     // Switch to player 1's turn
     playersTurn = 1;
-
-    // Determine and output winner
-    if (player1difference > player2difference) {
-      output('player 1 wins');
-    } else if (player2difference > player1difference) {
-      output('player 2 wins');
-    } else {
-      output('tie');
+    } 
+    
+    if (player2hand.length >= cardsNum){
+      if (player1difference > player2difference) {
+        output(`Player 1 Win! Player 1 Difference is ${player1difference}. Player 2 Difference is ${player2difference}.`)
+      }
+      if (player2difference > player1difference) {
+        output(`Player 2 Win! Player 1 Difference is ${player1difference}.Player 2 Difference is ${player2difference}.`)
+      }
+      if (player1difference === player2difference){
+        output(`Its a tie. The difference for both is ${player2difference}.`)
+      }
     }
-    }, 2000);
   }
 };
 
-const initGame = () => {
+const initGame = (input) => {
+
+  document.body.appendChild(player1div);
+  document.body.appendChild(player2div);
+
   // initialize button functionality
   player1Button.innerText = 'Player 1 Draw';
-  document.body.appendChild(player1Button);
+  drawButtonsContainer.appendChild(player1Button);
 
   player2Button.innerText = 'Player 2 Draw';
-  document.body.appendChild(player2Button);
+  drawButtonsContainer.appendChild(player2Button);
+  document.body.appendChild(drawButtonsContainer);
+  drawButtonsContainer.style.display = "none";
 
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
 
-  // fill game info div with starting instructions
-  gameInfo.innerText = 'Its player 1 turn. Click to draw a card! The player with the highest difference in rank wins!';
+  gameInfo.innerText = 'Please key in the number of cards (1 to 5) each player has to draw!';
   document.body.appendChild(gameInfo);
+
 };
 
 initGame();

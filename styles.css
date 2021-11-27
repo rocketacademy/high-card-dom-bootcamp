@@ -4,7 +4,7 @@ body {
 .card {
   margin: 10px;
   padding: 10px;
-  background-color: grey;
+  background-color: white;
   width: 50px;
   text-align: center;
   border-radius: 8px;
@@ -28,4 +28,7 @@ body {
 }
 .black {
   color: black;
+}
+div {
+  font-size: 20px;
 }
