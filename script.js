@@ -131,7 +131,7 @@ const output = (message) => {
   gameInfo.innerText = message;
 };
 
-// create helper function to sort array by descending order
+// create helper function to sort array by descending order according to rank
 const sortArray = (array) => {
   array.sort((a, b) => b.rank - a.rank);
 };
@@ -154,16 +154,28 @@ const player1Click = () => {
 
     if (player1Hand.length < 2 || player2Hand.length < 2) {
       output('Y\'all gotta draw more cards!');
-    } else if (player1Hand.length > 1 && player2Hand > 1) {
+    } else if (player1Hand.length > 1 && player2Hand.length > 1) {
+      sortArray(player1Hand);
+      p1CardRow.innerHTML = '';
+      const cardElementHigh = createCard(player1Hand[0]);
+      p1CardRow.appendChild(cardElementHigh);
+      const cardElementLow = createCard(player1Hand[player1Hand.length - 1]);
+      p1CardRow.appendChild(cardElementLow);
+      for (let i = 1; i < player1Hand.length - 1; i += 1) {
+        const cardElementNew = createCard(player1Hand[i]);
+        p1CardRow.appendChild(cardElementNew);
+      }
+
       if (calcRankDiff(player1Hand) > calcRankDiff(player2Hand)) {
         output('Player 1 wins!');
       } else if (calcRankDiff(player1Hand) < calcRankDiff(player2Hand)) {
         output('Player 2 wins!');
       } else {
+        sortArray(player1Hand);
         output('It\'s a tie!');
       }
     }
-  }, 1000);
+  }, 0);
 };
 
 const player2Click = () => {
@@ -176,6 +188,16 @@ const player2Click = () => {
     if (player1Hand.length < 2 || player2Hand.length < 2) {
       output('Y\'all gotta draw more cards!');
     } else if (player2Hand.length > 1 && player1Hand.length > 1) {
+      sortArray(player2Hand);
+      p2CardRow.innerHTML = '';
+      const cardElementHigh = createCard(player2Hand[0]);
+      p2CardRow.appendChild(cardElementHigh);
+      const cardElementLow = createCard(player2Hand[player2Hand.length - 1]);
+      p2CardRow.appendChild(cardElementLow);
+      for (let i = 1; i < player2Hand.length - 1; i += 1) {
+        const cardElementNew = createCard(player2Hand[i]);
+        p2CardRow.appendChild(cardElementNew);
+      }
       if (calcRankDiff(player1Hand) > calcRankDiff(player2Hand)) {
         output('Player 1 wins!');
       } else if (calcRankDiff(player1Hand) < calcRankDiff(player2Hand)) {
@@ -184,7 +206,7 @@ const player2Click = () => {
         output('It\'s a tie!');
       }
     }
-  }, 1000);
+  }, 0);
 };
 
 // INITIALISE GAME
