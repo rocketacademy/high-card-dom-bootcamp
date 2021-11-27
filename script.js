@@ -5,7 +5,7 @@ const deck = shuffleCards(makeDeck());
 let player1Hand = []; // Array of card obj
 let player2Hand = [];
 const maxCards = 3;
-let inProgress = true;
+let endGameState = false;
 let playersTurn = 1; // Player 1 starts first
 
 // Create a helper function for output to abstract complexity
@@ -31,13 +31,13 @@ const createCard = (cardInfo) => {
 
 const output = (message) => {
   const instructions = document.getElementById("instructions");
-  instructions.innerText = message;
+  instructions.innerTe = message;
 };
 
 const reset = () => {
   player1Hand = [];
   player2Hand = [];
-  inProgress = false;
+  endGameState = true;
 };
 
 const calculateScoreDiff = (hand) => {
@@ -51,11 +51,10 @@ const calculateScoreDiff = (hand) => {
 };
 
 const determineWinner = () => {
-  const lineBreak = `<br>`;
   const p1Score = calculateScoreDiff(player1Hand);
   const p2Score = calculateScoreDiff(player2Hand);
-  let message = `Player 1 has a difference of ${p1Score}` + lineBreak;
-  message += `Player 2 has a difference of ${p2Score}` + lineBreak;
+  let message = `Player 1 has a difference of ${p1Score}, `;
+  message += `Player 2 has a difference of ${p2Score}, `;
 
   // Determine and output winner
   if (p1Score > p2Score) {
@@ -72,24 +71,22 @@ const determineWinner = () => {
 
 const player1Click = () => {
   if (playersTurn === 1) {
-    const cardContainer = document.getElementById("player-1-cards");
-    const oppCardContainer = document.getElementById("player-2-cards");
+    const player1Container = document.getElementById("player-1-cards");
+    const player2Container = document.getElementById("player-2-cards");
 
     // add card to player 1 hand
     const newCard = deck.pop();
     player1Hand.push(newCard);
 
-    // Create card element
+    // Create card element and append to container
     const cardElement = createCard(newCard);
+    player1Container.appendChild(cardElement);
 
-    if (!inProgress) {
-      cardContainer.innerHTML = "";
-      oppCardContainer.innerHTML = "";
-      inProgress = true;
+    if (endGameState) {
+      player1Container.innerHTML = "";
+      player2Container.innerHTML = "";
+      endGameState = false;
     }
-
-    // Append the card element to the card container
-    cardContainer.appendChild(cardElement);
 
     // Switch to player 2's turn
     playersTurn = 2;
@@ -99,18 +96,19 @@ const player1Click = () => {
 
 const player2Click = () => {
   if (playersTurn === 2) {
-    const cardContainer = document.getElementById("player-2-cards");
-    // Pop player 2's card metadata from the deck
+    const player2Container = document.getElementById("player-2-cards");
+    // add card to player 2 hand
     const newCard = deck.pop();
     player2Hand.push(newCard);
 
-    // Create card element from card metadata
+    // Create card element and append to container
     const cardElement = createCard(newCard);
-    // Append card element to card container
-    cardContainer.appendChild(cardElement);
+    player2Container.appendChild(cardElement);
 
     // Switch to player 1's turn
     playersTurn = 1;
+
+    // check for endgame condition
     if (player1Hand.length === maxCards && player2Hand.length === maxCards) {
       determineWinner();
     } else {
@@ -120,12 +118,12 @@ const player2Click = () => {
 };
 
 const initGame = () => {
-  // fill game info div with starting instructions
+  // create big-container
   const gameContainer = document.createElement("div");
   gameContainer.id = "game-container";
   document.body.appendChild(gameContainer);
 
-  // create containers for players
+  // create containers for players in big-container
   for (let i = 0; i < 2; i++) {
     let p = i + 1;
     const playerContainer = document.createElement("div");
@@ -135,8 +133,9 @@ const initGame = () => {
     cardContainer.id = `player-${p}-cards`;
     playerContainer.appendChild(cardContainer);
 
+    // p separator - TODO: not sure if this is the best way
     const playerLabel = document.createElement("p");
-    playerLabel.id = `player-${p}-label`;
+    playerLabel.id = `player-${p}-separator`;
     playerContainer.appendChild(playerLabel);
 
     const playerButton = document.createElement("button");
