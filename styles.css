@@ -1,3 +1,44 @@
 body {
   background-color: pink;
 }
+
+.card-container {
+  margin: 10px;
+  padding: 10px;
+  background-color: white;
+  /* width: 250px; */
+  text-align: center;
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.card {
+  margin: 30px 10px 10px 10px;
+  padding: 10px;
+  background-color: lightgrey;
+  width: 50px;
+  text-align: center;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.suit {
+  margin: 5px;
+  font-size: 20px;
+}
+
+.name {
+  margin: 5px;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.red {
+  color: red;
+}
+
+.black {
+  color: black;
+}
