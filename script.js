@@ -1,13 +1,15 @@
 // Please implement exercise logic here
 let playersTurn = 1; // matches with starting instructions
-// const player1Cards = [];
-// const player2Cards = [];
-let player1Card;
-let maxNumberOfCards;
-let cardContainer;
+let player1Cards = [];
+let player2Cards = [];
+// let player1Card;
+let maxNumberOfCards = 3;
+// let player1Container;
+// let player2Container;
 
 // set timeout for dealing cards
 let canClick = true;
+let endGame = false;
 
 const player1Button = document.createElement("button");
 
@@ -188,24 +190,59 @@ const createCard = (cardInfo) => {
 //   }
 // };
 
+const checkReachMaxCards = (cardsArray) => {
+  return cardsArray.length == maxNumberOfCards;
+};
+
+const evaluateScore = () => {
+  // compare the ranks of each hand
+  const player1rankArray = [];
+  const player2rankArray = [];
+  for (let i = 0; i < maxNumberOfCards; i++) {
+    player1rankArray.push(player1Cards[i].rank);
+    player2rankArray.push(player2Cards[i].rank);
+  }
+
+  const player1score =
+    Math.max(...player1rankArray) - Math.min(...player1rankArray); //int
+  const player2score =
+    Math.max(...player2rankArray) - Math.min(...player2rankArray);
+
+  if (player1score > player2score) {
+    output("player 1 wins");
+  } else if (player1score < player2score) {
+    output("player 2 wins");
+  } else {
+    output("tie");
+  }
+};
+
 const player1Click = () => {
   if (playersTurn === 1 && canClick === true) {
     canClick = false;
+    const player1Container = document.getElementById("player-1-cards");
+    const player2Container = document.getElementById("player-2-cards");
+
+    // for clearing the playing field
+    if (endGame) {
+      player1Container.innerHTML = "";
+      player2Container.innerHTML = "";
+      player1Cards = [];
+      player2Cards = [];
+      endGame = false;
+    }
 
     setTimeout(() => {
-      player1Card = deck.pop();
+      const cardToPush = deck.pop();
+      player1Cards.push(cardToPush); // store to player1cards
 
-      const cardElement = createCard(player1Card);
+      const cardElement = createCard(cardToPush); // display
 
-      // in case this is not the 1st time
-      // in the entire app,
-      // empty the card container
-      cardContainer.innerHTML = "";
+      player1Container.appendChild(cardElement);
 
-      cardContainer.appendChild(cardElement);
       playersTurn = 2;
       canClick = true;
-    }, 2000);
+    }, 1000);
   }
 };
 
@@ -214,22 +251,25 @@ const player2Click = () => {
     canClick = false;
 
     setTimeout(() => {
-      const player2Card = deck.pop();
-      const cardElement = createCard(player2Card);
+      const cardToPush = deck.pop();
+      player2Cards.push(cardToPush); // store to player2cards
 
-      cardContainer.appendChild(cardElement);
+      const cardElement = createCard(cardToPush); // display
 
+      const player2Container = document.getElementById("player-2-cards");
+      const player1Container = document.getElementById("player-1-cards");
+      player2Container.appendChild(cardElement);
+
+      if (checkReachMaxCards(player2Cards)) {
+        // end game, calculate score
+        evaluateScore();
+
+        endGame = true;
+      }
+      //continue game
       playersTurn = 1;
       canClick = true;
-
-      if (player1Card.rank > player2Card.rank) {
-        output("player 1 wins");
-      } else if (player1Card.rank < player2Card.rank) {
-        output("player 2 wins");
-      } else {
-        output("tie");
-      }
-    }, 2000);
+    }, 1000);
   }
 };
 
@@ -252,9 +292,13 @@ const initGame = () => {
   gameInfo.innerText = "Its player 1 turn. Click to draw a card!";
   document.body.appendChild(gameInfo);
 
-  cardContainer = document.createElement("div");
-  cardContainer.classList.add("card-container");
-  document.body.appendChild(cardContainer);
+  player1Container = document.createElement("div");
+  player1Container.id = "player-1-cards";
+  document.body.appendChild(player1Container);
+
+  player2Container = document.createElement("div");
+  player2Container.id = "player-2-cards";
+  document.body.appendChild(player2Container);
 };
 
 // const startPage = () => {
