@@ -1,16 +1,18 @@
 
 let playersTurn = 1; // matches with starting instructions
-let player1Card;
+let player1Card; 
 let player2Card;
-let container1;
-let innerContainer1;
-let container2;
-let innerContainer2;
-let player1Hand =[];
-let player2Hand =[];
-let canClick = true;
-let difference1 =0;
-let difference2 =0;
+let player1CardHand =[]; // array created to store the full card display of player 1's hand
+let player2CardHand =[]; // array created to store the full card display of player 2's hand
+let container1; // container for player 1's innercontainer. doing this to separate between player 1 buttons' group and player 2 buttons' group
+let innerContainer1; // container for player 1's buttons
+let container2; // container for player 2's innercontainer
+let innerContainer2; // container for player 2's buttons
+let player1HandRank =[]; // array created to store the card ranks of player 1's hand
+let player2HandRank =[]; // array created to store the card ranks of player 2's hand
+let canClick = true; // for setTimeOut
+let difference1 = 0; // for getting difference for player 1's highest and lowest cards
+let difference2 = 0; // for getting difference for player 2's highest and lowest cards
 
 const gameInfo = document.createElement('h2');
 gameInfo.classList.add('game-message')
@@ -96,14 +98,17 @@ const makeDeck = () => {
 
 const deck = shuffleCards(makeDeck());
 
-const sortArray = (array) => {
-  array.sort((a,b) =>b - a);
+// Sorting of array in descending order
+const sortArray = (array) => { 
+  console.log("bananas" ,array)
+  array.sort((a,b) =>b.rank - a.rank);
 };
 
-const rankDiff = (array) => {
-  sortArray(array);
-  const rankDifference = array[0] - array[array.length - 1];
-  return rankDifference;
+//Only displays the highest card and the lowest card 
+const highLowCardDisplay = (array) =>{
+console.log("apples" ,array)
+sortArray(array);
+return [array[0],array[array.length-1]]
 }
 
 const createCard = (cardInfo) => {
@@ -134,6 +139,7 @@ const createCard2 = (cardInfo) => {
   return card;
 };
 
+// for displaying output message
 const output =(message) => {
   gameInfo.innerText = message;
 }
@@ -145,13 +151,13 @@ const player1Click = () => {
     canClick = false;
     setTimeout(() => {
       player1Card = deck.pop();
-      player1Hand.push(player1Card.rank)
-      const cardElement = createCard(player1Card);
-      // in case this is not the 1st time
-      // in the entire app,
+      player1CardHand.push(player1Card) // for displaying sorted full display cards
+      player1HandRank.push(player1Card.rank) // for comparing sorted cards rank
+      let cardElement = createCard(player1Card);
+      
       container1.appendChild(cardElement) 
       canClick = true;
-    }, 2000);
+    }, 500);
   } 
 };
 
@@ -160,25 +166,16 @@ const player2Click = () => {
     canClick = false;
     setTimeout(() => {
       const player2Card = deck.pop();
-      player2Hand.push(player2Card.rank)
-      const cardElement = createCard2(player2Card);
+      player2CardHand.push(player2Card) // for displaying sorted full display cards
+      player2HandRank.push(player2Card.rank) // for displaying sorted card's ranks only
+      let cardElement = createCard2(player2Card);
       container2.appendChild(cardElement) 
-      difference1 = rankDiff(player1Hand);
-      difference2 = rankDiff(player2Hand);
-      console.log(difference1)
-      console.log(difference2)
-      if (difference1 > difference2){
-      output('Player 1 wins!')
-      } else if (difference1 < difference2){
-      output('Player 2 wins!')
-    } else if ( difference1 == difference2){
-      output("its a tie!")
-    
-    } 
+      
     canClick = true;
-    }, 2000);
+    }, 500);
   }
 };
+
 
 const initGame = () => {
 for (i=0;i<1;i++){
@@ -221,48 +218,48 @@ innerContainer2.appendChild(player2EndButton)
 container2.appendChild(innerContainer2)
 player2EndButton.disabled= true;
 
-
-
-
-
-  // initialize button functionality
-/* 
-document.body.appendChild(player1Button);
-
-
-document.body.appendChild(player1EndButton);
-
-
-document.body.appendChild(player2Button);
-
-
-document.body.appendChild(player2EndButton); */
-  
-/* cardContainer = document.createElement('div');
-cardContainer.classList.add('card-container');
-document.body.appendChild(cardContainer); */
-
-
-
-
 player1Button.addEventListener('click', player1Click);
 player2Button.addEventListener('click', player2Click);
 player1EndButton.addEventListener('click', function(){ 
-    playersTurn = 2
-    player2Button.disabled= false;
+    playersTurn = 2 // Once end, go to P2's turn
+    player2Button.disabled= false; // disabling of P2's button is false now
     player2EndButton.disabled= false;
-    player1Button.disabled= true;
+    player1Button.disabled= true; // disabling of P1's button is now true
     player1EndButton.disabled= true;
+  
+    let player1HighestLowest = highLowCardDisplay(player1CardHand) // to retrieve only the highest and lowest card for player 1
+    let player1Biggest = createCard(player1HighestLowest[0]) // create the biggest card for display later
+    let player1Smallest = createCard(player1HighestLowest[1]) // create the smallest card for display later
+    difference1 = player1HighestLowest[0].rank - player1HighestLowest[1].rank // get the difference between the highest and lowest in terms of their ranks
+    container1.innerText = "Player 1"
+    container1.appendChild(player1Biggest) // append the biggest and lowest cards right after
+    container1.appendChild(player1Smallest)
     gameInfo.innerText = "It's Player 2's turn now. Click to draw a card!"
   
   });
 player2EndButton.addEventListener('click', function(){ 
     playersTurn = 1
-    player2Button.disabled= true;
+    player2Button.disabled= true; // disabling of P2's button is now true
     player2EndButton.disabled= true;
-    player1Button.disabled= false;
+    player1Button.disabled= false; // disabling of P1's button is now false
     player1EndButton.disabled= false;
-    gameInfo.innerText = "It's Player 1's turn now. Click to draw a card!"
+
+    let player2HighestLowest = highLowCardDisplay(player2CardHand) // to retrieve only the highest and lowest card for player 2
+    let player2Biggest = createCard2(player2HighestLowest[0]) // create the biggest card for display later
+    let player2Smallest = createCard2(player2HighestLowest[1]) // create the smallest card for display later
+    difference2 = player2HighestLowest[0].rank - player2HighestLowest[1].rank // get the difference between the highest and lowest in terms of their ranks
+    container2.innerText ='Player 2';
+    container2.appendChild(player2Biggest)
+    container2.appendChild(player2Smallest)
+    // Comparing the difference and printing the results
+    if (difference1 > difference2){
+      gameInfo.innerText = 'Player 1 wins!';
+      } else if (difference1 < difference2){
+      gameInfo.innerText = 'Player 2 wins!';
+      } else if ( difference1 == difference2){
+      gameInfo.innerText = "It's a tie!";
+      }
+    
   });
 }
 };
