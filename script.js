@@ -8,36 +8,76 @@ const maxCards = 3;
 let endGameState = false;
 let playersTurn = 1; // Player 1 starts first
 
-// Create a helper function for output to abstract complexity
-// of DOM manipulation away from game logic
+// createCards fn accepts an array of cards, from array draw cards dom and assigns to correct player doms
+const createCards = (cardsArr, player) => {
+  const cardContainer = document.getElementById(`player-${player}-cards`);
+  const highLowContainer = document.getElementById(
+    `player-${player}-high-low-cards`
+  );
+  const otherCardsContainer = document.getElementById(
+    `player-${player}-other-cards`
+  );
 
-const createCard = (cardInfo) => {
-  const suit = document.createElement("div");
-  suit.classList.add("suit", cardInfo.colour);
-  suit.innerText = cardInfo.suitSymbol;
+  const cardsArrCopy = [...cardsArr].sort((a, b) => a.rank - b.rank);
 
-  const name = document.createElement("div");
-  name.classList.add("name", cardInfo.colour);
-  name.innerText = cardInfo.displayName;
+  cardsArrCopy.forEach((card, index) => {
+    const suit = document.createElement("div");
+    suit.classList.add("suit", card.colour);
+    suit.innerText = card.suitSymbol;
 
-  const card = document.createElement("div");
-  card.classList.add("card");
+    const name = document.createElement("div");
+    name.classList.add("name", card.colour);
+    name.innerText = card.displayName;
 
-  card.appendChild(name);
-  card.appendChild(suit);
+    const cardDom = document.createElement("div");
+    cardDom.classList.add("card");
 
-  return card;
+    cardDom.appendChild(name);
+    cardDom.appendChild(suit);
+
+    switch (true) {
+      case cardsArrCopy.length == 1: // 1 card in hand
+        otherCardsContainer.appendChild(cardDom);
+      case cardsArrCopy.length == 2:
+        highLowContainer.appendChild(cardDom);
+        otherCardsContainer.innerHTML = "";
+      case cardsArrCopy.length > 2:
+        if (index === 0) {
+          highLowContainer.innerHTML = "";
+          highLowContainer.appendChild(cardDom); // append smallest card
+        } else if (index === cardsArrCopy.length - 1) {
+          highLowContainer.appendChild(cardDom); // append highest card
+        } else {
+          otherCardsContainer.appendChild(cardDom); // need to pop the others?
+        }
+      default:
+        return `Card length is < 1`;
+    }
+  });
 };
 
 const output = (message) => {
   const instructions = document.getElementById("instructions");
-  instructions.innerTe = message;
+  instructions.innerText = message;
 };
 
 const reset = () => {
   player1Hand = [];
   player2Hand = [];
   endGameState = true;
+};
+
+const clearDOM = () => {
+  // clear playing area
+  for (let i = 0; i < 2; i++) {
+    const hl = document.getElementById(`player-${i + 1}-high-low-cards`);
+    const other = document.getElementById(`player-${i + 1}-other-cards`);
+
+    hl.innerHTML = "";
+    other.innerHTML = "";
+  }
+  // display starting instructions
+  document.getElementById("instructions").innerHTML = "";
 };
 
 const calculateScoreDiff = (hand) => {
@@ -51,6 +91,7 @@ const calculateScoreDiff = (hand) => {
 };
 
 const determineWinner = () => {
+  console.log("determineWinner");
   const p1Score = calculateScoreDiff(player1Hand);
   const p2Score = calculateScoreDiff(player2Hand);
   let message = `Player 1 has a difference of ${p1Score}, `;
@@ -71,22 +112,12 @@ const determineWinner = () => {
 
 const player1Click = () => {
   if (playersTurn === 1) {
-    const player1Container = document.getElementById("player-1-cards");
-    const player2Container = document.getElementById("player-2-cards");
-
     // add card to player 1 hand
     const newCard = deck.pop();
     player1Hand.push(newCard);
 
     // Create card element and append to container
-    const cardElement = createCard(newCard);
-    player1Container.appendChild(cardElement);
-
-    if (endGameState) {
-      player1Container.innerHTML = "";
-      player2Container.innerHTML = "";
-      endGameState = false;
-    }
+    createCards(player1Hand, 1);
 
     // Switch to player 2's turn
     playersTurn = 2;
@@ -96,21 +127,22 @@ const player1Click = () => {
 
 const player2Click = () => {
   if (playersTurn === 2) {
-    const player2Container = document.getElementById("player-2-cards");
     // add card to player 2 hand
     const newCard = deck.pop();
     player2Hand.push(newCard);
 
     // Create card element and append to container
-    const cardElement = createCard(newCard);
-    player2Container.appendChild(cardElement);
+    createCards(player2Hand, 2);
+    // player2Container.appendChild(cardElement);
 
     // Switch to player 1's turn
     playersTurn = 1;
 
     // check for endgame condition
+    console.log(player1Hand.length, player2Hand.length);
     if (player1Hand.length === maxCards && player2Hand.length === maxCards) {
       determineWinner();
+      endGameState = false;
     } else {
       output("Its player 1 turn. Click to draw a card!");
     }
@@ -123,6 +155,12 @@ const initGame = () => {
   gameContainer.id = "game-container";
   document.body.appendChild(gameContainer);
 
+  const newGameButton = document.createElement("button");
+  newGameButton.id = "new-game-button";
+  newGameButton.innerText = "New Game";
+  newGameButton.addEventListener("click", clearDOM);
+  gameContainer.appendChild(newGameButton);
+
   // create containers for players in big-container
   for (let i = 0; i < 2; i++) {
     let p = i + 1;
@@ -132,6 +170,15 @@ const initGame = () => {
     const cardContainer = document.createElement("div");
     cardContainer.id = `player-${p}-cards`;
     playerContainer.appendChild(cardContainer);
+
+    // nest divs for high-low cards and remaining cards
+    const highLowContainer = document.createElement("div");
+    highLowContainer.id = `player-${p}-high-low-cards`;
+    cardContainer.appendChild(highLowContainer);
+
+    const otherCardsContainer = document.createElement("div");
+    otherCardsContainer.id = `player-${p}-other-cards`;
+    cardContainer.appendChild(otherCardsContainer);
 
     // p separator - TODO: not sure if this is the best way
     const playerLabel = document.createElement("p");
