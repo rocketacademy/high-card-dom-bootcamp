@@ -102,6 +102,7 @@ let player1Card;
 let player2Card;
 let player1Hand = [];
 let player2Hand = [];
+let cardsDrawn = 0;
 
 // Create all the elements on the page first
 
@@ -160,30 +161,7 @@ const player1Click = () => {
   cardContainerPlayer1.appendChild(cardElement)
 playersTurn = 2;
 }
-output('player 2, please click to draw.')
-}
-
-const calcDifference = (playersHand) => {
-  let lowestCard;
-  let highestCard;
-  let cardDifference;
-
-  for (let i = 0; i < playersHand.length; i += 1) {
-    let currentRank = playersHand[i].rank;
-    for (i = 0; i < 13; i += 1){
-      if (i = currentRank){
-        lowestCard = currentRank;
-      }
-    }
-    for (i = 13; i > 0; i -= 1){
-      if (i = currentRank){
-        highestCard = currentRank;
-      }
-    }
-  }
-  cardDifference = highestCard - lowestCard;
-
-return cardDifference;
+output (`It is player 2's turn. Click to draw a card.`)
 }
 
 const player2Click = () => {
@@ -200,6 +178,9 @@ const player2Click = () => {
     // Switch to player 1's turn
     playersTurn = 1;
     
+    // Add num of cards drawn
+    cardsDrawn += 1;
+
     // // Determine player with the greatest difference in highest and lowest cards in hand
     // let player1Difference = calcDifference(player1Hand);
     // let player2Difference = calcDifference(player2Hand);
@@ -214,26 +195,62 @@ const player2Click = () => {
     // }
 
     // Determine and output winner
-    if (player1Card.rank > player2Card.rank) {
-      output('player 1 wins');
-    } else if (player1Card.rank < player2Card.rank) {
-      output('player 2 wins');
+    // if (player1Card.rank > player2Card.rank) {
+    //   output('player 1 wins');
+    // } else if (player1Card.rank < player2Card.rank) {
+    //   output('player 2 wins');
+    // } else {
+    //   output('tie');
+    }
+    output (`It is player 1's turn. Click to draw a card.`)
+  }
+const calcDifference = (playersHand) => {
+  let lowestCard;
+  let highestCard;
+  let cardDifference;
+
+  for (let i = 0; i < playersHand.length; i += 1) {
+    let currentRank = playersHand[i].rank;
+    for (let j = 0; j < 13; j += 1){
+      if (j == currentRank){
+        lowestCard = currentRank;
+        console.log('lowest card num: ', lowestCard);
+      }
+    }
+    for (j = 13; j > 0; j -= 1){
+      if (j == currentRank){
+        highestCard = currentRank;
+        console.log('highest card num: ', highestCard);
+      }
+    }
+  }
+  cardDifference = highestCard - lowestCard;
+
+return cardDifference;
+}
+
+const determineWinner = () => {
+  if (cardsDrawn >= 2){
+  // push each players' arrays into calcDifference function
+  let player1Difference = calcDifference(player1Hand);
+  let player2Difference = calcDifference(player2Hand);
+
+    // Determine and output winner based on difference
+    if (player1Difference > player2Difference){
+      output ('player 1 wins!');
+    } else if (player2Difference > player1Difference){
+      output ('player 2 wins!');
     } else {
       output('tie');
     }
   }
-};
-
-const determineWinner = () => {
-  // put the arrays into calcDifference, then create if statements to determine outputs
-
 }
 
 const initGame = () => {
   
   cardContainerPlayer1.innerHTML = "Player 1's Drawn Cards<br><br>";
   cardContainerPlayer2.innerHTML = "Player 2's Drawn Cards<BR><BR>";
-  resultsContainer.innerHTML = "Results: <BR><BR>"
+  resultsContainer.innerHTML = "Results: "
   document.body.appendChild(cardContainerPlayer1);
   document.body.appendChild(cardContainerPlayer2);
   document.body.appendChild(resultsContainer);
@@ -250,7 +267,7 @@ const initGame = () => {
 
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
-  dealButton.addEventListen('click', determineWinner);
+  dealButton.addEventListener('click', determineWinner);
 
   // fill game info div with starting instructions
   gameInfo.innerText = 'It is player 1 turn. Click to draw a card!';
@@ -260,7 +277,7 @@ const initGame = () => {
 initGame();
 
 
-// ============= MORE COMFORTABLE PSEUDO CODE =====================
+// ============= COMFORTABLE PSEUDO CODE =====================
 // ============= HIGH / LOW CARD ==================================
 
 // Create arrays and push the cards drawn into those
