@@ -19,34 +19,36 @@ let numberOfCardsAllowed;
 
 const player1Click = () => {
   // Create card element from card metadata
-
-  if (numberOfCardsDrawn[0] !== numberOfCardsAllowed) {
-    // Create card element from card metadata
-    const card = deck.pop();
-    const cardElement = createCard(card);
-    player1CardRanks.push(card.rank);
-    // Empty cardContainer in case this is not the 1st round of gameplay
-    // Append the card element to the card container
-    firstPlayerCardContainer.appendChild(cardElement);
-    numberOfCardsDrawn[0]++;
-    checkBothPlayersCards();
-  } 
+  setTimeout(() => {
+    if (numberOfCardsDrawn[0] !== numberOfCardsAllowed) {
+      // Create card element from card metadata
+      const card = deck.pop();
+      const cardElement = createCard(card);
+      player1CardRanks.push(card.rank);
+      // Empty cardContainer in case this is not the 1st round of gameplay
+      // Append the card element to the card container
+      firstPlayerCardContainer.appendChild(cardElement);
+      numberOfCardsDrawn[0]++;
+      checkBothPlayersCards();
+    } 
+  }, 1000);
 };
 
 const player2Click = () => {
   // Create card element from card metadata
-
-  if (numberOfCardsDrawn[1] !== numberOfCardsAllowed) {
-    // Create card element from card metadata
-    const card = deck.pop();
-    const cardElement = createCard(card);
-    player2CardRanks.push(card.rank);
-    // Empty cardContainer in case this is not the 1st round of gameplay
-    // Append the card element to the card container
-    secondPlayerCardContainer.appendChild(cardElement);
-    numberOfCardsDrawn[1]++;
-    checkBothPlayersCards();
-  }
+  setTimeout(() => {
+    if (numberOfCardsDrawn[1] !== numberOfCardsAllowed) {
+      // Create card element from card metadata
+      const card = deck.pop();
+      const cardElement = createCard(card);
+      player2CardRanks.push(card.rank);
+      // Empty cardContainer in case this is not the 1st round of gameplay
+      // Append the card element to the card container
+      secondPlayerCardContainer.appendChild(cardElement);
+      numberOfCardsDrawn[1]++;
+      checkBothPlayersCards();
+    }
+  }, 1000);
 };
 
 const checkBothPlayersCards = () => {
