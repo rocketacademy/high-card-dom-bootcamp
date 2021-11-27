@@ -1,1 +1,160 @@
-// Please implement exercise logic here
+import { shuffleCards, makeDeck } from "./deck.js";
+
+const deck = shuffleCards(makeDeck());
+
+let player1Hand = []; // Array of card obj
+let player2Hand = [];
+const maxCards = 3;
+let inProgress = true;
+let playersTurn = 1; // Player 1 starts first
+
+// Create a helper function for output to abstract complexity
+// of DOM manipulation away from game logic
+
+const createCard = (cardInfo) => {
+  const suit = document.createElement("div");
+  suit.classList.add("suit", cardInfo.colour);
+  suit.innerText = cardInfo.suitSymbol;
+
+  const name = document.createElement("div");
+  name.classList.add("name", cardInfo.colour);
+  name.innerText = cardInfo.displayName;
+
+  const card = document.createElement("div");
+  card.classList.add("card");
+
+  card.appendChild(name);
+  card.appendChild(suit);
+
+  return card;
+};
+
+const output = (message) => {
+  const instructions = document.getElementById("instructions");
+  instructions.innerText = message;
+};
+
+const reset = () => {
+  player1Hand = [];
+  player2Hand = [];
+  inProgress = false;
+};
+
+const calculateScoreDiff = (hand) => {
+  // compare ranks
+  const rankArr = [];
+  for (let i = 0; i < hand.length; i++) {
+    rankArr.push(hand[i]["rank"]);
+  }
+  console.log("rankArr : " + rankArr);
+  return Math.max(...rankArr) - Math.min(...rankArr);
+};
+
+const determineWinner = () => {
+  const lineBreak = `<br>`;
+  const p1Score = calculateScoreDiff(player1Hand);
+  const p2Score = calculateScoreDiff(player2Hand);
+  let message = `Player 1 has a difference of ${p1Score}` + lineBreak;
+  message += `Player 2 has a difference of ${p2Score}` + lineBreak;
+
+  // Determine and output winner
+  if (p1Score > p2Score) {
+    message += "player 1 wins!";
+  } else if (p1Score < p2Score) {
+    message += "player 2 wins!";
+  } else {
+    message += "tie!";
+  }
+
+  output(message);
+  reset();
+};
+
+const player1Click = () => {
+  if (playersTurn === 1) {
+    const cardContainer = document.getElementById("player-1-cards");
+    const oppCardContainer = document.getElementById("player-2-cards");
+
+    // add card to player 1 hand
+    const newCard = deck.pop();
+    player1Hand.push(newCard);
+
+    // Create card element
+    const cardElement = createCard(newCard);
+
+    if (!inProgress) {
+      cardContainer.innerHTML = "";
+      oppCardContainer.innerHTML = "";
+      inProgress = true;
+    }
+
+    // Append the card element to the card container
+    cardContainer.appendChild(cardElement);
+
+    // Switch to player 2's turn
+    playersTurn = 2;
+    output("Its player 2 turn. Click to draw a card!");
+  }
+};
+
+const player2Click = () => {
+  if (playersTurn === 2) {
+    const cardContainer = document.getElementById("player-2-cards");
+    // Pop player 2's card metadata from the deck
+    const newCard = deck.pop();
+    player2Hand.push(newCard);
+
+    // Create card element from card metadata
+    const cardElement = createCard(newCard);
+    // Append card element to card container
+    cardContainer.appendChild(cardElement);
+
+    // Switch to player 1's turn
+    playersTurn = 1;
+    if (player1Hand.length === maxCards && player2Hand.length === maxCards) {
+      determineWinner();
+    } else {
+      output("Its player 1 turn. Click to draw a card!");
+    }
+  }
+};
+
+const initGame = () => {
+  // fill game info div with starting instructions
+  const gameContainer = document.createElement("div");
+  gameContainer.id = "game-container";
+  document.body.appendChild(gameContainer);
+
+  // create containers for players
+  for (let i = 0; i < 2; i++) {
+    let p = i + 1;
+    const playerContainer = document.createElement("div");
+    playerContainer.id = `player-${p}`;
+
+    const cardContainer = document.createElement("div");
+    cardContainer.id = `player-${p}-cards`;
+    playerContainer.appendChild(cardContainer);
+
+    const playerLabel = document.createElement("p");
+    playerLabel.id = `player-${p}-label`;
+    playerContainer.appendChild(playerLabel);
+
+    const playerButton = document.createElement("button");
+    playerButton.id = `player-${p}-button`;
+    playerButton.innerText = `Player ${p} Draw`;
+
+    const listenerFn = i === 0 ? player1Click : player2Click;
+    playerButton.addEventListener("click", listenerFn);
+    playerContainer.appendChild(playerButton);
+
+    gameContainer.appendChild(playerContainer);
+  }
+
+  // starting instructions - changes in instructions use output
+  const instructions = document.createElement("p");
+  instructions.id = "instructions";
+  instructions.innerText = "Its player 1 turn. Click to draw a card!";
+  gameContainer.appendChild(instructions);
+};
+
+initGame();
