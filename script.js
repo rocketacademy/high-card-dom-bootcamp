@@ -10,14 +10,10 @@ const shuffleCards = (cards) => {
   for (let currentIndex = 0; currentIndex < length; currentIndex += 1) {
     const randomIndex =
       Math.floor(Math.random() * (length - currentIndex)) + currentIndex;
-    console.log(`----`);
-    console.log(randomIndex);
     [cards[currentIndex], cards[randomIndex]] = [
       cards[randomIndex],
       cards[currentIndex],
     ];
-
-    console.log(cards[currentIndex]);
   }
   return cards;
 };
@@ -116,7 +112,6 @@ const main = (rootTag, playerNames) => {
           value: { rank },
         },
       } = players[name];
-      console.log(rank);
       if (rank > maxRank) {
         maxRank = rank;
         maxNames = [name];
@@ -130,7 +125,6 @@ const main = (rootTag, playerNames) => {
 
   let drawCount = 0;
   const drawButtonPressed = (playerName) => {
-    console.log(`${playerName} pressed draw`);
     const { card } = players[playerName];
 
     if (card.value || card.html) {
@@ -147,7 +141,6 @@ const main = (rootTag, playerNames) => {
       card.html.innerText = `${suit[0].toUpperCase()} | ${CardName}`;
       seat.html.appendChild(card.html);
       drawCount += 1;
-      console.log(`draw c ${drawCount} plc ${playerCount}`);
       if (drawCount === playerCount) {
         settle(playerNames);
       }
