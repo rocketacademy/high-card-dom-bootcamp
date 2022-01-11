@@ -7,13 +7,9 @@
 // Shuffle an array of cards
 const shuffleCards = (cards) => {
   const length = cards.length;
-  for (let currentIndex = 0; currentIndex < length; currentIndex += 1) {
-    const randomIndex =
-      Math.floor(Math.random() * (length - currentIndex)) + currentIndex;
-    [cards[currentIndex], cards[randomIndex]] = [
-      cards[randomIndex],
-      cards[currentIndex],
-    ];
+  for (let i = 0; i < length; i += 1) {
+    const j = Math.floor(Math.random() * (length - i)) + i;
+    [cards[i], cards[j]] = [cards[j], cards[i]];
   }
   return cards;
 };
@@ -49,15 +45,8 @@ const makeShuffledDeck = () => {
   return cards;
 };
 
-// Create a helper function for output to abstract complexity
-// of DOM manipulation away from game logic
-const output = (message) => {
-  gameInfo.innerText = message;
-};
-
-/// END BOILER
 // CSS class name
-const CLASS_ROOT_TAG = `playing-area`;
+const CLASS_ROOT_TAG = `high-playing-area`;
 const CLASS_MAT = `high-mat`;
 const CLASS_SEAT_ROW = `high-seat-row`;
 const CLASS_SEAT = `high-seat`;
@@ -168,9 +157,8 @@ const main = (rootTag, playerNames) => {
 };
 
 const ROOT_TAG = document.createElement(`div`);
-ROOT_TAG.classList.add();
+ROOT_TAG.classList.add(CLASS_ROOT_TAG);
 document.body.appendChild(ROOT_TAG);
-
 const PLAYER_NAMES = [`Player 1`, `Player 2`];
 
 main(ROOT_TAG, PLAYER_NAMES);
