@@ -51,3 +51,8 @@ body {
   width: 100%;
   justify-content: space-around;
 }
+.high-card {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+}
