@@ -205,6 +205,7 @@ const startGame = (rootTag, playerNames, cards) => {
       // should have at most one card per player
       // !card.value && !card.element;
       elementBanner.innerText = `Hi ${playerName}, You've already drawn a card ~`;
+      return;
     }
 
     if (playerNames[state.currentPlayerIndex] !== playerName) {
