@@ -121,72 +121,87 @@ const player2Btn = document.createElement('button');
 // Player turn
 let playerTurn = 1;
 let player1Card;
+let canClick = true;
 
 // ------ Callback functions ----------------------------------------------------
 const player1Click = () => {
-	if (playerTurn === 1) {
-		// Reset the game-info div
-		clearMsg();
-		cardContainer.innerHTML = ``;
+	if (playerTurn === 1 && canClick === true) {
+		canClick = false;
+		console.log(`Please wait. Drawing Player 1's card...`);
 
-		// Draw a card for player 1
-		player1Card = deck.pop();
-		console.log('Player 1', player1Card);
+		setTimeout(() => {
+			// Reset the game-info div
+			clearMsg();
+			cardContainer.innerHTML = ``;
 
-		// Create a card div & append it to card-container div
-		const player1CardDiv = makeCard(player1Card);
-		cardContainer.appendChild(player1CardDiv);
-		addMsg(cardContainer);
+			// Draw a card for player 1
+			player1Card = deck.pop();
+			console.log('Player 1', player1Card);
 
-		// Add game info: player 1's card and next player's turn
-		const player1DrawnCard = document.createElement('p');
-		player1DrawnCard.innerHTML = `Player 1 drew ${player1Card.name}${player1Card.symbol}.`;
+			// Create a card div & append it to card-container div
+			const player1CardDiv = makeCard(player1Card);
+			cardContainer.appendChild(player1CardDiv);
+			addMsg(cardContainer);
 
-		const nextTurn = document.createElement('p');
-		nextTurn.innerHTML = `Player 2, your turn.`;
-		addMsg(player1DrawnCard);
-		addMsg(nextTurn);
+			// Add game info: player 1's card and next player's turn
+			const player1DrawnCard = document.createElement('p');
+			player1DrawnCard.innerHTML = `Player 1 drew ${player1Card.name}${player1Card.symbol}.`;
 
-		// Next player's turn
-		playerTurn = 2;
+			const nextTurn = document.createElement('p');
+			nextTurn.innerHTML = `Player 2, your turn.`;
+			addMsg(player1DrawnCard);
+			addMsg(nextTurn);
+
+			// Next player's turn
+			playerTurn = 2;
+			canClick = true;
+		}, 2000);
 	}
 };
 
 const player2Click = () => {
-	// Clear game-info div
-	clearMsg();
+	if (playerTurn === 2 && canClick === true) {
+		canClick = false;
+		console.log(`Please wait. Drawing player 2's card...`);
 
-	// Draw card for player 2
-	let player2Card = deck.pop();
-	console.log('Player 2', player2Card);
+		setTimeout(() => {
+			// Clear game-info div
+			clearMsg();
 
-	// Create card div & append it to card-container div
-	const player2CardDiv = makeCard(player2Card);
-	cardContainer.appendChild(player2CardDiv);
-	addMsg(cardContainer);
+			// Draw card for player 2
+			let player2Card = deck.pop();
+			console.log('Player 2', player2Card);
 
-	// Add game info: players' cards and outcome of game
-	const drawnCards = document.createElement('p');
-	drawnCards.innerHTML = `Player 1 drew ${player1Card.name}${player1Card.symbol}.<br>
-  Player 2 drew ${player2Card.name}${player2Card.symbol}.`;
+			// Create card div & append it to card-container div
+			const player2CardDiv = makeCard(player2Card);
+			cardContainer.appendChild(player2CardDiv);
+			addMsg(cardContainer);
 
-	const outcome = document.createElement('p');
-	if (player1Card.rank === player2Card.rank) {
-		// addMsg(`It's a draw!`);
-		outcome.innerText += `It's a draw!`;
-	} else if (player1Card.rank > player2Card.rank) {
-		// addMsg(`Player 1 wins!`);
-		outcome.innerText += `Player 1 wins!`;
-	} else {
-		// addMsg(`Player 2 wins!`);
-		outcome.innerText += `Player 2 wins!`;
+			// Add game info: players' cards and outcome of game
+			const drawnCards = document.createElement('p');
+			drawnCards.innerHTML = `Player 1 drew ${player1Card.name}${player1Card.symbol}.<br>
+		Player 2 drew ${player2Card.name}${player2Card.symbol}.`;
+
+			const outcome = document.createElement('p');
+			if (player1Card.rank === player2Card.rank) {
+				// addMsg(`It's a draw!`);
+				outcome.innerText += `It's a draw!`;
+			} else if (player1Card.rank > player2Card.rank) {
+				// addMsg(`Player 1 wins!`);
+				outcome.innerText += `Player 1 wins!`;
+			} else {
+				// addMsg(`Player 2 wins!`);
+				outcome.innerText += `Player 2 wins!`;
+			}
+
+			addMsg(drawnCards);
+			addMsg(outcome);
+
+			// Reset player turn
+			playerTurn = 1;
+			canClick = true;
+		}, 2000);
 	}
-
-	addMsg(drawnCards);
-	addMsg(outcome);
-
-	// Reset player turn
-	playerTurn = 1;
 };
 
 // ----- Game initialisation ----------------------------------------------------
