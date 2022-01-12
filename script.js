@@ -15,7 +15,7 @@ const CLASS_BANNER = `high-banner`;
 const CLASS_BUTTON_ROW = `high-button-row`;
 
 /** CARDS */
-const SUITS = ["hearts", "diamonds", "clubs", "spades"];
+const SUITS = ["❤️", "💎", "♣️", "♠️"];
 
 const shuffleCards = (cards) => {
   const length = cards.length;
@@ -34,9 +34,9 @@ const makeShuffledDeck = () => {
     for (let rankCounter = 1; rankCounter <= 13; rankCounter += 1) {
       let cardName = ``;
       if (rankCounter === 1) {
-        cardName = `ace`;
+        cardName = `A`;
       } else if (rankCounter === 11) {
-        cardName = `jack`;
+        cardName = `J`;
       } else if (rankCounter === 12) {
         cardName = `👸`;
       } else if (rankCounter === 13) {
@@ -102,7 +102,7 @@ const newElementCard = (cardValue) => {
   const { suit, name } = cardValue;
 
   const elementCardSuit = document.createElement(`div`);
-  elementCardSuit.innerText = `${suit[0].toUpperCase()}`;
+  elementCardSuit.innerText = `${suit}`;
   elementCardSuit.className += ` ${CLASS_CARD_SUIT}`;
   const elementCardName = document.createElement(`div`);
   elementCardName.innerText = `${name}`;
