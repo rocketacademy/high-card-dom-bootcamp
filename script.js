@@ -237,6 +237,8 @@ const startGame = (rootTag, playerNames, cards) => {
       state.currentPlayerIndex += 1;
       elementParentOfButtonRow.appendChild(elementButtonRow);
       elementBanner.innerText = ``;
+
+      // if all players drew one card
       if (state.drawCount === playerCount) {
         // state.currentPlayerIndex === playerCount
         _settle(playerNames);
