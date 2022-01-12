@@ -60,6 +60,7 @@ const makeShuffledDeck = () => {
 /** LOGIC HELPERS */
 
 /**
+ * game registration
  * @returns a set of players with its associated playing objects. Example : {
  *                                                                            PLAYER_1 : {
                                                                                 name: PLAYER_1,
