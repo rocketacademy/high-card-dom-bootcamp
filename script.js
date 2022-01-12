@@ -46,6 +46,7 @@ const makeDeck = () => {
     for (let rankCounter = 1; rankCounter <= 13; rankCounter += 1) {
       // By default, the card name is the same as rankCounter
       let cardName = `${rankCounter}`;
+      displayName = rankCounter
 
       // If rank is 1, 11, 12, or 13, set cardName to the ace or face card's name
       if (cardName === '1') {
@@ -60,9 +61,8 @@ const makeDeck = () => {
       } else if (cardName === '13') {
         cardName = 'king';
         displayName = 'K'
-      }
+      } 
 
-      //PARAMETERISE CARD ATTRIBUTES
       const cardInfo = {
         suitSymbol,
         suit: currentSuit,
@@ -71,6 +71,9 @@ const makeDeck = () => {
         colour,
         rank: rankCounter,
       };
+
+      //PARAMETERISE CARD ATTRIBUTES
+      
 
       // Add the new card to the deck
       newDeck.push(cardInfo);
@@ -88,7 +91,7 @@ const createCard = (cardInfo) => {
 
   const name = document.createElement('div');
   name.classList.add('name');
-  name.innerText = cardInfo.rank;
+  name.innerText = cardInfo.displayName;
 
   const card = document.createElement('div');
   card.classList.add('card');
@@ -104,11 +107,67 @@ const createCard = (cardInfo) => {
 const output = (message) => {
   gameInfo.innerText = message;
 };
+
+//SETUP
+const deck = shuffleCards(makeDeck());
+
+let playersTurn = 1; // matches with starting instructions
+let player1Card;
+
+const player1Button = document.createElement('button');
+player1Button.classList.add('player1')
+
+const player2Button = document.createElement('button');
+player2Button.classList.add('player2')
+
+const gameInfo = document.createElement('div');
+
+const resultButton = document.createElement('button');
+resultButton.classList.add('result')
+
+let canClick = true;
+let cardContainer;
+let results
+
+//GAME INIT
+const initGame = () => {
+  cardContainer = document.createElement('div');
+  cardContainer.classList.add('card-container');
+  document.body.appendChild(cardContainer);
+
+  results = document.createElement('div')
+  results.classList.add('results')
+  document.body.appendChild(results)
+  
+  // initialize button functionality
+  player1Button.innerText = 'Player 1 Draw';
+  results.appendChild(player1Button);
+
+  player2Button.innerText = 'Player 2 Draw';
+  results.appendChild(player2Button);
+
+  player1Button.addEventListener('click', player1Click);
+  player2Button.addEventListener('click', player2Click);
+
+  // add result button
+  resultButton.innerText = 'Click for Result';
+  results.appendChild(resultButton)
+  resultButton.addEventListener('click', showResult);
+  
+  // fill game info div with starting instructions
+  gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
+  gameInfo.id = "message"
+  document.body.append(gameInfo);
+};
 //PLAYER ACTION CALLBACK
+let multiCards = true
+
+let player1Cards = []
+let player2Cards = []
+
 const player1Click = () => {
   if (playersTurn === 1 && canClick === true) {
     canClick = false
-
     setTimeout(() => {
     // Pop player 1's card metadata from the deck
       player1Card = deck.pop();
@@ -116,14 +175,21 @@ const player1Click = () => {
       // Create card element from card metadata
       const cardElement = createCard(player1Card);
       cardElement.classList.add("player1")
+      cardElement.classList.add("card"+player1Cards.length)
       // Empty cardContainer in case this is not the 1st round of gameplay
-      cardContainer.innerHTML = '';
+      if (multiCards === false){
+        cardContainer.innerHTML = '';
+        multiCards = true
+      }
       // Append the card element to the card container
       cardContainer.appendChild(cardElement);
+      player1Cards.push(player1Card.rank)
+      console.log(player1Cards)
       
       // Switch to player 2's turn
       playersTurn = 2;
       canClick = true
+      output(`Its player 2's turn to draw a card`)
   }, 500);
 }
 };
@@ -139,66 +205,44 @@ const player2Click = () => {
     // Create card element from card metadata
     const cardElement = createCard(player2Card);   
     cardElement.classList.add("player2") 
+    cardElement.classList.add("card"+player2Cards.length)
     // Append card element to card container
     cardContainer.appendChild(cardElement);
+    player2Cards.push(player2Card.rank)
+    console.log(player2Cards)
     
     // Switch to player 1's turn
-    playersTurn = 1;
-    canClick = true
+    if(player2Cards.length < 3){
+      playersTurn = 1;
+      output('Player 1, click to continue drawing \nor click for the game result')
+      canClick = true
+    } else {
+      output('Maximum of 3 cards reached. Click for result.')
+    }
     
     // Determine and output winner
-    if (player1Card.rank > player2Card.rank) {
-      output('player 1 wins');
-    } else if (player1Card.rank < player2Card.rank) {
-      output('player 2 wins');
-    } else {
-      output('tie');
-    }
-  }, 500)
-  }
-};
-//SETUP
-const deck = shuffleCards(makeDeck());
-
-let playersTurn = 1; // matches with starting instructions
-let player1Card;
-
-
-const player1Button = document.createElement('button');
-player1Button.classList.add('player1')
-
-const player2Button = document.createElement('button');
-player2Button.classList.add('player2')
-
-const gameInfo = document.createElement('div');
-
-let canClick = true;
-let cardContainer;
-//GAME INIT
-const initGame = () => {
-  cardContainer = document.createElement('div');
-  cardContainer.classList.add('card-container');
-  document.body.appendChild(cardContainer);
-  
-  // initialize button functionality
-  player1Button.innerText = 'Player 1 Draw';
-  document.body.appendChild(player1Button);
-
-  player2Button.innerText = 'Player 2 Draw';
-  document.body.appendChild(player2Button);
-
-  player1Button.addEventListener('click', player1Click);
-  player2Button.addEventListener('click', player2Click);
-
-  // fill game info div with starting instructions
-  gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
-  gameInfo.id = "message"
-  document.body.appendChild(gameInfo);
-  
+  }, 500)    
+  console.log(deck.length)
+}
 };
 
-// let playButton = document.createElement("button")
-// playButton.innerText = "play"
-// document.body.appendChild(playButton)
+const showResult = () => {
+  const player1Max = Math.max(...player1Cards)
+  const player2Max = Math.max(...player2Cards)
+
+  if (player1Max > player2Max) {
+        output('player 1 wins');
+      } else if (player1Max < player2Max) {
+        output('player 2 wins');
+      } else if (player1Max = player2Max) {
+        output('tie');
+      }
+  multiCards = false
+  playersTurn = 1
+  canClick = true
+  player1Cards = []
+  player2Cards = []
+  // const deck = shuffleCards(makeDeck()); - how to reset deck
+}
 
 window.addEventListener('load', initGame)
