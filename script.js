@@ -190,8 +190,8 @@ const startGame = (rootTag, playerNames, cards) => {
     // show in banner
     elementBanner.innerText =
       maxNames > 1
-        ? `Winner ${maxNames}`
-        : `Multiple winners, more the merrier! ${maxNames}`;
+        ? `Multiple winners, more the merrier! ${maxNames}`
+        : `Winner ${maxNames}`;
 
     // show restart button
     elementButtonRow.replaceChildren(elementButtonRestart);
