@@ -106,26 +106,33 @@ const output = (message) => {
 };
 //PLAYER ACTION CALLBACK
 const player1Click = () => {
-  if (playersTurn === 1) {
+  if (playersTurn === 1 && canClick === true) {
+    canClick = false
+
+    setTimeout(() => {
     // Pop player 1's card metadata from the deck
-    player1Card = deck.pop();
-    
-    // Create card element from card metadata
-    const cardElement = createCard(player1Card);
-    cardElement.classList.add("player1")
-    // Empty cardContainer in case this is not the 1st round of gameplay
-    cardContainer.innerHTML = '';
-    // Append the card element to the card container
-    cardContainer.appendChild(cardElement);
-    
-    // Switch to player 2's turn
-    playersTurn = 2;
-    console.log(player1Card)
-  }
+      player1Card = deck.pop();
+      
+      // Create card element from card metadata
+      const cardElement = createCard(player1Card);
+      cardElement.classList.add("player1")
+      // Empty cardContainer in case this is not the 1st round of gameplay
+      cardContainer.innerHTML = '';
+      // Append the card element to the card container
+      cardContainer.appendChild(cardElement);
+      
+      // Switch to player 2's turn
+      playersTurn = 2;
+      canClick = true
+  }, 500);
+}
 };
 
 const player2Click = () => {
-  if (playersTurn === 2) {
+  if (playersTurn === 2 && canClick === true) {
+    canClick = false
+
+    setTimeout(()=>{
     // Pop player 2's card metadata from the deck
     const player2Card = deck.pop();
     
@@ -137,6 +144,7 @@ const player2Click = () => {
     
     // Switch to player 1's turn
     playersTurn = 1;
+    canClick = true
     
     // Determine and output winner
     if (player1Card.rank > player2Card.rank) {
@@ -146,6 +154,7 @@ const player2Click = () => {
     } else {
       output('tie');
     }
+  }, 500)
   }
 };
 //SETUP
@@ -163,6 +172,7 @@ player2Button.classList.add('player2')
 
 const gameInfo = document.createElement('div');
 
+let canClick = true;
 let cardContainer;
 //GAME INIT
 const initGame = () => {
