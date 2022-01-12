@@ -1,3 +1,67 @@
 body {
-  background-color: pink;
+	background-color: powderblue;
+	font-family: monospace;
+	text-align: center;
+}
+
+h1 {
+	color: darkcyan;
+}
+
+button {
+	background-color: lightpink;
+	border-width: 2px;
+	border-style: solid;
+	border-color: lightcyan darkcyan darkcyan lightcyan;
+	color: darkcyan;
+	font-family: monospace;
+	font-size: 1.5em;
+	font-weight: bold;
+	text-transform: uppercase;
+	width: 30vw;
+	height: 3em;
+	margin-left: 1em;
+	margin-right: 1em;
+}
+
+.btn-container {
+	margin: 1em;
+	padding: 1em;
+}
+
+.card {
+	background: white;
+	display: inline-block;
+	width: 2em;
+	padding: 1em 0.5em;
+	margin: 0.5em 1em;
+	border: 1px solid grey;
+	border-radius: 3px;
+}
+
+.card-name {
+	font-size: 1.3em;
+	font-weight: bold;
+}
+
+.card-symbol {
+	font-size: 1.2em;
+}
+
+.red {
+	color: red;
+}
+
+.black {
+	color: black;
+}
+
+#game-info {
+	font-size: 1.5em;
+	color: darkslategrey;
+	background-color: lightgoldenrodyellow;
+	margin: 1em auto;
+	padding: 1em;
+	width: 80vw;
+	height: 15em;
 }
