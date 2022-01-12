@@ -113,11 +113,32 @@ const newElementCard = (cardValue) => {
   return elementCard;
 };
 
+const newElementButtonRow = () => {
+  const element = document.createElement(`div`);
+  element.className += ` ${CLASS_BUTTON_ROW}`;
+  return element;
+};
+
+const newElementSeatRow = () => {
+  const element = document.createElement(`div`);
+  element.className += ` ${CLASS_SEAT_ROW}`;
+  return element;
+};
 const newElementSeat = () => {
   const element = document.createElement(`div`);
   element.className += ` ${CLASS_SEAT}`;
   return element;
 };
+
+const newElementMat = () => {
+  const element = document.createElement(`div`);
+  element.className += ` ${CLASS_MAT}`;
+  return element;
+};
+
+const newElementButtonRestartDesc = () => document.createTextNode(`restart`);
+const newElementDrawDesc = (playerName) =>
+  document.createTextNode(`${playerName} Draw`);
 
 const startGame = (rootTag, playerNames, cards) => {
   const playerCount = playerNames.length;
@@ -127,20 +148,18 @@ const startGame = (rootTag, playerNames, cards) => {
   // if cards less than players, wash a new deck
   cards = !cards || cards.length <= playerCount ? makeShuffledDeck() : cards;
 
-  const elementMat = document.createElement(`div`);
-  elementMat.className += ` ${CLASS_MAT}`;
+  const elementMat = newElementMat();
 
-  const elementSeatRow = document.createElement(`div`);
-  elementSeatRow.className += ` ${CLASS_SEAT_ROW}`;
+  const elementSeatRow = newElementSeatRow();
 
-  const elementButtonRow = document.createElement(`div`);
-  elementButtonRow.className += ` ${CLASS_BUTTON_ROW}`;
+  const elementButtonRow = newElementButtonRow();
 
   const elementButtonRestart = document.createElement(`button`);
   elementButtonRestart.addEventListener(`click`, () =>
     startGame(rootTag, playerNames)
   );
-  const elementButtonRestartDesc = document.createTextNode(`restart`);
+
+  const elementButtonRestartDesc = newElementButtonRestartDesc();
   elementButtonRestart.appendChild(elementButtonRestartDesc);
 
   const elementBanner = document.createElement(`div`);
@@ -178,62 +197,61 @@ const startGame = (rootTag, playerNames, cards) => {
   const _drawButtonPressed = (playerName) => {
     const { card } = players[playerName];
 
-    if (playerNames[state.currentPlayerIndex] !== playerName) {
-      // play should be orderly
-      elementBanner.innerText = `Hi ${playerName}, Please wait for your turn :)`;
-      return;
-    }
     if (card.value) {
       // should have at most one card per player
 
       // !card.value && !card.element;
       elementBanner.innerText = `Hi ${playerName}, You've already drawn a card ~`;
-      return;
-    } else {
-      //
-      const {
-        seat: { element: elementSeat },
-      } = players[playerName];
-      // !!seat.element;
+    }
 
-      const cardValue = drawCard(cards);
-      const elementCard = newElementCard(cardValue);
-
-      // set card element
-      elementSeat.appendChild(elementCard);
-
-      // record player card info
-      card.element = elementCard;
-      card.value = cardValue;
-
-      // update game state
-      state.drawCount += 1;
-      state.currentPlayerIndex += 1;
-
-      if (state.drawCount === playerCount) {
-        // state.currentPlayerIndex === playerCount
-        _settle(playerNames);
-      }
-
+    if (playerNames[state.currentPlayerIndex] !== playerName) {
+      // play should be orderly
+      elementBanner.innerText = `Hi ${playerName}, Please wait for your turn :)`;
       return;
     }
-    // !!
+    const {
+      seat: { element: elementSeat },
+    } = players[playerName];
+    // !!seat.element;
+
+    const cardValue = drawCard(cards);
+    const elementCard = newElementCard(cardValue);
+
+    // set card element
+    elementSeat.appendChild(elementCard);
+
+    // record player card info
+    card.element = elementCard;
+    card.value = cardValue;
+
+    // update game state
+    state.drawCount += 1;
+    state.currentPlayerIndex += 1;
+
+    if (state.drawCount === playerCount) {
+      // state.currentPlayerIndex === playerCount
+      _settle(playerNames);
+    }
   };
 
   for (const name of playerNames) {
     const elementSeat = newElementSeat();
-    players[name].seat.element = elementSeat;
-    elementSeatRow.appendChild(elementSeat);
 
     const elementDrawButton = document.createElement(`button`);
     elementDrawButton.addEventListener(`click`, () =>
       _drawButtonPressed(name, elementBanner)
     );
-    const elementDrawDesc = document.createTextNode(`${name} Draw`);
-    elementDrawButton.appendChild(elementDrawDesc);
 
-    // record player button
+    const elementDrawDesc = newElementDrawDesc(name);
+
+    // record player info
+
+    players[name].seat.element = elementSeat;
     players[name].drawClicker.element = elementDrawButton;
+
+    elementSeatRow.appendChild(elementSeat);
+
+    elementDrawButton.appendChild(elementDrawDesc);
     elementButtonRow.appendChild(elementDrawButton);
   }
 
