@@ -14,6 +14,8 @@ const CLASS_BANNER = `high-banner`;
 
 const CLASS_BUTTON_ROW = `high-button-row`;
 
+const DRAW_LATENCY_MS = 500;
+
 /** CARDS */
 const SUITS = ["❤️", "💎", "♣️", "♠️"];
 
@@ -216,24 +218,30 @@ const startGame = (rootTag, playerNames, cards) => {
     } = players[playerName];
     // !!seat.element;
 
-    const cardValue = drawCard(cards);
-    const elementCard = newElementCard(cardValue);
+    const elementParentOfButtonRow = elementButtonRow.parentNode;
+    elementParentOfButtonRow.removeChild(elementButtonRow);
+    elementBanner.innerText = `Drawing card . . . . . . . .`;
+    setTimeout(() => {
+      const cardValue = drawCard(cards);
+      const elementCard = newElementCard(cardValue);
 
-    // set card element
-    elementSeat.appendChild(elementCard);
+      // set card element
+      elementSeat.appendChild(elementCard);
 
-    // record player card info
-    card.element = elementCard;
-    card.value = cardValue;
+      // record player card info
+      card.element = elementCard;
+      card.value = cardValue;
 
-    // update game state
-    state.drawCount += 1;
-    state.currentPlayerIndex += 1;
-
-    if (state.drawCount === playerCount) {
-      // state.currentPlayerIndex === playerCount
-      _settle(playerNames);
-    }
+      // update game state
+      state.drawCount += 1;
+      state.currentPlayerIndex += 1;
+      elementParentOfButtonRow.appendChild(elementButtonRow);
+      elementBanner.innerText = ``;
+      if (state.drawCount === playerCount) {
+        // state.currentPlayerIndex === playerCount
+        _settle(playerNames);
+      }
+    }, DRAW_LATENCY_MS);
   };
 
   for (const name of playerNames) {
