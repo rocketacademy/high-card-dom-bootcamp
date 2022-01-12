@@ -81,7 +81,7 @@ const createPlayers = (names) => {
       [name]: {
         name: name,
         seat: { element: null, value: null },
-        draw: { element: null },
+        drawClicker: { element: null },
         card: { element: null, value: null },
       },
     };
@@ -217,7 +217,6 @@ const startGame = (rootTag, playerNames, cards) => {
 
       return;
     }
-
     // !!
   };
 
@@ -227,12 +226,14 @@ const startGame = (rootTag, playerNames, cards) => {
     elementSeatRow.appendChild(elementSeat);
 
     const elementDrawButton = document.createElement(`button`);
-    const elementDrawDesc = document.createTextNode(`${name} Draw`);
-    elementDrawButton.appendChild(elementDrawDesc);
     elementDrawButton.addEventListener(`click`, () =>
       _drawButtonPressed(name, elementBanner)
     );
-    players[name].draw.element = elementDrawButton;
+    const elementDrawDesc = document.createTextNode(`${name} Draw`);
+    elementDrawButton.appendChild(elementDrawDesc);
+
+    // record player button
+    players[name].drawClicker.element = elementDrawButton;
     elementButtonRow.appendChild(elementDrawButton);
   }
 
@@ -242,7 +243,7 @@ const startGame = (rootTag, playerNames, cards) => {
 
 // <--- HIGH CARD ---->
 
-// Flow
+// 1. ---- Flow
 
 // PLAYER TURN: A player has a "seat" with a button, waiting to draw
 // END OF TURN: Next player, or settlement phase.
@@ -251,7 +252,7 @@ const startGame = (rootTag, playerNames, cards) => {
 
 // ACTIONS: DRAW
 
-// Ui
+// 2. ---- Ui
 
 /**
  *  [MAT]:
@@ -263,7 +264,7 @@ const startGame = (rootTag, playerNames, cards) => {
  *  [PLAYING AREA (ROOT)]:
  *
  *               [MAT]
- *        [BUTTON]  [BUTTON]
+ *          ...[BUTTON]
  */
 
 /*
