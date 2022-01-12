@@ -60,7 +60,7 @@ const makeShuffledDeck = () => {
 /** LOGIC HELPERS */
 
 /**
- * game registration
+ * game registration. 
  * @returns a set of players with its associated playing objects. Example : {
  *                                                                            PLAYER_1 : {
                                                                                 name: PLAYER_1,
@@ -145,7 +145,7 @@ const startGame = (rootTag, playerNames, cards) => {
   const playerCount = playerNames.length;
   const players = createPlayers(playerNames);
 
-  const state = { drawCount: 0, currentPlayerIndex: 0 };
+  const state = { drawCount: 0, drawing: false, currentPlayerIndex: 0 };
   // if cards less than players, wash a new deck
   cards = !cards || cards.length <= playerCount ? makeShuffledDeck() : cards;
 
@@ -194,13 +194,13 @@ const startGame = (rootTag, playerNames, cards) => {
     // show restart button
     elementButtonRow.replaceChildren(elementButtonRestart);
   };
+
   // player attempts to draw
   const _drawButtonPressed = (playerName) => {
     const { card } = players[playerName];
 
     if (card.value) {
       // should have at most one card per player
-
       // !card.value && !card.element;
       elementBanner.innerText = `Hi ${playerName}, You've already drawn a card ~`;
     }
@@ -210,6 +210,7 @@ const startGame = (rootTag, playerNames, cards) => {
       elementBanner.innerText = `Hi ${playerName}, Please wait for your turn :)`;
       return;
     }
+
     const {
       seat: { element: elementSeat },
     } = players[playerName];
