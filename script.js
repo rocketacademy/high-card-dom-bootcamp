@@ -88,16 +88,14 @@ const createPlayers = (names) => {
   }, {});
 };
 
-const createRootTag = () => {
+const drawCard = (cards) => cards.pop();
+
+/** UI HELPERS */
+const newElementRoot = () => {
   const element = document.createElement(`div`);
   element.className += ` ${CLASS_ROOT_TAG}`;
   return element;
 };
-
-const drawCard = (cards) => cards.pop();
-
-/** UI HELPERS */
-
 const newElementCard = (cardValue) => {
   const elementCard = document.createElement(`div`);
   elementCard.className += ` ${CLASS_CARD}`;
@@ -111,6 +109,12 @@ const newElementCard = (cardValue) => {
   elementCard.replaceChildren(elementCardSuit, elementCardName);
 
   return elementCard;
+};
+
+const newElementSeat = () => {
+  const element = document.createElement(`div`);
+  element.className += ` ${CLASS_SEAT}`;
+  return element;
 };
 
 const startGame = (rootTag, playerNames, cards) => {
@@ -140,7 +144,7 @@ const startGame = (rootTag, playerNames, cards) => {
   const elementBanner = document.createElement(`div`);
   elementBanner.className += ` ${CLASS_BANNER}`;
 
-  const settle = (playerNames) => {
+  const _settle = (playerNames) => {
     // gather the winners
 
     let maxNames = [];
@@ -168,41 +172,45 @@ const startGame = (rootTag, playerNames, cards) => {
     // show restart button
     elementButtonRow.replaceChildren(elementButtonRestart);
   };
-
-  const drawButtonPressed = (playerName) => {
+  // player attempts to draw
+  const _drawButtonPressed = (playerName) => {
     const { card } = players[playerName];
 
-    // orderly play
     if (playerNames[state.currentPlayerIndex] !== playerName) {
+      // play should be orderly
       elementBanner.innerText = `Hi ${playerName}, Please wait for your turn :)`;
       return;
     }
-    // one card per player
     if (card.value) {
+      // should have at most one card per player
+
       // !card.value && !card.element;
       elementBanner.innerText = `Hi ${playerName}, You've already drawn a card ~`;
       return;
     } else {
+      //
       const {
         seat: { element: elementSeat },
       } = players[playerName];
       // !!seat.element;
 
       const cardValue = drawCard(cards);
-
       const elementCard = newElementCard(cardValue);
 
       // set card element first character of suit and card name
       elementSeat.appendChild(elementCard);
 
+      // record player card info
       card.element = elementCard;
       card.value = cardValue;
 
+      // update game state
       state.drawCount += 1;
       state.currentPlayerIndex += 1;
 
       if (state.drawCount === playerCount) {
-        settle(playerNames);
+        // state.currentPlayerIndex === playerCount
+        _settle(playerNames);
       }
 
       return;
@@ -212,8 +220,7 @@ const startGame = (rootTag, playerNames, cards) => {
   };
 
   for (const name of playerNames) {
-    const elementSeat = document.createElement(`div`);
-    elementSeat.classList.add(CLASS_SEAT);
+    const elementSeat = newElementSeat();
     players[name].seat.element = elementSeat;
     elementSeatRow.appendChild(elementSeat);
 
@@ -221,7 +228,7 @@ const startGame = (rootTag, playerNames, cards) => {
     const elementDrawDesc = document.createTextNode(`${name} Draw`);
     elementDrawButton.appendChild(elementDrawDesc);
     elementDrawButton.addEventListener(`click`, () =>
-      drawButtonPressed(name, elementBanner)
+      _drawButtonPressed(name, elementBanner)
     );
     players[name].draw.element = elementDrawButton;
     elementButtonRow.appendChild(elementDrawButton);
@@ -264,7 +271,7 @@ const startGame = (rootTag, playerNames, cards) => {
 
 // <--- START ---->
 
-const ELEMENT_ROOT = createRootTag();
+const ELEMENT_ROOT = newElementRoot();
 document.body.appendChild(ELEMENT_ROOT); // !!
 
 const PLAYER_NAMES = [`Player 1`, `Player 2`];
