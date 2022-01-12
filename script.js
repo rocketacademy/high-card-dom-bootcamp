@@ -1,10 +1,15 @@
-// Please implement exercise logic here
+// CSS class name
+const CLASS_ROOT_TAG = `high-playing-area`;
+const CLASS_MAT = `high-mat`;
+const CLASS_SEAT_ROW = `high-seat-row`;
+const CLASS_SEAT = `high-seat`;
+const CLASS_BANNER = `high-banner`;
+const CLASS_BUTTON_ROW = `high-button-row`;
+const CLASS_CARD = `high-card`;
 
-///  BOILER
+/** CARDS */
+const SUITS = ["hearts", "diamonds", "clubs", "spades"];
 
-// Get a random index ranging from 0 (inclusive) to max (exclusive).
-
-// Shuffle an array of cards
 const shuffleCards = (cards) => {
   const length = cards.length;
   for (let i = 0; i < length; i += 1) {
@@ -13,21 +18,21 @@ const shuffleCards = (cards) => {
   }
   return cards;
 };
-const SUITS = ["hearts", "diamonds", "clubs", "spades"];
+
 const makeShuffledDeck = () => {
   // make
   const cards = [];
   for (let suitIndex = 0; suitIndex < SUITS.length; suitIndex += 1) {
     const currentSuit = SUITS[suitIndex];
     for (let rankCounter = 1; rankCounter <= 13; rankCounter += 1) {
-      let name = ``;
-      if (rankCounter === "1") {
+      let cardName = ``;
+      if (rankCounter === 1) {
         cardName = "ace";
-      } else if (rankCounter === "11") {
+      } else if (rankCounter === 11) {
         cardName = "jack";
-      } else if (rankCounter === "12") {
+      } else if (rankCounter === 12) {
         cardName = "queen";
-      } else if (rankCounter === "13") {
+      } else if (rankCounter === 13) {
         cardName = "king";
       } else {
         cardName = `${rankCounter}`;
@@ -45,14 +50,21 @@ const makeShuffledDeck = () => {
   return cards;
 };
 
-// CSS class name
-const CLASS_ROOT_TAG = `high-playing-area`;
-const CLASS_MAT = `high-mat`;
-const CLASS_SEAT_ROW = `high-seat-row`;
-const CLASS_SEAT = `high-seat`;
-const CLASS_BANNER = `high-banner`;
-const CLASS_BUTTON_ROW = `high-button-row`;
-
+/**
+ * @returns a set of players with its associated playing objects. Example : {
+ *                                                                            PLAYER_1 : {
+                                                                                name: PLAYER_1,
+                                                                                seat: { html: null, value: null },
+                                                                                draw: { html: null },
+                                                                                card: { html: null, value: null },
+                                                                              },
+                                                                              PLAYER_2: {
+                                                                                name: PLAYER_2,
+                                                                                seat: { html: null, value: null },
+                                                                                draw: { html: null },
+                                                                                card: { html: null, value: null },
+                                                                              },}
+ */
 const createPlayers = (names) => {
   return names.reduce((acc, name) => {
     return {
@@ -66,22 +78,24 @@ const createPlayers = (names) => {
     };
   }, {});
 };
+
 const drawCard = (cards) => cards.pop();
 
-const main = (rootTag, playerNames) => {
+const main = (rootTag, playerNames, cards) => {
   const playerCount = playerNames.length;
   const players = createPlayers(playerNames);
+  const state = { drawCount: 0, currentPlayerIndex: 0 };
+  // if cards less than players, wash a new deck
+  cards = !cards || cards.length <= playerCount ? makeShuffledDeck() : cards;
 
-  const cards = makeShuffledDeck();
-
-  const mat = document.createElement(`div`);
-  mat.classList.add(CLASS_MAT);
+  const htmlMat = document.createElement(`div`);
+  htmlMat.className += ` ${CLASS_MAT}`;
 
   const htmlSeatRow = document.createElement(`div`);
-  htmlSeatRow.classList.add(CLASS_SEAT_ROW);
+  htmlSeatRow.className += ` ${CLASS_SEAT_ROW}`;
 
   const htmlButtonRow = document.createElement(`div`);
-  htmlButtonRow.classList.add(CLASS_BUTTON_ROW);
+  htmlSeatRow.className += ` ${CLASS_BUTTON_ROW}`;
 
   const htmlButtonRestart = document.createElement(`button`);
   htmlButtonRestart.addEventListener(`click`, () => main(rootTag, playerNames));
@@ -89,9 +103,11 @@ const main = (rootTag, playerNames) => {
   htmlButtonRestart.appendChild(htmlButtonRestartDesc);
 
   const htmlBanner = document.createElement(`div`);
-  htmlBanner.classList.add(CLASS_BANNER);
+  htmlBanner.className += ` ${CLASS_BANNER}`;
 
   const settle = (playerNames) => {
+    // gather the winners
+
     let maxNames = [];
     let maxRank = -1;
 
@@ -100,7 +116,7 @@ const main = (rootTag, playerNames) => {
         card: {
           value: { rank },
         },
-      } = players[name];
+      } = players[name]; // get rank
       if (rank > maxRank) {
         maxRank = rank;
         maxNames = [name];
@@ -108,32 +124,56 @@ const main = (rootTag, playerNames) => {
         maxNames.push(name);
       }
     }
-    htmlBanner.innerText = `Winner${maxNames > 1 ? `s` : ``}: ${maxNames}`;
+    // show in banner
+    htmlBanner.innerText =
+      maxNames > 1
+        ? `Multiple winners, more the merrier! ${maxNames}`
+        : `Winner ${maxNames}`;
+
+    // show restart button
     htmlButtonRow.replaceChildren(htmlButtonRestart);
   };
 
-  let drawCount = 0;
   const drawButtonPressed = (playerName) => {
     const { card } = players[playerName];
 
-    if (card.value || card.html) {
-      !card.value && !card.html;
-      htmlBanner.innerText = `Hi ${playerName}, You've already drawn a card . . . `;
+    if (playerNames[state.currentPlayerIndex] !== playerName) {
+      htmlBanner.innerText = `Hi ${playerName}, Please wait for your turn :)`;
+      return;
+    }
+    if (card.value) {
+      // one card per player
+      // !card.value && !card.html;
+      htmlBanner.innerText = `Hi ${playerName}, You've already drawn a card ~`;
       return;
     } else {
-      const { seat } = players[playerName];
-      !!seat.html;
+      const {
+        seat: { html: htmlSeat },
+      } = players[playerName];
+      // !!seat.html;
+
       const cardValue = drawCard(cards);
-      card.html = document.createElement(`div`);
+      const cardHtml = document.createElement(`div`);
+      cardHtml.className += ` ${CLASS_CARD}`;
+      const { suit, name: cardName } = cardValue;
+
+      // set card html first character of suit and card name
+      cardHtml.innerText = `${suit[0].toUpperCase()} | ${cardName}`;
+      htmlSeat.appendChild(cardHtml);
+
+      card.html = cardHtml;
       card.value = cardValue;
-      const { suit, name: CardName } = card.value;
-      card.html.innerText = `${suit[0].toUpperCase()} | ${CardName}`;
-      seat.html.appendChild(card.html);
-      drawCount += 1;
-      if (drawCount === playerCount) {
+
+      state.drawCount += 1;
+      state.currentPlayerIndex += 1;
+      if (state.drawCount === playerCount) {
         settle(playerNames);
       }
+
+      return;
     }
+
+    // !!
   };
 
   for (const name of playerNames) {
@@ -152,28 +192,47 @@ const main = (rootTag, playerNames) => {
     htmlButtonRow.appendChild(htmlDrawButton);
   }
 
-  mat.replaceChildren(htmlSeatRow, htmlBanner);
-  rootTag.replaceChildren(mat, htmlButtonRow);
+  htmlMat.replaceChildren(htmlSeatRow, htmlBanner);
+  rootTag.replaceChildren(htmlMat, htmlButtonRow);
 };
 
-const ROOT_TAG = document.createElement(`div`);
-ROOT_TAG.classList.add(CLASS_ROOT_TAG);
-document.body.appendChild(ROOT_TAG);
-const PLAYER_NAMES = [`Player 1`, `Player 2`];
-
-main(ROOT_TAG, PLAYER_NAMES);
+// <--- HIGH CARD ---->
 
 // Flow
 
-// TURN: A player has a "seat" with a button, waiting to draw
+// PLAYER TURN: A player has a "seat" with a button, waiting to draw
 // END OF TURN: Next player, or settlement phase.
+
+// SETTLEMENT PHASE: show winner and restart button
 
 // ACTIONS: DRAW
 
 // Ui
 
 /**
- *
- *  [SEAT]      [SEAT]
- *  [BUTTON]  [BUTTON]
+ *  [MAT]:
+ *        [SEAT]      [SEAT]
+ *            [BANNER]
  */
+
+/*
+ *  [PLAYING AREA (ROOT)]:
+ *
+ *               [MAT]
+ *        [BUTTON]  [BUTTON]
+ */
+
+/*
+ *  [document.body]:
+ *               [PLAYING AREA (ROOT)]
+ */
+
+// <--- START ---->
+
+const ROOT_TAG = document.createElement(`div`);
+ROOT_TAG.className += ` ${CLASS_ROOT_TAG}`;
+document.body.appendChild(ROOT_TAG); // !!
+
+const PLAYER_NAMES = [`Player 1`, `Player 2`];
+
+main(ROOT_TAG, PLAYER_NAMES);
