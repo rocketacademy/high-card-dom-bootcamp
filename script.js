@@ -7,8 +7,8 @@ const CLASS_SEAT_ROW = `high-seat-row`;
 const CLASS_SEAT = `high-seat`;
 
 const CLASS_CARD = `high-card`;
-const CLASS_CARD_SUIT = `high-card`;
-const CLASS_CARD_VALUE = `high-card`;
+const CLASS_CARD_SUIT = `high-card-suit`;
+const CLASS_CARD_NAME = `high-card-name`;
 
 const CLASS_BANNER = `high-banner`;
 
@@ -34,13 +34,13 @@ const makeShuffledDeck = () => {
     for (let rankCounter = 1; rankCounter <= 13; rankCounter += 1) {
       let cardName = ``;
       if (rankCounter === 1) {
-        cardName = "ace";
+        cardName = `ace`;
       } else if (rankCounter === 11) {
-        cardName = "jack";
+        cardName = `jack`;
       } else if (rankCounter === 12) {
-        cardName = "queen";
+        cardName = `👸`;
       } else if (rankCounter === 13) {
-        cardName = "king";
+        cardName = `👑`;
       } else {
         cardName = `${rankCounter}`;
       }
@@ -103,9 +103,11 @@ const newElementCard = (cardValue) => {
 
   const elementCardSuit = document.createElement(`div`);
   elementCardSuit.innerText = `${suit[0].toUpperCase()}`;
-
+  elementCardSuit.className += ` ${CLASS_CARD_SUIT}`;
   const elementCardName = document.createElement(`div`);
   elementCardName.innerText = `${name}`;
+  elementCardName.className += ` ${CLASS_CARD_NAME}`;
+
   elementCard.replaceChildren(elementCardSuit, elementCardName);
 
   return elementCard;
@@ -132,7 +134,7 @@ const startGame = (rootTag, playerNames, cards) => {
   elementSeatRow.className += ` ${CLASS_SEAT_ROW}`;
 
   const elementButtonRow = document.createElement(`div`);
-  elementSeatRow.className += ` ${CLASS_BUTTON_ROW}`;
+  elementButtonRow.className += ` ${CLASS_BUTTON_ROW}`;
 
   const elementButtonRestart = document.createElement(`button`);
   elementButtonRestart.addEventListener(`click`, () =>
@@ -197,7 +199,7 @@ const startGame = (rootTag, playerNames, cards) => {
       const cardValue = drawCard(cards);
       const elementCard = newElementCard(cardValue);
 
-      // set card element first character of suit and card name
+      // set card element
       elementSeat.appendChild(elementCard);
 
       // record player card info
