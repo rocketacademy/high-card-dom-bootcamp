@@ -90,6 +90,8 @@ let cardContainer2;
 let cardNum = 0;
 let player1Ranks = [];
 let player2Ranks = [];
+let player1Cards = [];
+let player2Cards = [];
 let reset = false;
 
 const buttonsDiv = document.createElement('div');
@@ -114,7 +116,7 @@ const createCard = (cardInfo) => {
   name.innerText = cardInfo.displayName;
 
   const card = document.createElement('div');
-  card.classList.add('card');
+  card.classList.add('card', cardInfo.rank);
 
   card.appendChild(name);
   card.appendChild(suit);
@@ -129,6 +131,8 @@ const player1Click = () => {
     playersTurn = 1;
     player1Ranks = [];
     player2Ranks = [];
+    player1Cards = [];
+    player2Cards = [];
     cardContainer1.innerHTML = '';
     cardContainer2.innerHTML = '';
     output('');
@@ -138,12 +142,10 @@ const player1Click = () => {
     // Pop player 1's card metadata from the deck
     player1Card = deck.pop();
     player1Ranks.push(player1Card.rank);
+    player1Cards.push(player1Card);
     cardNum += 1;
 
-    // Create card element from card metadata
     const cardElement = createCard(player1Card);
-    // Empty cardContainer in case this is not the 1st round of gameplay
-    // Append the card element to the card container
     cardContainer1.appendChild(cardElement);
 
     output('');
@@ -157,6 +159,7 @@ const player2Click = () => {
     // Pop player 2's card metadata from the deck
     const player2Card = deck.pop();
     player2Ranks.push(player2Card.rank);
+    player2Cards.push(player2Card);
 
     // Create card element from card metadata
     const cardElement = createCard(player2Card);
@@ -167,13 +170,64 @@ const player2Click = () => {
       const player1Diff = Math.max(...player1Ranks) - Math.min(...player1Ranks);
       const player2Diff = Math.max(...player2Ranks) - Math.min(...player2Ranks);
 
+      // player1 new card display
+      let lowest1Card = player1Cards[0];
+      for (let i = 1; i < player1Cards.length; i += 1) {
+        if (player1Cards[i].rank < lowest1Card.rank) {
+          lowest1Card = player1Cards[i];
+        }
+      }
+      player1Cards.splice(player1Cards.indexOf(lowest1Card), 1);
+      player1Cards.unshift(lowest1Card);
+
+      let highest1Card = player1Cards[0];
+      for (let i = 1; i < player1Cards.length; i += 1) {
+        if (player1Cards[i].rank > highest1Card.rank) {
+          highest1Card = player1Cards[i];
+        }
+      }
+      player1Cards.splice(player1Cards.indexOf(highest1Card), 1);
+      player1Cards.unshift(highest1Card);
+
+      const player1NewDisplay = document.querySelector('.card-container.player1');
+      player1NewDisplay.innerHTML = '';
+      for (let i = 0; i < player1Cards.length; i += 1) {
+        const newCardElement = createCard(player1Cards[i]);
+        cardContainer1.appendChild(newCardElement);
+      }
+
+      // player2 new card display
+      let lowest2Card = player2Cards[0];
+      for (let i = 1; i < player2Cards.length; i += 1) {
+        if (player2Cards[i].rank < lowest2Card.rank) {
+          lowest2Card = player2Cards[i];
+        }
+      }
+      player2Cards.splice(player2Cards.indexOf(lowest2Card), 1);
+      player2Cards.unshift(lowest2Card);
+
+      let highest2Card = player2Cards[0];
+      for (let i = 1; i < player2Cards.length; i += 1) {
+        if (player2Cards[i].rank > highest2Card.rank) {
+          highest2Card = player2Cards[i];
+        }
+      }
+      player2Cards.splice(player2Cards.indexOf(highest2Card), 1);
+      player2Cards.unshift(highest2Card);
+
+      const player2NewDisplay = document.querySelector('.card-container.player2');
+      player2NewDisplay.innerHTML = '';
+      for (let i = 0; i < player2Cards.length; i += 1) {
+        const newCardElement = createCard(player2Cards[i]);
+        cardContainer2.appendChild(newCardElement);
+      }
       // Determine and output winner
       if (player1Diff > player2Diff) {
-        output(`player 1 wins. player 1 diff: <b>${player1Diff}</b>; player 2 diff: <b>${player2Diff}</b>`);
+        output(`player 1 wins. player 1 diff: <b>${player1Diff}</b>; player 2 diff: <b>${player2Diff}</b> (highest & lowest card are displayed on the left)`);
       } else if (player1Diff < player2Diff) {
-        output(`player 2 wins. player 1 diff: <b>${player1Diff}</b>; player 2 diff: <b>${player2Diff}</b>`);
+        output(`player 2 wins. player 1 diff: <b>${player1Diff}</b>; player 2 diff: <b>${player2Diff}</b> (highest & lowest card are displayed on the left)`);
       } else {
-        output(`tie. player 1 diff: <b>${player1Diff}</b>; player 2 diff: <b>${player2Diff}</b>`);
+        output(`tie. player 1 diff: <b>${player1Diff}</b>; player 2 diff: <b>${player2Diff}</b> (highest & lowest card are displayed on the left)`);
       }
       reset = true;
     }
@@ -197,10 +251,10 @@ const initGame = () => {
   document.body.appendChild(gameInfo);
 
   cardContainer1 = document.createElement('div');
-  cardContainer1.classList.add('card-container');
+  cardContainer1.classList.add('card-container', 'player1');
   // cardContainer1.id = 'card container 1';
   cardContainer2 = document.createElement('div');
-  cardContainer2.classList.add('card-container');
+  cardContainer2.classList.add('card-container', 'player2');
   // cardContainer2.id = 'card container 2';
   document.body.appendChild(cardContainer1);
   document.body.appendChild(cardContainer2);
