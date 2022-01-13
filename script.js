@@ -210,6 +210,7 @@ const player2Click = () => {
 
 		if (player2Cards.length === 5) {
 			determineResults();
+			return;
 		}
 
 		// Reset player turn
