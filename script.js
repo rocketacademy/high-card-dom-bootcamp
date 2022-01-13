@@ -85,10 +85,15 @@ const deck = shuffleCards(makeDeck());
 
 let playersTurn = 1; // matches with starting instructions
 let player1Card;
-let cardContainer;
+let cardContainer1;
+let cardContainer2;
+let cardNum = 0;
+let player1Ranks = [];
+let player2Ranks = [];
+let reset = false;
 
+const buttonsDiv = document.createElement('div');
 const player1Button = document.createElement('button');
-
 const player2Button = document.createElement('button');
 
 const gameInfo = document.createElement('div');
@@ -96,7 +101,7 @@ const gameInfo = document.createElement('div');
 // Create a helper function for output to abstract complexity
 // of DOM manipulation away from game logic
 const output = (message) => {
-  gameInfo.innerText = message;
+  gameInfo.innerHTML = message;
 };
 
 const createCard = (cardInfo) => {
@@ -118,43 +123,59 @@ const createCard = (cardInfo) => {
 };
 
 const player1Click = () => {
+  if (reset === true) {
+    reset = false;
+    cardNum = 0;
+    playersTurn = 1;
+    player1Ranks = [];
+    player2Ranks = [];
+    cardContainer1.innerHTML = '';
+    cardContainer2.innerHTML = '';
+    output('');
+  }
+
   if (playersTurn === 1) {
     // Pop player 1's card metadata from the deck
     player1Card = deck.pop();
+    player1Ranks.push(player1Card.rank);
+    cardNum += 1;
 
     // Create card element from card metadata
     const cardElement = createCard(player1Card);
     // Empty cardContainer in case this is not the 1st round of gameplay
-    cardContainer.innerHTML = '';
     // Append the card element to the card container
-    cardContainer.appendChild(cardElement);
+    cardContainer1.appendChild(cardElement);
 
-    // Switch to player 2's turn
     output('');
-    playersTurn = 2;
   }
 };
 
 const player2Click = () => {
-  if (playersTurn === 2) {
+  if (cardNum >= 2) {
+    playersTurn = 2; }
+  if (playersTurn === 2 && cardNum > player2Ranks.length) {
     // Pop player 2's card metadata from the deck
     const player2Card = deck.pop();
+    player2Ranks.push(player2Card.rank);
 
     // Create card element from card metadata
     const cardElement = createCard(player2Card);
     // Append card element to card container
-    cardContainer.appendChild(cardElement);
+    cardContainer2.appendChild(cardElement);
 
-    // Switch to player 1's turn
-    playersTurn = 1;
+    if (player2Ranks.length === cardNum) {
+      const player1Diff = Math.max(...player1Ranks) - Math.min(...player1Ranks);
+      const player2Diff = Math.max(...player2Ranks) - Math.min(...player2Ranks);
 
-    // Determine and output winner
-    if (player1Card.rank > player2Card.rank) {
-      output('player 1 wins');
-    } else if (player1Card.rank < player2Card.rank) {
-      output('player 2 wins');
-    } else {
-      output('tie');
+      // Determine and output winner
+      if (player1Diff > player2Diff) {
+        output(`player 1 wins. player 1 diff: <b>${player1Diff}</b>; player 2 diff: <b>${player2Diff}</b>`);
+      } else if (player1Diff < player2Diff) {
+        output(`player 2 wins. player 1 diff: <b>${player1Diff}</b>; player 2 diff: <b>${player2Diff}</b>`);
+      } else {
+        output(`tie. player 1 diff: <b>${player1Diff}</b>; player 2 diff: <b>${player2Diff}</b>`);
+      }
+      reset = true;
     }
   }
 };
@@ -162,10 +183,11 @@ const player2Click = () => {
 const initGame = () => {
   // initialize button functionality
   player1Button.innerText = 'Player 1 Draw';
-  document.body.appendChild(player1Button);
+  buttonsDiv.appendChild(player1Button);
 
   player2Button.innerText = 'Player 2 Draw';
-  document.body.appendChild(player2Button);
+  buttonsDiv.appendChild(player2Button);
+  document.body.appendChild(buttonsDiv);
 
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
@@ -174,9 +196,14 @@ const initGame = () => {
   gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
   document.body.appendChild(gameInfo);
 
-  cardContainer = document.createElement('div');
-  cardContainer.classList.add('card-container');
-  document.body.appendChild(cardContainer);
+  cardContainer1 = document.createElement('div');
+  cardContainer1.classList.add('card-container');
+  // cardContainer1.id = 'card container 1';
+  cardContainer2 = document.createElement('div');
+  cardContainer2.classList.add('card-container');
+  // cardContainer2.id = 'card container 2';
+  document.body.appendChild(cardContainer1);
+  document.body.appendChild(cardContainer2);
 };
 
 document.addEventListener('DOMContentLoaded', initGame);
