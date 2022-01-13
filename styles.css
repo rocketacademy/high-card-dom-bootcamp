@@ -15,18 +15,38 @@ button {
 	border-color: lightcyan darkcyan darkcyan lightcyan;
 	color: darkcyan;
 	font-family: monospace;
-	font-size: 1.5em;
+	font-size: 1.2em;
 	font-weight: bold;
 	text-transform: uppercase;
 	width: 30vw;
-	height: 3em;
-	margin-left: 1em;
-	margin-right: 1em;
+	padding: 1rem;
+	margin-left: 0.5rem;
+	margin-right: 0.5rem;
+}
+
+button:disabled {
+	color: lightslategrey;
+	background-color: lightgrey;
+	border-width: 2px;
+	border-style: solid;
+	border-color: lightcyan lightslategrey lightslategrey lightcyan;
 }
 
 .btn-container {
-	margin: 1em;
-	padding: 1em;
+	margin: 1rem auto;
+	padding: 1.1rem;
+	width: 80vw;
+	display: flex;
+	justify-content: space-around;
+}
+
+.card-container {
+	font-size: 1.2em;
+	margin: 1rem auto;
+	width: 80vw;
+	display: flex;
+	justify-content: space-between;
+	box-sizing: border-box;
 }
 
 .card {
@@ -40,7 +60,7 @@ button {
 }
 
 .card-name {
-	font-size: 1.3em;
+	font-size: 1.2em;
 	font-weight: bold;
 }
 
@@ -56,12 +76,31 @@ button {
 	color: black;
 }
 
+#instructions {
+	font-size: 1.1em;
+	color: darkslategrey;
+	text-align: left;
+	background-color: lightgoldenrodyellow;
+	margin: 1rem auto;
+	padding: 2rem;
+	box-sizing: border-box;
+	width: 80vw;
+}
+
 #game-info {
 	font-size: 1.5em;
 	color: darkslategrey;
 	background-color: lightgoldenrodyellow;
-	margin: 1em auto;
-	padding: 1em;
+	margin: 1rem auto;
+	padding: 1rem;
 	width: 80vw;
-	height: 15em;
+	box-sizing: border-box;
+}
+
+#player1-container,
+#player2-container {
+	background-color: white;
+	padding: 1rem;
+	width: 48%;
+	box-sizing: border-box;
 }
