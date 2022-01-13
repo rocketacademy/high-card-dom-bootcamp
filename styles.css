@@ -1,3 +1,108 @@
+@import url("https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Lato:ital@1&family=Lobster&family=Roboto&display=swap");
+
+.header {
+  display: flex;
+  justify-content: center;
+}
+
 body {
-  background-color: pink;
+  background-color: #f9faf4;
+}
+h1 {
+  font-family: "Abril Fatface";
+  font-size: 3em;
+  background-color: #f9a66c;
+  color: #f9fafa;
+  padding: 20px;
+  border-radius: 3px;
+}
+h2 {
+  font-family: "Abril Fatface";
+  color: #f9a66c;
+  font-size: 2em;
+  margin: auto;
+  width: 50%;
+  text-align: center;
+}
+
+.container {
+  width: 80%;
+  border: 7px dotted #4a6163;
+  margin: auto;
+  padding: 10px;
+  overflow: auto;
+}
+
+.message {
+  margin: 20px auto;
+  width: 80%;
+  background-color: #4a6163;
+  padding: 20px;
+  font-family: lato;
+  color: #f9fafa;
+  font-size: 20px;
+  line-height: 40px;
+}
+
+.results {
+  width: 90%;
+  margin: 20px auto;
+  text-align: center;
+  font-size: 1.4em;
+  background-color: #4a6163;
+  border-radius: 5px;
+  color: #f9faf4;
+  padding: 10px;
+  line-height: 40px;
+}
+
+button {
+  padding: 5px 15px;
+  margin: 10px;
+  background-color: #f9a66c;
+  color: #f9faf4;
+  cursor: pointer;
+  transition-duration: 0.4s;
+  font-family: "Abril FatFace";
+  font-size: 0.8em;
+}
+
+button:hover {
+  background-color: #f9faf4;
+  color: #4a6163;
+}
+
+.player-results {
+  display: flex;
+  justify-content: space-around;
+}
+
+.card {
+  border: 2px solid #4a6163;
+  padding: 20px;
+  text-align: center;
+  background-color: white;
+  border-radius: 5px;
+  font-family: "Abril FatFace";
+  font-size: 1.5em;
+  box-shadow: 2px 5px 8px 5px #bdbaba;
+  margin-bottom: 20px;
+}
+
+.red {
+  color: rgb(148, 26, 26);
+}
+.black {
+  color: black;
+}
+.buttons-to-play {
+  display: flex;
+  justify-content: space-around;
+  margin: 40px 0px;
+}
+
+.player1-output,
+.player2-output {
+  display: flex;
+  gap: 10px;
 }
