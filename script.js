@@ -1,5 +1,5 @@
 
-// HELPERS
+
 // Get a random index ranging from 0 (inclusive) to max (exclusive).
 const getRandomIndex = (max) => Math.floor(Math.random() * max);
 // Shuffle an array of cards
@@ -64,7 +64,6 @@ const makeDeck = () => {
   return newDeck;
 };
 // update createDeck to include new visual attributes!!
-// colour + suitSymbol
 const createCard = (cardInfo) => {
   const suit = document.createElement('div');
   suit.classList.add('suit');
@@ -81,7 +80,7 @@ const createCard = (cardInfo) => {
 };
 
 
-// GLOBAL
+// GLOBAL VARIABLES
 const deck = shuffleCards(makeDeck());
 let playersTurn = 1; // matches with starting instructions
 let player1Card;
@@ -110,7 +109,7 @@ const output = (message) => {
 };
 
 
-// CALLBACKS
+// CALLBACK FUNCTIONS
 const cardNumberButtonClick = () => {
   if (cardNumberInput.value > 0 && cardNumberInput.value < 10) {
     numberOfCards = cardNumberInput.value;
