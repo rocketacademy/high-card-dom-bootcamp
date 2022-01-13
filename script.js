@@ -23,15 +23,11 @@ const makeDeck = () => {
   // Initialise an empty deck array
   const newDeck = [];
   // Initialise an array of the 4 suits in our deck. We will loop over this array.
-  const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
-  const suitSymbols = ['♥', '♦', '♣', '♠'];
-  const cardColours = ['red', 'red', 'black', 'black'];
+  const suits = ['♥', '♦', '♣', '♠'];
   // Loop over the suits array
   for (let suitIndex = 0; suitIndex < suits.length; suitIndex += 1) {
     // Store the current suit in a variable
     const currentSuit = suits[suitIndex];
-    const currentSuitSymbol = suitSymbols[suitIndex];
-    const currentCardColour = cardColours[suitIndex];
     // Loop from 1 to 13 to create all cards for a given suit
     // Notice rankCounter starts at 1 and not 0, and ends at 13 and not 12.
     // This is an example of a loop without an array.
@@ -53,8 +49,6 @@ const makeDeck = () => {
         name: cardName,
         suit: currentSuit,
         rank: rankCounter,
-        suitSymbol: currentSuitSymbol,
-        colour: currentCardColour,
       };
       // Add the new card to the deck
       newDeck.push(card);
@@ -67,9 +61,8 @@ const makeDeck = () => {
 const createCard = (cardInfo) => {
   const suit = document.createElement('div');
   suit.classList.add('suit');
-  suit.innerText = cardInfo.suitSymbol;
+  suit.innerText = cardInfo.suit;
   const name = document.createElement('div');
-  name.classList.add('name', cardInfo.colour);
   name.innerText = cardInfo.name;
   const card = document.createElement('div');
   card.classList.add('card');
@@ -84,6 +77,7 @@ const createCard = (cardInfo) => {
 const deck = shuffleCards(makeDeck());
 let playersTurn = 1; // matches with starting instructions
 let player1Card;
+
 // define card number elements
 const cardNumberDiv = document.createElement('div');
 const cardNumberInput = document.createElement('input');
@@ -93,17 +87,13 @@ const player2Button = document.createElement('button');
 const gameInfo = document.createElement('div');
 let canClick = true;
 let cardContainer;
-let numberOfCards = 0;
+let numberOfCards = "";
 const p1Hand = [];
 const p2Hand = [];
 let scoreP1 = 0;
 let scoreP2 = 0;
-// let highestRankP1 = 0;
-// const lowestRankP1 = 0;
-// const highestRankP2 = 0;
-// const lowestRankP2 = 0;
-// Create a helper function for output to abstract complexity
-// of DOM manipulation away from game logic
+
+
 const output = (message) => {
   gameInfo.innerText = message;
 };
