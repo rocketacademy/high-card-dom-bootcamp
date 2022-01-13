@@ -1,27 +1,22 @@
-// =========================
+// ==================================================
 // Global Variables
-// =========================
+// ==================================================
 
 let playersTurn = 1; // matches with starting instructions
-let player1Card1;
-let player1Card2;
-let player2Card1;
-let player2Card2;
 const player1CardArray = [];
 const player2CardArray = [];
 let canClick = true;
 
+// create a global array for # of cards to draw
+const numOfCards = [];
 const player1Button = document.createElement('button');
-
 const player2Button = document.createElement('button');
-
 const gameInfo = document.createElement('div');
-
 let cardContainer;
 
-// =========================
+// ==================================================
 //  Helper Functions
-// =========================
+// ==================================================
 
 // Get a random index ranging from 0 (inclusive) to max (exclusive).
 const getRandomIndex = (max) => Math.floor(Math.random() * max);
@@ -150,38 +145,33 @@ const compareCardsRankDiff = (cardArray) => {
   return rankDiff;
 };
 
-// ==========================
-//   Game Functions
-// =========================
+// ===================================================
+//  Player Action Callbacks functions
+// ==================================================
 
 // player 1's turn to draw the card
 const player1Click = () => {
   if (playersTurn === 1 && canClick === true) {
     canClick = false;
-
-    // setTimeout for player1 to draw the cards
-
+    // Empty cardContainer in case this is not the 1st round of gameplay
+    cardContainer.innerHTML = '';
     setTimeout(() => {
-      // Pop player 1's first card metadata from the deck
-      player1Card1 = deck.pop();
+    // create a loop
+      for (let i = 0; i < numOfCards.length; i += 1) {
+        // setTimeout for player1 to draw the cards
 
-      // store the player1Card into player1CardArray.
-      player1CardArray.push(player1Card1);
+        // Pop player 1's first card metadata from the deck
+        const player1Card = [];
+        player1Card[i] = deck.pop();
+        player1CardArray.push(player1Card[i]);
 
-      // Pop player 1's second card metadata from the deck
-      player1Card2 = deck.pop();
-      player1CardArray.push(player1Card2);
+        // Create card element from card metadata
+        const cardElement = [];
+        cardElement[i] = createCard(player1Card[i]);
 
-      // Create card element from card metadata
-      const cardElement1 = createCard(player1Card1);
-      const cardElement2 = createCard(player1Card2);
-
-      // Empty cardContainer in case this is not the 1st round of gameplay
-      cardContainer.innerHTML = '';
-
-      // Append the card element to the card container
-      cardContainer.appendChild(cardElement1);
-      cardContainer.appendChild(cardElement2);
+        // Append the card element to the card container
+        cardContainer.appendChild(cardElement[i]);
+      }
 
       // Switch to player 2's turn
       playersTurn = 2;
@@ -194,21 +184,21 @@ const player1Click = () => {
 const player2Click = () => {
   if (playersTurn === 2 && canClick === true) {
     canClick = false;
-
     setTimeout(() => {
-      // Pop player 2's card metadata from the deck
-      player2Card1 = deck.pop();
-      player2CardArray.push(player2Card1);
+    // create a loop to generate no.of cards according to user input
+      for (let i = 0; i < numOfCards.length; i += 1) {
+        // Pop player 2's card metadata from the deck
+        const player2Card = [];
+        player2Card[i] = deck.pop();
+        player2CardArray.push(player2Card[i]);
 
-      player2Card2 = deck.pop();
-      player2CardArray.push(player2Card2);
+        // Create card element from card metadata
+        const cardElement = [];
+        cardElement[i] = createCard(player2Card[i]);
 
-      // Create card element from card metadata
-      const cardElement1 = createCard(player2Card1);
-      const cardElement2 = createCard(player2Card2);
-      // Append card element to card container
-      cardContainer.appendChild(cardElement1);
-      cardContainer.appendChild(cardElement2);
+        // Append card element to card container
+        cardContainer.appendChild(cardElement[i]);
+      }
 
       // change canClcik back to true
       canClick = true;
@@ -218,13 +208,13 @@ const player2Click = () => {
 
       // Determine and output winner
       if (
-        compareCardsRankDiff(player1CardArray) >
-        compareCardsRankDiff(player2CardArray)
+        compareCardsRankDiff(player1CardArray)
+        > compareCardsRankDiff(player2CardArray)
       ) {
         output('player 1 wins');
       } else if (
-        compareCardsRankDiff(player1CardArray) <
-        compareCardsRankDiff(player2CardArray)
+        compareCardsRankDiff(player1CardArray)
+        < compareCardsRankDiff(player2CardArray)
       ) {
         output('player 2 wins');
       } else {
@@ -241,12 +231,35 @@ const initGame = () => {
   cardContainer.classList.add('card-container');
   document.body.appendChild(cardContainer);
 
+  // create an input option for user to choose how many cards to draw
+  const cardNumInput = document.createElement('input');
+  cardNumInput.setAttribute('id', 'player-box');
+  cardContainer.appendChild(cardNumInput);
+  cardNumInput.placeholder = '# of cards to draw?';
+
+  // create a submit option for user to confirm no. of cards to draw
+  const submitBtn = document.createElement('button');
+  submitBtn.innerText = 'submit';
+  submitBtn.setAttribute('id', 'submit-button');
+  cardContainer.appendChild(submitBtn);
+
+  // create a helper function to store user input on # of cards to draw
+  const numOfCardsDraw = () => {
+    numOfCards.length = document.getElementById('player-box').value;
+    console.log('s');
+  };
+
+  // create an eventListener
+  submitBtn.addEventListener('click', numOfCardsDraw);
+
   // initialize button functionality
   player1Button.innerText = 'Player 1 Draw';
   document.body.appendChild(player1Button);
+  player1Button.setAttribute('class', 'player-button');
 
   player2Button.innerText = 'Player 2 Draw';
   document.body.appendChild(player2Button);
+  player2Button.setAttribute('class', 'player-button');
 
   player1Button.addEventListener('click', player1Click);
   player2Button.addEventListener('click', player2Click);
