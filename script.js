@@ -189,7 +189,7 @@ const startGame = (rootTag, playerNames, cards) => {
     }
     // show in banner
     elementBanner.innerText =
-      maxNames > 1
+      maxNames.length > 1
         ? `Multiple winners, more the merrier! ${maxNames}`
         : `Winner ${maxNames}`;
 
@@ -200,7 +200,7 @@ const startGame = (rootTag, playerNames, cards) => {
   // player attempts to draw
   const _drawButtonPressed = (playerName) => {
     const { card } = players[playerName];
-
+    // card = { elemnent , value}
     if (card.value) {
       // should have at most one card per player
       // !card.value && !card.element;
@@ -219,8 +219,10 @@ const startGame = (rootTag, playerNames, cards) => {
     } = players[playerName];
     // !!seat.element;
 
+    // remove all button when click
     const elementParentOfButtonRow = elementButtonRow.parentNode;
     elementParentOfButtonRow.removeChild(elementButtonRow);
+
     elementBanner.innerText = `Drawing card . . . . . . . .`;
     setTimeout(() => {
       const cardValue = drawCard(cards);
@@ -230,7 +232,7 @@ const startGame = (rootTag, playerNames, cards) => {
       elementSeat.appendChild(elementCard);
 
       // record player card info
-      card.element = elementCard;
+      card.element = elementCard; // player[playername].card.element = elementCard
       card.value = cardValue;
 
       // update game state
@@ -249,13 +251,14 @@ const startGame = (rootTag, playerNames, cards) => {
 
   for (const name of playerNames) {
     const elementSeat = newElementSeat();
-
+    // Button
     const elementDrawButton = document.createElement(`button`);
     elementDrawButton.addEventListener(`click`, () =>
       _drawButtonPressed(name, elementBanner)
     );
 
     const elementDrawDesc = newElementDrawDesc(name);
+    elementDrawButton.appendChild(elementDrawDesc);
 
     // record player info
 
@@ -264,7 +267,6 @@ const startGame = (rootTag, playerNames, cards) => {
 
     elementSeatRow.appendChild(elementSeat);
 
-    elementDrawButton.appendChild(elementDrawDesc);
     elementButtonRow.appendChild(elementDrawButton);
   }
 
@@ -287,7 +289,7 @@ const startGame = (rootTag, playerNames, cards) => {
 
 /**
  *  [MAT]:
- *        [SEAT]      [SEAT]
+ *        [SEAT]      [SEAT] // seats are appended to [SeatRow]
  *            [BANNER]
  */
 
