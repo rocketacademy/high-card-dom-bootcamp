@@ -99,17 +99,27 @@ const newElementRoot = () => {
   element.className += ` ${CLASS_ROOT_TAG}`;
   return element;
 };
+
+const newElementCardSuit = (suit) => {
+  const element = document.createElement(`div`);
+  element.innerText = `${suit}`;
+  element.className += ` ${CLASS_CARD_SUIT}`;
+  return element;
+};
+
+const newElementCardName = (name) => {
+  const element = document.createElement(`div`);
+  element.innerText = `${name}`;
+  element.className += ` ${CLASS_CARD_NAME}`;
+  return element;
+};
 const newElementCard = (cardValue) => {
   const elementCard = document.createElement(`div`);
   elementCard.className += ` ${CLASS_CARD}`;
   const { suit, name } = cardValue;
 
-  const elementCardSuit = document.createElement(`div`);
-  elementCardSuit.innerText = `${suit}`;
-  elementCardSuit.className += ` ${CLASS_CARD_SUIT}`;
-  const elementCardName = document.createElement(`div`);
-  elementCardName.innerText = `${name}`;
-  elementCardName.className += ` ${CLASS_CARD_NAME}`;
+  const elementCardSuit = newElementCardSuit(suit);
+  const elementCardName = newElementCardName(name);
 
   elementCard.replaceChildren(elementCardSuit, elementCardName);
 
@@ -154,7 +164,6 @@ const startGame = (rootTag, playerNames, cards) => {
   const elementMat = newElementMat();
 
   const elementSeatRow = newElementSeatRow();
-
   const elementButtonRow = newElementButtonRow();
 
   const elementButtonRestart = document.createElement(`button`);
