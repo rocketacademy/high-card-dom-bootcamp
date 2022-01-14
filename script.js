@@ -87,7 +87,7 @@ const player2Button = document.createElement('button');
 const gameInfo = document.createElement('div');
 let canClick = true;
 let cardContainer;
-let numberOfCards = "";
+let numberOfCards = 0;
 const p1Hand = [];
 const p2Hand = [];
 let scoreP1 = 0;
@@ -112,6 +112,7 @@ const player1Click = () => {
     let highestRankP1 = 0;
     let lowestRankP1 = 0;
     // loop timeout and deck.pop
+
     setTimeout(() => {
       cardContainer.innerHTML = '';
       // loop to pop cards one by one depending on variable card number
@@ -140,12 +141,29 @@ const player1Click = () => {
       // sort cards in ascending order
       p1Hand.sort((a, b) => a.rank - b.rank);
       // loop to create cards into card container.
-      for (let i = 0; i < numberOfCards; i += 1) {
-        // create card element from card metadata
+      //  let x = 0
+        // for (let i = 0; i < numberOfCards; i += 1) {
+        //   x = x + 1000
+        //   setTimeout(()=>{ 
+        //   const cardElement = createCard(p1Hand[i]);
+        //   cardContainer.appendChild(cardElement)
+        //  },x);
+        // }
+
+      let i = 0;
+       const sequenceCard = setInterval(()=>{ 
         const cardElement = createCard(p1Hand[i]);
-        // append card element to cardContainer
+         i +=1;
         cardContainer.appendChild(cardElement);
-      }
+         if(i>numberOfCards){
+        clearInterval(sequenceCard);
+        i =0;
+         }
+        },1000);
+        
+      
+  
+    
       // scoring based on rank differences:
       scoreP1 = highestRankP1 - lowestRankP1;
       // define and append a break between players' cards.
