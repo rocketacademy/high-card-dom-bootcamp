@@ -87,8 +87,6 @@ function drawCard () {
 
 // check deck count to have at least 2 cards
 // before player 1 draws/ when player 2 ends, there should be at least 2 cards
-
-
 const checkDeckCount = (deck) => {
   if ( (playersTurn === 1 && deck.length < 2) || (playersTurn === 2 && deck.length < 1) || deck.length <= 0 ) {
     return false;
@@ -124,6 +122,52 @@ const createCard = (cardInfo) => {
   return card;
 };
 
+// different game types
+
+function highCardGame(card1, card2) {
+    if (card1.rank > card2.rank) {
+      output('player 1 wins!');
+    } else if (card1.rank < card2.rank) {
+      output('player 2 wins!');
+    } else {
+      output('tie!');
+  }
+};
+
+let maxCard;
+let minCard;
+
+function rankDifference(playerCards) {
+  if (playerCards.length === 1) {
+    maxCard = playerCards[0];
+    minCard = playerCards[0];
+  }
+
+  if (playerCards.length > 1) {
+  for (let i = 0; i < playerCards.length; i += 1) {
+    console.log(i);
+    console.log('here');
+    if (playerCards[i].rank > maxCard.rank) {
+      maxCard = playerCards[i];
+    }
+    if (playerCards[i].rank < minCard.rank) {
+      minCard = playerCards[i];
+    }
+  }
+  }
+  let difference = maxCard.rank - minCard.rank;
+  console.log('difference:' ,difference)
+  return difference;
+
+};
+
+function highLowCardGame(difference1, difference2) {
+  if (difference1 > difference2) {
+    output('player 1 wins');
+  } else if (difference1 < difference2) {
+    output('player 2 wins');
+  } else output('tie');
+}
 
 
 // GLOBAL SET UP
@@ -145,11 +189,12 @@ let cardContainer;
 const player1Button = document.createElement('button');
 const player2Button = document.createElement('button');
 
-
+// initialise game type
+let gameType;
 
 // PLAYER ACTION CALLBACKS
 
-const player1Click = () => {
+const player1HighClick = () => {
   if (playersTurn === 1) {
     cardContainer.innerHTML = '';
     player1Card = drawCard();
@@ -158,27 +203,50 @@ const player1Click = () => {
   }
 };
 
-const player2Click = () => {
+const player2HighClick = () => {
   if (playersTurn === 2) {
     player2Card = drawCard();
     playersTurn = 1;
-
-    if (player1Card.rank > player2Card.rank) {
-      output('player 1 wins!');
-    } else if (player1Card.rank < player2Card.rank) {
-      output('player 2 wins!');
-    } else {
-      output('tie!');
-    }
+    highCardGame(player1Card, player2Card);
   }
 };
 
+let player1HighLowHand=[];
+const player1HighLowClick = () => {
+  player1Card = drawCard();
+  player1HighLowHand.push(player1Card);
+  player1difference = rankDifference(player1HighLowHand);
+}
+
+let player2HighLowHand=[];
+const player2HighLowClick = () => {
+  player2Card = drawCard();
+  player2HighLowHand.push(player2Card);
+  player2difference = rankDifference(player2HighLowHand);
+  console.log(player1difference);
+  highLowCardGame(player1difference, player2difference);
+}
 
 // GAME INITIALISATION
 
-const initGame = () => {
 
+const highCardButton = document.createElement('button');
+highCardButton.innerText = "High Card Game";
+document.body.appendChild(highCardButton);
+
+const highLowCardButton = document.createElement('button');
+highLowCardButton.innerText = "High Low Card Game";
+document.body.appendChild(highLowCardButton);
+
+highCardButton.addEventListener('click', () => initHighCardGame())
+highLowCardButton.addEventListener('click', () => initHighLowCardGame());
+
+
+
+const initHighCardGame = () => {
+  console.log('game type:' + gameType)
   // fill in game info with starting instructions
+  
   gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
   document.body.appendChild(gameInfo);
 
@@ -194,10 +262,32 @@ const initGame = () => {
   document.body.appendChild(player2Button);
 
 
-  player1Button.addEventListener('click', player1Click);
-  player2Button.addEventListener('click', player2Click);
-  
+  player1Button.addEventListener('click', player1HighClick);
+  player2Button.addEventListener('click', player2HighClick);
 
 };
+  
+const initHighLowCardGame = () => {
+  console.log('highlowcardgame starts')
+  gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
+  document.body.appendChild(gameInfo);
 
-initGame();
+  cardContainer = document.createElement('div');
+  cardContainer.classList.add('card-container');
+  document.body.appendChild(cardContainer);
+
+  // initialise button functionality
+  player1Button.innerText = 'Player 1 Draw';
+  document.body.appendChild(player1Button);
+
+  player2Button.innerText = 'Player 2 Draw';
+  document.body.appendChild(player2Button);
+
+
+  player1Button.addEventListener('click', player1HighLowClick);
+  player2Button.addEventListener('click', player2HighLowClick);
+
+
+
+
+};
