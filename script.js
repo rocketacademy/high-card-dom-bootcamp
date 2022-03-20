@@ -233,6 +233,8 @@ let p2MinCard;
 let player1HighLowHand=[];
 let player2HighLowHand=[];
 
+let canClick = true;
+
 // HTML set up
 
 // creating containers for game type buttons, game info, player hand, and draw card containers
@@ -276,47 +278,71 @@ player2Button.innerText = 'Player 2 draw'
 // PLAYER ACTION CALLBACKS
 
 const player1HighClick = () => {
-  if (playersTurn === 1) {
+  if (playersTurn === 1 && canClick === true) {
+    canClick = false;
+
     p1CardCanvas.innerHTML = '';
     p2CardCanvas.innerHTML = '';
+    setTimeout( () => {
     player1Card = drawCard();
     playersTurn = 2;
+    canClick = true;
+  }, 500);
     output('Its player 2 turn.');
   }
 };
 
 const player2HighClick = () => {
-  if (playersTurn === 2) {
+  if (playersTurn === 2 && canClick === true) {
+    canClick = false;
+    
+    setTimeout( () => {
     player2Card = drawCard();
     playersTurn = 1;
+    canClick = true;  
     highCardGame(player1Card, player2Card);
+  }, 500);
+   
   }
 };
 
-
 const player1HighLowClick = () => {
   playersTurn = 1;
-  player1Card = drawCard();
-  player1HighLowHand.push(player1Card);
-  player1difference = rankDifference(player1HighLowHand);
-  highLowCardGame(player1difference, player2difference);
-}
+  
+  if (playersTurn === 1 && canClick === true) {
+    canClick = false;
+  
+    setTimeout ( () => {
+      player1Card = drawCard();
+      player1HighLowHand.push(player1Card);
+      player1difference = rankDifference(player1HighLowHand);
+    
+      canClick = true;
+      highLowCardGame(player1difference, player2difference);
+      }, 500);
+  }
+};
 
 const player2HighLowClick = () => {
   playersTurn = 2;
-  player2Card = drawCard();
-  player2HighLowHand.push(player2Card);
-  player2difference = rankDifference(player2HighLowHand);
-  highLowCardGame(player1difference, player2difference);
-}
+
+  if (playersTurn === 2 && canClick === true) {
+    canClick = false;
+
+    setTimeout( () => {
+      player2Card = drawCard();
+      player2HighLowHand.push(player2Card);
+      player2difference = rankDifference(player2HighLowHand);
+      canClick = true;
+      highLowCardGame(player1difference, player2difference);
+    }, 500);
+  }
+};
 
 // GAME INITIALISATION
 
-
 highCardButton.addEventListener('click', () => initHighCardGame())
 highLowCardButton.addEventListener('click', () => initHighLowCardGame());
-
-
 
 const initHighCardGame = () => {
   initHTMLcontainers();
@@ -328,6 +354,7 @@ const initHighCardGame = () => {
   
 const initHighLowCardGame = () => {
   initHTMLcontainers();
+
   player1Button.addEventListener('click', player1HighLowClick);
   player2Button.addEventListener('click', player2HighLowClick);
 
