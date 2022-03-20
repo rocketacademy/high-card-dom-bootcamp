@@ -80,7 +80,12 @@ const shuffleCards = (cards) => {
 function drawCard () {
   let playerCard = deck.pop();
   const cardElement = createCard(playerCard);
-  cardContainer.appendChild(cardElement);
+  if (playersTurn === 1) {
+    p1CardCanvas.appendChild(cardElement);
+  } 
+  if (playersTurn === 2) {
+    p2CardCanvas.appendChild(cardElement);
+  }
   return playerCard
 }
 
@@ -134,28 +139,46 @@ function highCardGame(card1, card2) {
   }
 };
 
-let maxCard;
-let minCard;
-
 function rankDifference(playerCards) {
+  let difference;
+  if (playersTurn === 1) {
   if (playerCards.length === 1) {
-    maxCard = playerCards[0];
-    minCard = playerCards[0];
+    p1MaxCard = playerCards[0];
+    p1MinCard = playerCards[0];
   }
-
   if (playerCards.length > 1) {
   for (let i = 0; i < playerCards.length; i += 1) {
-    console.log(i);
-    console.log('here');
-    if (playerCards[i].rank > maxCard.rank) {
-      maxCard = playerCards[i];
+
+    if (playerCards[i].rank > p1MaxCard.rank) {
+      p1MaxCard = playerCards[i];
     }
-    if (playerCards[i].rank < minCard.rank) {
-      minCard = playerCards[i];
+    if (playerCards[i].rank < p1MinCard.rank) {
+      p1MinCard = playerCards[i];
     }
   }
   }
-  let difference = maxCard.rank - minCard.rank;
+  difference = p1MaxCard.rank - p1MinCard.rank;}
+
+  if (playersTurn === 2) {
+  if (playerCards.length === 1) {
+    p2MaxCard = playerCards[0];
+    p2MinCard = playerCards[0];
+  }
+  if (playerCards.length > 1) {
+  for (let i = 0; i < playerCards.length; i += 1) {
+
+    if (playerCards[i].rank > p2MaxCard.rank) {
+      p2MaxCard = playerCards[i];
+    }
+    if (playerCards[i].rank < p2MinCard.rank) {
+      p2MinCard = playerCards[i];
+    }
+  }
+  }
+    difference = p2MaxCard.rank - p2MinCard.rank;
+  }
+
+
   console.log('difference:' ,difference)
   return difference;
 
@@ -169,34 +192,93 @@ function highLowCardGame(difference1, difference2) {
   } else output('tie');
 }
 
+function initHTMLcontainers() {
+  // fill in game info with starting instructions
+  
+  gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
+  document.body.appendChild(gameInfo);
+
+  document.body.appendChild(playerHandContainer);
+  document.body.appendChild(drawButtonContainer);
+
+  playerHandContainer.appendChild(p1CardContainer);
+  playerHandContainer.appendChild(p2CardContainer);
+
+  p1CardContainer.appendChild(p1CardCanvas);
+  p2CardContainer.appendChild(p2CardCanvas);
+
+  // initialise button functionality
+  drawButtonContainer.appendChild(player1Button);
+  drawButtonContainer.appendChild(player2Button);
+}
+
 
 // GLOBAL SET UP
 
+// initialising variables
 const deck = shuffleCards(makeDeck());
 
 // player 1 starts first
 let playersTurn = 1; 
 
-// initialise player1Card
+// initialise player cards and hands
 let player1Card; 
 let player2Card;
 
-const gameInfo = document.createElement('div')
+let p1MaxCard;
+let p1MinCard;
+let p2MaxCard;
+let p2MinCard;
 
-let cardContainer;
+let player1HighLowHand=[];
+let player2HighLowHand=[];
+
+// HTML set up
+
+// creating containers for game type buttons, game info, player hand, and draw card containers
+const gameButtonContainer = document.createElement('div');
+const gameInfo = document.createElement('div'); 
+const playerHandContainer = document.createElement('div');
+const drawButtonContainer = document.createElement('div');
+
+document.body.appendChild(gameButtonContainer);
+
+// create containers for p1 and p2 hands
+const p1CardContainer = document.createElement('div');
+const p2CardContainer = document.createElement('div');
+
+const p1CardContainerText = document.createElement('p');
+p1CardContainerText.innerText = 'Player 1 Hand';
+p1CardContainer.appendChild(p1CardContainerText);
+
+const p2CardContainerText = document.createElement('p');
+p2CardContainerText.innerText = "Player 2 Hand";
+p2CardContainer.appendChild(p2CardContainerText);
+
+const p1CardCanvas = document.createElement('p');
+const p2CardCanvas = document.createElement('p');
+
+// creating game type buttons
+const highCardButton = document.createElement('button');
+highCardButton.innerText = "High Card Game";
+gameButtonContainer.appendChild(highCardButton);
+
+const highLowCardButton = document.createElement('button');
+highLowCardButton.innerText = "High Low Card Game";
+gameButtonContainer.appendChild(highLowCardButton);
 
 // create two buttons
 const player1Button = document.createElement('button');
 const player2Button = document.createElement('button');
-
-// initialise game type
-let gameType;
+player1Button.innerText = 'Player 1 draw';
+player2Button.innerText = 'Player 2 draw'
 
 // PLAYER ACTION CALLBACKS
 
 const player1HighClick = () => {
   if (playersTurn === 1) {
-    cardContainer.innerHTML = '';
+    p1CardCanvas.innerHTML = '';
+    p2CardCanvas.innerHTML = '';
     player1Card = drawCard();
     playersTurn = 2;
     output('Its player 2 turn.');
@@ -211,32 +293,25 @@ const player2HighClick = () => {
   }
 };
 
-let player1HighLowHand=[];
+
 const player1HighLowClick = () => {
+  playersTurn = 1;
   player1Card = drawCard();
   player1HighLowHand.push(player1Card);
   player1difference = rankDifference(player1HighLowHand);
+  highLowCardGame(player1difference, player2difference);
 }
 
-let player2HighLowHand=[];
 const player2HighLowClick = () => {
+  playersTurn = 2;
   player2Card = drawCard();
   player2HighLowHand.push(player2Card);
   player2difference = rankDifference(player2HighLowHand);
-  console.log(player1difference);
   highLowCardGame(player1difference, player2difference);
 }
 
 // GAME INITIALISATION
 
-
-const highCardButton = document.createElement('button');
-highCardButton.innerText = "High Card Game";
-document.body.appendChild(highCardButton);
-
-const highLowCardButton = document.createElement('button');
-highLowCardButton.innerText = "High Low Card Game";
-document.body.appendChild(highLowCardButton);
 
 highCardButton.addEventListener('click', () => initHighCardGame())
 highLowCardButton.addEventListener('click', () => initHighLowCardGame());
@@ -244,23 +319,7 @@ highLowCardButton.addEventListener('click', () => initHighLowCardGame());
 
 
 const initHighCardGame = () => {
-  console.log('game type:' + gameType)
-  // fill in game info with starting instructions
-  
-  gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
-  document.body.appendChild(gameInfo);
-
-  cardContainer = document.createElement('div');
-  cardContainer.classList.add('card-container');
-  document.body.appendChild(cardContainer);
-
-  // initialise button functionality
-  player1Button.innerText = 'Player 1 Draw';
-  document.body.appendChild(player1Button);
-
-  player2Button.innerText = 'Player 2 Draw';
-  document.body.appendChild(player2Button);
-
+  initHTMLcontainers();
 
   player1Button.addEventListener('click', player1HighClick);
   player2Button.addEventListener('click', player2HighClick);
@@ -268,26 +327,8 @@ const initHighCardGame = () => {
 };
   
 const initHighLowCardGame = () => {
-  console.log('highlowcardgame starts')
-  gameInfo.innerText = 'Its player 1 turn. Click to draw a card!';
-  document.body.appendChild(gameInfo);
-
-  cardContainer = document.createElement('div');
-  cardContainer.classList.add('card-container');
-  document.body.appendChild(cardContainer);
-
-  // initialise button functionality
-  player1Button.innerText = 'Player 1 Draw';
-  document.body.appendChild(player1Button);
-
-  player2Button.innerText = 'Player 2 Draw';
-  document.body.appendChild(player2Button);
-
-
+  initHTMLcontainers();
   player1Button.addEventListener('click', player1HighLowClick);
   player2Button.addEventListener('click', player2HighLowClick);
-
-
-
 
 };
