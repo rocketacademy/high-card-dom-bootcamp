@@ -76,6 +76,15 @@ const shuffleCards = (cards) => {
   return cards;
 }
 
+// draw cards
+function drawCard () {
+  let playerCard = deck.pop();
+  const cardElement = createCard(playerCard);
+  cardContainer.appendChild(cardElement);
+  return playerCard
+}
+
+
 // check deck count to have at least 2 cards
 // before player 1 draws/ when player 2 ends, there should be at least 2 cards
 
@@ -90,8 +99,6 @@ const checkDeckCount = (deck) => {
 
 // display output message
 const output = (message) => {
-
-
   if (checkDeckCount(deck)) {
   gameInfo.innerText = message + ' Click to draw a card!'
 } else { gameInfo.innerText = message + ' There are not enough cards left in deck. Restart game to play.'}
@@ -144,10 +151,8 @@ const player2Button = document.createElement('button');
 
 const player1Click = () => {
   if (playersTurn === 1) {
-    player1Card = deck.pop();
-    const cardElement = createCard(player1Card);
     cardContainer.innerHTML = '';
-    cardContainer.appendChild(cardElement);
+    player1Card = drawCard();
     playersTurn = 2;
     output('Its player 2 turn.');
   }
@@ -155,9 +160,7 @@ const player1Click = () => {
 
 const player2Click = () => {
   if (playersTurn === 2) {
-    player2Card = deck.pop();
-    const cardElement = createCard(player2Card);  
-     cardContainer.appendChild(cardElement);
+    player2Card = drawCard();
     playersTurn = 1;
 
     if (player1Card.rank > player2Card.rank) {
@@ -167,9 +170,8 @@ const player2Click = () => {
     } else {
       output('tie!');
     }
-}
+  }
 };
-
 
 
 // GAME INITIALISATION
