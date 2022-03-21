@@ -1,3 +1,33 @@
 body {
   background-color: pink;
 }
+
+.cardCSS {
+  margin: 10px;
+  padding: 10px;
+  background-color: grey;
+  width: 50px;
+  text-align: center;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.suitCSS {
+  margin: 5px;
+  font-size: 20px;
+}
+
+.nameCSS {
+  margin: 5px;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.red {
+  color: red;
+}
+
+.black {
+  color: black;
+}
