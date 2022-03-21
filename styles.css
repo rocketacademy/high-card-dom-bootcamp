@@ -1,3 +1,40 @@
 body {
   background-color: pink;
 }
+
+.card {
+  margin: 10px;
+  padding: 10px;
+  background-color: #746f72;
+  width: 50px;
+  text-align: center;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.suit {
+  margin: 5px;
+  font-size: 20px;
+}
+
+.name {
+  margin: 5px;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.red {
+  color: #f85a3e;
+}
+
+.message-output {
+  font-size: 32px;
+  color: #00539cff;
+  font-family: Garamond;
+}
+
+.fixed-output {
+  font-size: 24px;
+  color: #00203fff;
+}
