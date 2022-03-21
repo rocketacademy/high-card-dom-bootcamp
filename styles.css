@@ -1,3 +1,106 @@
 body {
-  background-color: pink;
+	background-color: powderblue;
+	font-family: monospace;
+	text-align: center;
+}
+
+h1 {
+	color: darkcyan;
+}
+
+button {
+	background-color: lightpink;
+	border-width: 2px;
+	border-style: solid;
+	border-color: lightcyan darkcyan darkcyan lightcyan;
+	color: darkcyan;
+	font-family: monospace;
+	font-size: 1.2em;
+	font-weight: bold;
+	text-transform: uppercase;
+	width: 30vw;
+	padding: 1rem;
+	margin-left: 0.5rem;
+	margin-right: 0.5rem;
+}
+
+button:disabled {
+	color: lightslategrey;
+	background-color: lightgrey;
+	border-width: 2px;
+	border-style: solid;
+	border-color: lightcyan lightslategrey lightslategrey lightcyan;
+}
+
+.btn-container {
+	margin: 1rem auto;
+	padding: 1.1rem;
+	width: 80vw;
+	display: flex;
+	justify-content: space-around;
+}
+
+.card-container {
+	font-size: 1.2em;
+	margin: 1rem auto;
+	width: 80vw;
+	display: flex;
+	justify-content: space-between;
+	box-sizing: border-box;
+}
+
+.card {
+	background: white;
+	display: inline-block;
+	width: 2em;
+	padding: 1em 0.5em;
+	margin: 0.5em 1em;
+	border: 1px solid grey;
+	border-radius: 3px;
+}
+
+.card-name {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.card-symbol {
+	font-size: 1.2em;
+}
+
+.red {
+	color: red;
+}
+
+.black {
+	color: black;
+}
+
+#instructions {
+	font-size: 1.1em;
+	color: darkslategrey;
+	text-align: left;
+	background-color: lightgoldenrodyellow;
+	margin: 1rem auto;
+	padding: 2rem;
+	box-sizing: border-box;
+	width: 80vw;
+}
+
+#game-info {
+	font-size: 1.5em;
+	color: darkslategrey;
+	background-color: lightgoldenrodyellow;
+	margin: 1rem auto;
+	padding: 1rem;
+	width: 80vw;
+	box-sizing: border-box;
+}
+
+#player1-container,
+#player2-container {
+	background-color: white;
+	padding: 1rem;
+	width: 48%;
+	box-sizing: border-box;
 }
