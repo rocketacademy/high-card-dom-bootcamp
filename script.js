@@ -2,6 +2,18 @@
 
 // HELPER FUNCTIONS
 
+// creating text input to draw cards
+function getVal() {
+  text = Number(document.getElementById("text_id").value);
+  console.log(text);
+  return text;
+}
+
+const submitButton = document.createElement('button');
+submitButton.innerText = 'Submit';
+document.body.appendChild(submitButton);
+submitButton.addEventListener('click', () => getVal());
+
 // make deck
 const makeDeck = () => {
   const newDeck = [];
@@ -286,6 +298,8 @@ let player2HighLowHand=[];
 
 let canClick = true;
 
+let text;
+
 // HTML set up
 
 // creating containers for game type buttons, game info, player hand, and draw card containers
@@ -360,7 +374,7 @@ const player2HighClick = () => {
 const player1HighLowClick = () => {
   playersTurn = 1;
   
-  if (playersTurn === 1 && canClick === true) {
+  if (playersTurn === 1 && canClick === true && player1HighLowHand.length < text) {
     canClick = false;
   
     setTimeout ( () => {
@@ -380,7 +394,7 @@ const player1HighLowClick = () => {
 const player2HighLowClick = () => {
   playersTurn = 2;
 
-  if (playersTurn === 2 && canClick === true) {
+  if (playersTurn === 2 && canClick === true && player2HighLowHand.length < text) {
     canClick = false;
 
     setTimeout( () => {
@@ -410,7 +424,7 @@ const initHighCardGame = () => {
 };
   
 const initHighLowCardGame = () => {
-
+  
   initHTMLcontainers();
 
   player1Button.addEventListener('click', player1HighLowClick);
