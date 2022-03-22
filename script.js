@@ -65,7 +65,7 @@ const makeDeck = () => {
   return newDeck;
 }
 
-console.log(makeDeck());
+
 // shuffle cards
 const getRandomIndex = (max) => Math.floor(Math.random() * max);
 
@@ -82,22 +82,32 @@ const shuffleCards = (cards) => {
   return cards;
 }
 
-
 // sort cards
 function sortCards(array) {
   for (let i = 0; i < array.length; i += 1) {
     for (let j = 0; j < array.length - i - 1; j += 1) {
-      if (array[j].sortRank > array[j+1].sortRank) {
+      if (array[j].rank > array[j+1].rank) {
         let temp = array[j];
         array[j] = array[j+1];
         array[j+1] = temp;
       }
     }
   }
-  console.log(array);
-};
 
-// draw cards
+  // swap 2nd and max card
+  if (array.length > 1) {
+  let temp2 = array[1]; 
+  console.log('temp2: ', temp2)
+  array[1] = array[array.length-1];
+  console.log('2nd card in array: ', array[1]);
+  array[array.length-1] = temp2;
+  console.log('last card in array: ', array[array.length-1]);
+  }
+
+  return array;
+};
+ 
+// draw cards for high card game
 function drawCard () {
   let playerCard = deck.pop();
   const cardElement = createCard(playerCard);
@@ -108,6 +118,26 @@ function drawCard () {
     p2CardCanvas.appendChild(cardElement);
   }
   return playerCard
+}
+
+// draw cards for high low card game
+
+function printCard(playerHand) {
+  if (playersTurn === 1) {
+    p1CardCanvas.innerText = "";
+    for (let i = 0 ; i < playerHand.length; i += 1) {
+      const cardElement = createCard(playerHand[i]);
+      p1CardCanvas.appendChild(cardElement);
+    }
+  }
+
+  if (playersTurn === 2) {
+    p2CardCanvas.innerText = "";
+    for (let i = 0 ; i < playerHand.length; i += 1) {
+      const cardElement = createCard(playerHand[i]);
+      p2CardCanvas.appendChild(cardElement);
+    }
+  }
 }
 
 
@@ -129,7 +159,7 @@ const output = (message) => {
   
 }
 
-// HTML to JS DOM
+// HTML to JS DOM for each card
 const createCard = (cardInfo) => {
   const suit = document.createElement('div');
   suit.classList.add('suit');
@@ -334,8 +364,11 @@ const player1HighLowClick = () => {
     canClick = false;
   
     setTimeout ( () => {
-      player1Card = drawCard();
+  
+      player1Card = deck.pop()
       player1HighLowHand.push(player1Card);
+      player1HighLowHand = sortCards(player1HighLowHand);
+      printCard(player1HighLowHand);
       player1difference = rankDifference(player1HighLowHand);
     
       canClick = true;
@@ -351,8 +384,10 @@ const player2HighLowClick = () => {
     canClick = false;
 
     setTimeout( () => {
-      player2Card = drawCard();
+      player2Card = deck.pop();
       player2HighLowHand.push(player2Card);
+      player2HighLowHand = sortCards(player2HighLowHand);
+      printCard(player2HighLowHand);
       player2difference = rankDifference(player2HighLowHand);
       canClick = true;
       highLowCardGame(player1difference, player2difference);
@@ -366,6 +401,7 @@ highCardButton.addEventListener('click', () => initHighCardGame())
 highLowCardButton.addEventListener('click', () => initHighLowCardGame());
 
 const initHighCardGame = () => {
+  
   initHTMLcontainers();
 
   player1Button.addEventListener('click', player1HighClick);
@@ -374,9 +410,12 @@ const initHighCardGame = () => {
 };
   
 const initHighLowCardGame = () => {
+
   initHTMLcontainers();
 
   player1Button.addEventListener('click', player1HighLowClick);
   player2Button.addEventListener('click', player2HighLowClick);
 
 };
+
+
