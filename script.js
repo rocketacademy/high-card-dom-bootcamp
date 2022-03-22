@@ -12,6 +12,7 @@ const makeDeck = () => {
     const currentSuit = suits[suitIndex];
     let currentSymbol;
     let currentColor;
+    let currentSortRank;
 
     if (currentSuit == 'hearts') {
       currentSymbol = '♥️';
@@ -46,13 +47,17 @@ const makeDeck = () => {
         cardName = 'king';
         currentDisplayName = 'K';
       }
+
+      currentSortRank = (suitIndex * 13) + rankCounter;
+
       const card = {
       name: cardName,
       suit: currentSuit,
       suitSymbol: currentSymbol,
-      rank: rankCounter,
+      rank: rankCounter, // 1 to 13
       displayName: currentDisplayName,
       color: currentColor,
+      sortRank: currentSortRank // 1 to 52
       };
     newDeck.push(card);
     }
@@ -60,6 +65,7 @@ const makeDeck = () => {
   return newDeck;
 }
 
+console.log(makeDeck());
 // shuffle cards
 const getRandomIndex = (max) => Math.floor(Math.random() * max);
 
@@ -75,6 +81,21 @@ const shuffleCards = (cards) => {
   }
   return cards;
 }
+
+
+// sort cards
+function sortCards(array) {
+  for (let i = 0; i < array.length; i += 1) {
+    for (let j = 0; j < array.length - i - 1; j += 1) {
+      if (array[j].sortRank > array[j+1].sortRank) {
+        let temp = array[j];
+        array[j] = array[j+1];
+        array[j+1] = temp;
+      }
+    }
+  }
+  console.log(array);
+};
 
 // draw cards
 function drawCard () {
